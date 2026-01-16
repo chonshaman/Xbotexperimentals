@@ -18,6 +18,7 @@ export default function App() {
   const [timeMode, setTimeMode] = useState<'30s' | '60s' | 'price'>('price');
   const [countdown, setCountdown] = useState<number | undefined>(undefined);
   const [entryPrice, setEntryPrice] = useState<number | undefined>(undefined);
+  const [currentPrice, setCurrentPrice] = useState<number>(96500);
   
   const countdownRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -33,6 +34,7 @@ export default function App() {
     
     setActiveButton('up');
     setChartState('opened');
+    setEntryPrice(currentPrice);
     
     // After 700ms, transition to live state
     setTimeout(() => {
@@ -59,6 +61,7 @@ export default function App() {
     
     setActiveButton('down');
     setChartState('opened');
+    setEntryPrice(currentPrice);
     
     // After 700ms, transition to live state
     setTimeout(() => {
@@ -138,7 +141,12 @@ export default function App() {
         </div>
 
         {/* Content Area with Padding and Gaps */}
-        <div className="flex-1 flex flex-col gap-[14px] px-[14px] pb-[14px] pt-[14px] min-h-0 max-[375px]:gap-[10px] max-[375px]:px-[10px] max-[375px]:pb-[10px] max-[375px]:pt-[8px] max-[340px]:gap-[8px] max-[340px]:px-[8px] max-[340px]:pb-[8px] max-[340px]:pt-[4px] max-[320px]:gap-[6px] max-[320px]:px-[6px] max-[320px]:pb-[6px] max-[320px]:pt-0">
+        <div 
+          className="flex-1 flex flex-col px-[14px] pb-[14px] pt-[14px] min-h-0 transition-all duration-300 ease-in-out"
+          style={{ 
+            gap: chartState === 'idle' ? '14px' : '11px' 
+          }}
+        >
           
           {/* Live Chart - Flexible height */}
           <div className="w-full flex-1 min-h-0">
@@ -148,6 +156,8 @@ export default function App() {
               countdown={countdown}
               mode={timeMode}
               direction={activeButton || undefined}
+              entryPrice={entryPrice}
+              onPriceUpdate={setCurrentPrice}
             />
           </div>
 

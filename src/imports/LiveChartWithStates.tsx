@@ -188,37 +188,33 @@ function Chart1AndPrice({ state, onPriceUpdate }: { state: LiveChartState; onPri
     });
     setDataPoints(initial);
 
-    // Animate chart - update every 800ms for smooth, slower animation
+    // Animate chart - update every 400ms for more real-time feel
     const interval = setInterval(() => {
       setDataPoints(prev => {
         const newPoints = [...prev];
-        // Shift all points left
         newPoints.shift();
-        // Add new random point at the end
         const lastPoint = newPoints[newPoints.length - 1];
-        const change = (Math.random() - 0.5) * 15;
-        const newPoint = Math.max(50, Math.min(150, lastPoint + change));
+        // Increased volatility for more dramatic price action
+        const change = (Math.random() - 0.5) * 25; 
+        const newPoint = Math.max(40, Math.min(160, lastPoint + change));
         newPoints.push(newPoint);
         
-        // Calculate prices immediately based on new data with more dramatic variation
         const maxValue = Math.max(...newPoints);
         const minValue = Math.min(...newPoints);
         const range = maxValue - minValue;
         const step = range / 5;
         
-        // Create 6 price levels from max to min with more visible changes
         const newPrices = Array.from({ length: 6 }, (_, i) => {
           const value = maxValue - (i * step);
-          const basePrice = 96500; // Base BTC price
-          const priceVariation = ((value - 100) / 100) * 50; // Increased from 4 to 50 for more variation
+          const basePrice = 96500;
+          const priceVariation = ((value - 100) / 100) * 80;
           return (basePrice + priceVariation).toFixed(2);
         });
         
         setPrices(newPrices);
         
-        // Calculate current price from the latest point
         const basePrice = 96500;
-        const priceVariation = ((newPoint - 100) / 100) * 50;
+        const priceVariation = ((newPoint - 100) / 100) * 80;
         const newCurrentPrice = basePrice + priceVariation;
         
         setPrevPrice(currentPrice);
@@ -226,7 +222,7 @@ function Chart1AndPrice({ state, onPriceUpdate }: { state: LiveChartState; onPri
         
         return newPoints;
       });
-    }, 800);
+    }, 400);
 
     return () => clearInterval(interval);
   }, [currentPrice]);
@@ -509,7 +505,29 @@ function Chart({ state, onPriceUpdate }: { state: LiveChartState; onPriceUpdate?
   );
 }
 
-function Footer({ state, countdown, mode }: { state: LiveChartState; countdown?: number; mode?: '30s' | '60s' | 'price' }) {
+function Footer({ 
+  state, 
+  countdown, 
+  mode, 
+  entryPrice, 
+  currentPrice: externalCurrentPrice, 
+  direction 
+}: { 
+  state: LiveChartState; 
+  countdown?: number; 
+  mode?: '30s' | '60s' | 'price'; 
+  entryPrice?: number; 
+  currentPrice?: number; 
+  direction?: 'up' | 'down';
+}) {
+  const [internalPrice, setInternalPrice] = useState(externalCurrentPrice || 96500);
+
+  useEffect(() => {
+    if (externalCurrentPrice) {
+      setInternalPrice(externalCurrentPrice);
+    }
+  }, [externalCurrentPrice]);
+
   const getSettleText = () => {
     if (state === 'opened') return 'Starting round…';
     if (state === 'live' && countdown !== undefined) {
@@ -518,19 +536,49 @@ function Footer({ state, countdown, mode }: { state: LiveChartState; countdown?:
     return '';
   };
 
+  const calculatePnL = () => {
+    if (!entryPrice || !internalPrice || !direction || countdown === undefined) return 0;
+    
+    const sigma = 0.0001; 
+    const stake = 100;
+    const payoutMultiplier = 1.95; 
+    const netProfit = stake * (payoutMultiplier - 1);
+    const t = Math.max(1, countdown);
+    
+    const priceDiff = internalPrice - entryPrice;
+    const z = priceDiff / (entryPrice * sigma * Math.sqrt(t));
+    
+    const k = direction === 'up' ? z : -z;
+    const pWin = 1 / (1 + Math.exp(-1.702 * k));
+    
+    const ev = (pWin * netProfit) - ((1 - pWin) * stake);
+    return ev;
+  };
+
+  const pnl = calculatePnL();
+  const isPositive = pnl >= 0;
+
   return (
     <div 
-      className={`relative rounded-[10px] shrink-0 w-full z-[0] transition-all duration-500 ease-out ${
-        state !== 'idle' ? 'translate-y-0 opacity-100' : 'translate-y-[20px] opacity-0'
-      }`}
+      className={`relative rounded-[10px] shrink-0 w-full z-[0] transition-all duration-500 ease-out translate-y-0 opacity-100`}
       data-name="footer" 
       style={{ backgroundImage: "url('data:image/svg+xml;utf8,<svg viewBox=\\'0 0 376 28\\' xmlns=\\'http://www.w3.org/2000/svg\\' preserveAspectRatio=\\'none\\'><rect x=\\'0\\' y=\\'0\\' height=\\'100%\\' width=\\'100%\\' fill=\\'url(%23grad)\\' opacity=\\'0.6000000238418579\\'/><defs><radialGradient id=\\'grad\\' gradientUnits=\\'userSpaceOnUse\\' cx=\\'0\\' cy=\\'0\\' r=\\'10\\' gradientTransform=\\'matrix(16.035 4.6542e-15 8.0454e-12 0.039007 170.49 0.73684)\\'><stop stop-color=\\'rgba(160,230,246,1)\\' offset=\\'0\\'/><stop stop-color=\\'rgba(160,230,246,1)\\' offset=\\'0.22115\\'/><stop stop-color=\\'rgba(160,230,246,0)\\' offset=\\'1\\'/></radialGradient></defs></svg>'), url('data:image/svg+xml;utf8,<svg viewBox=\\'0 0 376 28\\' xmlns=\\'http://www.w3.org/2000/svg\\' preserveAspectRatio=\\'none\\'><rect x=\\'0\\' y=\\'0\\' height=\\'100%\\' width=\\'100%\\' fill=\\'url(%23grad)\\' opacity=\\'0.6000000238418579\\'/><defs><radialGradient id=\\'grad\\' gradientUnits=\\'userSpaceOnUse\\' cx=\\'0\\' cy=\\'0\\' r=\\'10\\' gradientTransform=\\'matrix(14.837 1.3021e-15 1.648e-12 0.02123 178.78 26.526)\\'><stop stop-color=\\'rgba(160,230,246,1)\\' offset=\\'0\\'/><stop stop-color=\\'rgba(160,230,246,1)\\' offset=\\'0.22115\\'/><stop stop-color=\\'rgba(160,230,246,0)\\' offset=\\'1\\'/></radialGradient></defs></svg>'), linear-gradient(1.0372e-07deg, rgb(12, 8, 17) 37.778%, rgb(41, 45, 52) 100%)" }}
     >
+      <style>{`
+        @keyframes footerSlideLeft {
+          from { opacity: 0; transform: translateX(30px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes footerSlideRight {
+          from { opacity: 0; transform: translateX(-30px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+      `}</style>
       <div aria-hidden="true" className="absolute border border-[rgba(130,207,255,0.1)] border-solid inset-0 pointer-events-none rounded-[10px]" />
       <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex isolate items-center px-[8px] py-[4px] relative w-full" style={{ justifyContent: state === 'idle' ? 'center' : 'space-between' }}>
-        {/* Settle Status - Left */}
+        {/* Settle Status - Left (Transform smoothly from right to left) */}
         {state !== 'idle' && (
-          <div className="content-stretch flex items-center gap-2 py-0 relative shrink-0 z-[3]" data-name="settle status">
+          <div className="content-stretch flex items-center gap-2 py-0 relative shrink-0 z-[3] animate-[footerSlideLeft_0.5s_ease-out]" data-name="settle status">
             {state === 'opened' && (
               <Loader2 className="w-4 h-4 text-[rgba(255,255,255,0.72)] animate-spin" />
             )}
@@ -559,19 +607,21 @@ function Footer({ state, countdown, mode }: { state: LiveChartState; countdown?:
                   <p className="leading-[20px] whitespace-pre-wrap">PnL</p>
                 </div>
               </div>
-              <div className="bg-[#188b3c] content-stretch flex items-center justify-center px-[4px] py-0 relative rounded-br-[4px] shrink-0 w-[48px]">
-                <div aria-hidden="true" className="absolute border border-[#1fb74f] border-dashed inset-[-1px] pointer-events-none rounded-br-[5px]" />
-                <div className="flex flex-col font-['IBM_Plex_Sans:Medium',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-white whitespace-nowrap">
-                  <p className="leading-[20px] whitespace-pre">+56.27</p>
+              <div 
+                className={`content-stretch flex items-center justify-center px-[4px] py-0 relative rounded-br-[4px] shrink-0 w-[54px] transition-colors duration-300 ${isPositive ? 'bg-[#188b3c]' : 'bg-[#ff3232]'}`}
+              >
+                <div aria-hidden="true" className="absolute border border-white/20 border-dashed inset-[-1px] pointer-events-none rounded-br-[5px]" />
+                <div className="flex flex-col font-['IBM_Plex_Sans:Medium',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[11px] text-white whitespace-nowrap">
+                  <p className="leading-[20px] whitespace-pre">{isPositive ? '+' : ''}{pnl.toFixed(2)}</p>
                 </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* Bet Amount - Right (hidden in idle state) */}
+        {/* Bet Amount - Right (Transform smoothly from left to right) */}
         {state !== 'idle' && (
-          <div className="relative shrink-0 z-[1]">
+          <div className="relative shrink-0 z-[1] animate-[footerSlideRight_0.5s_ease-out]">
             <div className="flex flex-col font-['IBM_Plex_Sans_Condensed:Medium',sans-serif] justify-center leading-[0] not-italic text-[12px] text-[rgba(255,255,255,0.72)] text-center whitespace-nowrap">
               <p className="leading-[20px] whitespace-pre">Amount: 100</p>
             </div>
@@ -582,13 +632,38 @@ function Footer({ state, countdown, mode }: { state: LiveChartState; countdown?:
   );
 }
 
-function Inside({ state, countdown, mode, direction, showElements, entryPrice, onPriceUpdate }: { state: LiveChartState; countdown?: number; mode?: '30s' | '60s' | 'price'; direction?: 'up' | 'down'; showElements: boolean; entryPrice?: number; onPriceUpdate?: (price: number) => void }) {
+function Inside({ 
+  state, 
+  countdown, 
+  mode, 
+  direction, 
+  showElements, 
+  entryPrice, 
+  onPriceUpdate 
+}: { 
+  state: LiveChartState; 
+  countdown?: number; 
+  mode?: '30s' | '60s' | 'price'; 
+  direction?: 'up' | 'down'; 
+  showElements: boolean; 
+  entryPrice?: number; 
+  onPriceUpdate?: (price: number) => void 
+}) {
+  const [currentPrice, setCurrentPrice] = useState<number>(96500);
+
+  const handleInternalPriceUpdate = (price: number) => {
+    setCurrentPrice(price);
+    if (onPriceUpdate) {
+      onPriceUpdate(price);
+    }
+  };
+
   return (
     <div className="flex-[1_0_0] min-h-px min-w-px relative rounded-[8px] w-full" data-name="inside" style={{ background: "radial-gradient(131.72% 191.3% at 28.74% -94.84%, #323842 0%, #1F2026 52.33%, #1D1F27 72.1%, #080910 100%)" }}>
       <div className="flex flex-col items-center justify-center overflow-clip rounded-[inherit] size-full">
         <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col isolate items-center justify-center pl-[8px] pr-[2px] py-[8px] relative size-full gap-[4px]">
           <FloatingOverlay state={state} direction={direction} showElements={showElements} entryPrice={entryPrice} />
-          <Chart state={state} onPriceUpdate={onPriceUpdate} />
+          <Chart state={state} onPriceUpdate={handleInternalPriceUpdate} />
           <div className="absolute bottom-[-100px] flex h-[148px] items-center justify-center left-[calc(50%-1px)] mix-blend-screen translate-x-[-50%] w-[384px] z-[1]">
             <div className="flex-none rotate-[180deg]">
               <div className="h-[148px] relative w-[384px]" data-name="glowing">
@@ -616,7 +691,14 @@ function Inside({ state, countdown, mode, direction, showElements, entryPrice, o
               </div>
             </div>
           </div>
-          <Footer state={state} countdown={countdown} mode={mode} />
+          <Footer 
+            state={state} 
+            countdown={countdown} 
+            mode={mode} 
+            entryPrice={entryPrice} 
+            currentPrice={currentPrice} 
+            direction={direction} 
+          />
         </div>
       </div>
       <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0px_1px_1px_0px_rgba(0,0,0,0.25)]" />
@@ -624,9 +706,17 @@ function Inside({ state, countdown, mode, direction, showElements, entryPrice, o
   );
 }
 
-export default function LiveChartWithStates({ state = 'idle', showWinToast = false, countdown, mode, direction, entryPrice, onPriceUpdate }: LiveChartWithStatesProps) {
+export default function LiveChartWithStates({ 
+  state = 'idle', 
+  showWinToast = false, 
+  countdown, 
+  mode, 
+  direction, 
+  entryPrice, 
+  onPriceUpdate 
+}: LiveChartWithStatesProps) {
   const [showElements, setShowElements] = useState(false);
-  const [currentPrice, setCurrentPrice] = useState<number | undefined>(undefined);
+  const [currentPrice, setCurrentPrice] = useState<number>(96500);
 
   useEffect(() => {
     if (state === 'opened') {
