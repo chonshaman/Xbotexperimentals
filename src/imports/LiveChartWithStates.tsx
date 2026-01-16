@@ -16,24 +16,11 @@ interface LiveChartWithStatesProps {
   betAmount?: number;
 }
 
-function PriceRight() {
-  const [price, setPrice] = useState(96500);
-  const [percentage, setPercentage] = useState(16);
-  const [isUp, setIsUp] = useState(true);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const change = (Math.random() - 0.48) * 200;
-      setPrice(prev => {
-        const newPrice = Math.max(95000, Math.min(98000, prev + change));
-        const newPercentage = ((newPrice - 96000) / 96000 * 100);
-        setPercentage(Number(newPercentage.toFixed(2)));
-        setIsUp(newPercentage >= 0);
-        return newPrice;
-      });
-    }, 2000);
-    return () => clearInterval(interval);
-  }, []);
+function PriceRight({ currentPrice, entryPrice }: { currentPrice?: number; entryPrice?: number }) {
+  const price = currentPrice || 96500;
+  const basePrice = entryPrice || 96500;
+  const percentage = ((price - basePrice) / basePrice * 100);
+  const isUp = percentage >= 0;
 
   const formatPrice = (price: number) => {
     return price.toLocaleString('en-US', {
@@ -52,12 +39,12 @@ function PriceRight() {
   );
 }
 
-function Title() {
+function Title({ currentPrice, entryPrice }: { currentPrice?: number; entryPrice?: number }) {
   return (
     <div className="relative shrink-0 w-full" data-name="title">
       <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex font-sans font-semibold items-start justify-between leading-[normal] not-italic relative text-[14px] w-full whitespace-pre">
         <p className="relative shrink-0 text-white uppercase tracking-tight">BTC/USDT LIVE CHART</p>
-        <PriceRight />
+        <PriceRight currentPrice={currentPrice} entryPrice={entryPrice} />
       </div>
     </div>
   );
@@ -97,9 +84,9 @@ function UpDown({ direction }: { direction?: 'up' | 'down' }) {
 
 function Bg({ direction }: { direction?: 'up' | 'down' }) {
   return (
-    <div className="backdrop-blur-[4px] bg-[rgba(0,0,0,0.16)] content-stretch flex items-center justify-center px-[4px] py-0 relative rounded-tl-[4px] rounded-tr-[4px] shrink-0" data-name="bg">
+    <div className="backdrop-blur-[4px] bg-[rgba(0,0,0,0.16)] content-stretch flex items-center justify-center px-[4px] py-0 relative rounded-tl-[4px] rounded-tr-[4px] shrink-0 w-fit" data-name="bg">
       <div className="flex flex-col font-sans font-medium justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-[rgba(255,255,255,0.72)]">
-        <p className="leading-[20px] whitespace-pre">{`Live Round  -`}</p>
+        <p className="leading-[20px] whitespace-pre">{`Live Round - `}</p>
       </div>
       <UpDown direction={direction} />
     </div>
@@ -849,7 +836,7 @@ export default function LiveChartWithStates({
         </div>
       )}
       
-      <Title />
+      <Title currentPrice={currentPrice} entryPrice={entryPrice} />
       <Inside state={state} countdown={countdown} mode={mode} direction={direction} showElements={showElements} entryPrice={entryPrice} onPriceUpdate={handlePriceUpdate} betAmount={betAmount} />
       <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0.5px_1px_0px_0px_rgba(88,102,123,0.33),inset_0px_0.2px_1px_0.5px_rgba(133,140,150,0.55)]" />
     </div>
