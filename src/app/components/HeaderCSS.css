@@ -1,0 +1,375 @@
+/* Header Container */
+.header-container {
+  width: 100%;
+  height: 80px;
+  padding: 0 14px 8px 14px;
+  border-radius: 0 0 16px 16px;
+  background: radial-gradient(50% 50% at 50% 100%, rgba(72, 190, 229, 0.20) 0%, rgba(0, 0, 0, 0.20) 100%), linear-gradient(0deg, #162952 -148.75%, #0C0811 100%);
+  border: 1px solid rgba(130, 207, 255, 0.1);
+  border-top: none;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  isolation: isolate;
+}
+
+/* Balance Section */
+.balance-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: 24px;
+  background: linear-gradient(to top, #110811 37.778%, #523716 100%);
+  isolation: isolate;
+  position: relative;
+  z-index: 2;
+  height: 51px;
+}
+
+.balance-border-wrapper {
+  position: relative;
+  width: 100%;
+  height: 51px;
+  background-image: url('data:image/svg+xml,<svg width="174" height="51" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 .031h150v4H12v-4z" fill="url(%23a)"/><path d="M0 39.313V10.03L10 0h2v4l-8 8.031v24.73l8 9.27v4l-2 .032-10-10.75z" fill="url(%23b)"/><path d="M174 39.328V10.047L164 .016h-2v4l8 8.03v24.731l-8 9.27v4h2l10-10.719z" fill="url(%23c)"/><path d="M12 46.031h150v4H12v-4z" fill="url(%23d)"/><defs><linearGradient id="a" x1="12.581" y1="2.031" x2="162.581" y2="2.031" gradientUnits="userSpaceOnUse"><stop stop-color="%23C6A778"/><stop offset="1" stop-color="%23D7A75F"/></linearGradient><linearGradient id="b" x1="11.938" y1="25" x2="-4.062" y2="25" gradientUnits="userSpaceOnUse"><stop stop-color="%23C6A778"/><stop offset="1" stop-color="%23D7A75F"/></linearGradient><linearGradient id="c" x1="162.062" y1="25.015" x2="178.062" y2="25.015" gradientUnits="userSpaceOnUse"><stop stop-color="%23D7A75F"/><stop offset="1" stop-color="%23C6A778"/></linearGradient><linearGradient id="d" x1="12.581" y1="48.031" x2="162.581" y2="48.031" gradientUnits="userSpaceOnUse"><stop stop-color="%23C6A778"/><stop offset="1" stop-color="%23D7A75F"/></linearGradient></defs></svg>');
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0px 2px 8px rgba(215, 167, 95, 0.4)) drop-shadow(0px 8px 12px rgba(14, 17, 22, 0.69));
+}
+
+.balance-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 20px;
+  font-family: 'IBM Plex Sans Condensed', sans-serif;
+  font-weight: bold;
+  font-size: 14px;
+  text-align: center;
+  white-space: pre;
+  height: 51px;
+  margin: 0 12px;
+}
+
+.balance-label {
+  color: white;
+  opacity: 0.7;
+  text-shadow: 0px 4px 24px #009cef;
+}
+
+.balance-value {
+  color: #d7a75f;
+  text-shadow: 0px 4px 24px #009cef;
+}
+
+/* Right Controls */
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  z-index: 1;
+}
+
+/* Mode Section */
+.mode-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 16px;
+}
+
+.mode-label {
+  width: 98px;
+  height: 16px;
+  font-family: 'IBM Plex Sans Condensed', sans-serif;
+  font-weight: bold;
+  font-size: 12px;
+  text-align: center;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.mode-label p {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: 0;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mode-label p.visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.mode-label p.hidden {
+  transform: translateY(10px);
+  opacity: 0;
+}
+
+.time-toggle {
+  display: flex;
+  align-items: center;
+  height: 36px;
+  padding: 4px;
+  border-radius: 36px;
+  background: linear-gradient(180deg, #2E3138 0%, #1A1D23 100%);
+  border: 3px solid #52566a;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25), inset 0px 1px 8px 0px black;
+  gap: 0;
+  position: relative;
+}
+
+.time-toggle-slider {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  height: calc(100% - 8px);
+  border-radius: 28px;
+  background: radial-gradient(
+    ellipse 13.611px 13.611px at center,
+    rgba(232, 241, 253, 1) 0%,
+    rgba(185, 214, 249, 1) 6.9421%,
+    rgba(139, 187, 244, 1) 13.884%,
+    rgba(93, 159, 240, 1) 20.826%,
+    rgba(70, 146, 238, 1) 24.297%,
+    rgba(47, 132, 236, 1) 27.768%,
+    rgba(19, 103, 206, 1) 74.593%,
+    rgba(16, 85, 171, 1) 87.297%,
+    rgba(12, 68, 136, 1) 100%
+  );
+  border: 1px solid white;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.time-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 100%;
+  padding: 3px 6px 4px;
+  border-radius: 28px;
+  background: transparent;
+  border: none;
+  font-family: 'IBM Plex Sans Condensed', sans-serif;
+  font-weight: bold;
+  font-size: 12px;
+  color: white;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  margin-right: -2px;
+  box-shadow: none;
+  position: relative;
+  z-index: 1;
+}
+
+.time-button:last-child {
+  margin-right: 0;
+}
+
+.time-button.price {
+  font-size: 14px;
+  min-width: 24px;
+}
+
+.time-button.active {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+/* Martingale Section */
+.martingale-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 16px;
+  box-shadow: 
+    0px 4px 4px 0px rgba(0, 0, 0, 0.25),
+    inset 0px 1px 8px 0px rgba(255, 255, 255, 0.04);
+}
+
+.martingale-label {
+  font-family: 'IBM Plex Sans Condensed', sans-serif;
+  font-weight: bold;
+  font-size: 12px;
+  text-align: center;
+  color: white;
+  white-space: pre;
+}
+
+.martingale-toggle-container {
+  height: 36px;
+  min-height: 36px;
+  padding: 4px;
+  border-radius: 36px;
+  background: linear-gradient(180deg, #2E3138 0%, #1A1D23 100%);
+  border: 3px solid #52566a;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25), inset 0px 1px 8px 0px black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.martingale-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 6px;
+  border-radius: 28px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  height: 100%;
+  box-shadow: inset 0px 1px 2px 0px rgba(0, 0, 0, 0.25);
+}
+
+.martingale-button.active {
+  background: radial-gradient(
+    ellipse 13.611px 13.611px at center,
+    rgba(188, 255, 249, 1) 0%,
+    rgba(153, 250, 241, 1) 6.9421%,
+    rgba(117, 246, 233, 1) 13.884%,
+    rgba(82, 241, 225, 1) 20.826%,
+    rgba(47, 236, 217, 1) 27.768%,
+    rgba(29, 212, 209, 1) 43.412%,
+    rgba(15, 150, 156, 1) 71.706%,
+    rgba(8, 119, 130, 1) 85.853%,
+    rgba(1, 88, 103, 1) 100%
+  );
+  border: 1px solid white;
+}
+
+.settings-icon {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+/* Responsive adjustments */
+@media (max-width: 440px) {
+  .header-container {
+    padding: 0 10px 8px 10px;
+  }
+  
+  .balance-content {
+    font-size: 13px;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 375px) {
+  .header-container {
+    height: 72px;
+    padding: 0 10px 8px 10px;
+  }
+  
+  .balance-content {
+    font-size: 12px;
+    gap: 6px;
+  }
+  
+  .time-button,
+  .martingale-label,
+  .mode-label {
+    font-size: 11px;
+  }
+  
+  .balance-fill {
+    height: 44px;
+  }
+  
+  .balance-left-cap,
+  .balance-right-cap {
+    height: 44px;
+  }
+}
+
+@media (max-width: 340px) {
+  .header-container {
+    height: 64px;
+    padding: 0 8px 8px 8px;
+  }
+  
+  .balance-content {
+    font-size: 11px;
+    gap: 5px;
+    padding: 0 8px;
+  }
+  
+  .time-toggle,
+  .martingale-toggle-container {
+    height: 32px;
+    min-height: 32px;
+  }
+  
+  .time-button {
+    font-size: 10px;
+    min-width: 24px;
+  }
+  
+  .time-button.price {
+    font-size: 12px;
+    min-width: 20px;
+  }
+  
+  .balance-fill {
+    height: 40px;
+  }
+  
+  .balance-left-cap,
+  .balance-right-cap {
+    height: 40px;
+  }
+  
+  .martingale-section {
+    padding: 4px 8px;
+  }
+}
+
+@media (max-width: 320px) {
+  .header-container {
+    height: 60px;
+    padding: 0 6px 8px 6px;
+  }
+  
+  .balance-content {
+    font-size: 10px;
+    gap: 4px;
+    padding: 0 6px;
+  }
+  
+  .balance-label {
+    display: none;
+  }
+  
+  .time-button,
+  .martingale-label,
+  .mode-label {
+    font-size: 10px;
+  }
+  
+  .balance-fill {
+    height: 36px;
+  }
+  
+  .balance-left-cap,
+  .balance-right-cap {
+    height: 36px;
+  }
+}

@@ -1,0 +1,545 @@
+/* Blue Button Styles */
+
+.button-blue {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border-radius: 16px;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  user-select: none;
+  padding: 5px 7px 9px 7px;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+              padding 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  background: conic-gradient(from 90deg, 
+    rgb(75, 75, 75) 0%, 
+    rgb(102, 102, 102) 0.59212%, 
+    rgb(129, 129, 129) 1.1842%, 
+    rgb(156, 156, 156) 1.7764%, 
+    rgb(183, 183, 183) 2.3685%, 
+    rgb(149, 149, 149) 5.5278%, 
+    rgb(114, 114, 114) 8.687%, 
+    rgb(149, 149, 149) 12.732%, 
+    rgb(184, 184, 184) 16.778%, 
+    rgb(157, 157, 157) 18.741%, 
+    rgb(130, 130, 130) 20.704%, 
+    rgb(172, 172, 172) 23.571%, 
+    rgb(125, 125, 125) 25.908%, 
+    rgb(135, 135, 135) 46.715%, 
+    rgb(181, 181, 181) 49.983%, 
+    rgb(208, 208, 208) 51.927%, 
+    rgb(179, 179, 179) 56.027%, 
+    rgb(149, 149, 149) 60.128%, 
+    rgb(177, 177, 177) 71.229%, 
+    rgb(137, 137, 137) 74.799%, 
+    rgb(170, 170, 170) 75.767%, 
+    rgb(203, 203, 203) 76.736%, 
+    rgb(155, 155, 155) 86.815%, 
+    rgb(131, 131, 131) 91.855%, 
+    rgb(107, 107, 107) 96.895%, 
+    rgb(142, 142, 142) 98.714%, 
+    rgb(109, 109, 109) 99.357%, 
+    rgb(75, 75, 75) 100%);
+}
+
+/* Disabled State - Prevent All Interactions */
+.button-blue.state-disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Entry Locked State - Prevent All Interactions */
+.button-blue.state-entry-locked {
+  pointer-events: none;
+}
+
+.button-blue:hover {
+  transform: translateY(-6px);
+}
+
+/* Disabled State - No Hover */
+.button-blue.state-disabled:hover {
+  transform: none;
+}
+
+/* Entry Locked State - No Hover */
+.button-blue.state-entry-locked:hover {
+  transform: none;
+}
+
+.button-blue.pressed {
+  transform: scale(0.95) translateY(-3px);
+  padding: 4px 5px 8px 5px;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              padding 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Metallic Border */
+.blue-metallic-border {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  position: relative;
+  flex-shrink: 0;
+  width: 100%;
+  border-radius: 16px 16px 14px 14px;
+  transition: border-radius 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: visible;
+  background: conic-gradient(from 90deg, 
+    rgb(75, 75, 75) 0%, 
+    rgb(102, 102, 102) 0.59212%, 
+    rgb(129, 129, 129) 1.1842%, 
+    rgb(156, 156, 156) 1.7764%, 
+    rgb(183, 183, 183) 2.3685%, 
+    rgb(149, 149, 149) 5.5278%, 
+    rgb(114, 114, 114) 8.687%, 
+    rgb(149, 149, 149) 12.732%, 
+    rgb(184, 184, 184) 16.778%, 
+    rgb(157, 157, 157) 18.741%, 
+    rgb(130, 130, 130) 20.704%, 
+    rgb(172, 172, 172) 23.571%, 
+    rgb(125, 125, 125) 25.908%, 
+    rgb(135, 135, 135) 46.715%, 
+    rgb(181, 181, 181) 49.983%, 
+    rgb(208, 208, 208) 51.927%, 
+    rgb(179, 179, 179) 56.027%, 
+    rgb(149, 149, 149) 60.128%, 
+    rgb(177, 177, 177) 71.229%, 
+    rgb(137, 137, 137) 74.799%, 
+    rgb(170, 170, 170) 75.767%, 
+    rgb(203, 203, 203) 76.736%, 
+    rgb(155, 155, 155) 86.815%, 
+    rgb(131, 131, 131) 91.855%, 
+    rgb(107, 107, 107) 96.895%, 
+    rgb(142, 142, 142) 98.714%, 
+    rgb(109, 109, 109) 99.357%, 
+    rgb(75, 75, 75) 100%);
+}
+
+.button-blue:hover .blue-metallic-border,
+.button-blue.pressed .blue-metallic-border {
+  border-radius: 16px;
+  transition: border-radius 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark Background */
+.blue-dark-bg {
+  height: 91px;
+  position: relative;
+  border-radius: 14px 14px 12px 12px;
+  flex-shrink: 0;
+  width: 100%;
+  background: linear-gradient(to bottom, #000000, #121212);
+  overflow: visible;
+}
+
+.blue-dark-bg-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 2px 2px 2px;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: padding 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: visible;
+}
+
+.button-blue.pressed .blue-dark-bg-inner {
+  padding: 1px 1px 2px 1px;
+}
+
+/* Metallic Inner Layer */
+.blue-metallic-inner {
+  flex-basis: 0;
+  flex-grow: 1;
+  min-height: 1px;
+  min-width: 1px;
+  position: relative;
+  border-radius: 14px 14px 12px 12px;
+  flex-shrink: 0;
+  width: 100%;
+  transition: background 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: visible;
+  background: conic-gradient(from 90deg, 
+    rgb(22, 22, 22) 0%, 
+    rgb(39, 39, 39) 1.1842%, 
+    rgb(56, 56, 56) 2.3685%, 
+    rgb(39, 39, 39) 5.5278%, 
+    rgb(22, 22, 22) 8.687%, 
+    rgb(39, 39, 39) 12.732%, 
+    rgb(55, 55, 55) 16.778%, 
+    rgb(56, 56, 56) 20.704%, 
+    rgb(55, 55, 55) 23.571%, 
+    rgb(56, 56, 56) 25.908%, 
+    rgb(46, 46, 46) 46.715%, 
+    rgb(63, 63, 63) 48.349%, 
+    rgb(80, 80, 80) 49.983%, 
+    rgb(60, 60, 60) 50.955%, 
+    rgb(41, 41, 41) 51.927%, 
+    rgb(22, 22, 22) 60.128%, 
+    rgb(37, 37, 37) 71.229%, 
+    rgb(22, 22, 22) 74.799%, 
+    rgb(37, 37, 37) 75.283%, 
+    rgb(51, 51, 51) 75.767%, 
+    rgb(80, 80, 80) 76.736%, 
+    rgb(51, 51, 51) 86.815%, 
+    rgb(37, 37, 37) 91.855%, 
+    rgb(22, 22, 22) 96.895%, 
+    rgb(37, 37, 37) 97.122%, 
+    rgb(52, 52, 52) 97.35%, 
+    rgb(82, 82, 82) 97.804%, 
+    rgb(112, 112, 112) 98.259%, 
+    rgb(142, 142, 142) 98.714%, 
+    rgb(112, 112, 112) 99.036%, 
+    rgb(82, 82, 82) 99.357%, 
+    rgb(52, 52, 52) 99.679%, 
+    rgb(37, 37, 37) 99.839%, 
+    rgb(22, 22, 22) 100%);
+}
+
+.button-blue.pressed .blue-metallic-inner {
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.7) 100%), 
+    conic-gradient(from 90deg, 
+      rgb(22, 22, 22) 0%, 
+      rgb(39, 39, 39) 1.1842%, 
+      rgb(56, 56, 56) 2.3685%, 
+      rgb(39, 39, 39) 5.5278%, 
+      rgb(22, 22, 22) 8.687%, 
+      rgb(39, 39, 39) 12.732%, 
+      rgb(55, 55, 55) 16.778%, 
+      rgb(56, 56, 56) 20.704%, 
+      rgb(55, 55, 55) 23.571%, 
+      rgb(56, 56, 56) 25.908%, 
+      rgb(46, 46, 46) 46.715%, 
+      rgb(63, 63, 63) 48.349%, 
+      rgb(80, 80, 80) 49.983%, 
+      rgb(60, 60, 60) 50.955%, 
+      rgb(41, 41, 41) 51.927%, 
+      rgb(22, 22, 22) 60.128%, 
+      rgb(37, 37, 37) 71.229%, 
+      rgb(22, 22, 22) 74.799%, 
+      rgb(37, 37, 37) 75.283%, 
+      rgb(51, 51, 51) 75.767%, 
+      rgb(80, 80, 80) 76.736%, 
+      rgb(51, 51, 51) 86.815%, 
+      rgb(37, 37, 37) 91.855%, 
+      rgb(22, 22, 22) 96.895%, 
+      rgb(37, 37, 37) 97.122%, 
+      rgb(52, 52, 52) 97.35%, 
+      rgb(82, 82, 82) 97.804%, 
+      rgb(112, 112, 112) 98.259%, 
+      rgb(142, 142, 142) 98.714%, 
+      rgb(112, 112, 112) 99.036%, 
+      rgb(82, 82, 82) 99.357%, 
+      rgb(52, 52, 52) 99.679%, 
+      rgb(37, 37, 37) 99.839%, 
+      rgb(22, 22, 22) 100%);
+}
+
+/* Inner Container */
+.blue-inner-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  align-items: flex-start;
+  min-height: 1px;
+  min-width: 1px;
+  padding: 0 0 8px 0;
+  position: relative;
+  flex-shrink: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  transition: padding-bottom 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+              border-radius 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.button-blue.pressed .blue-inner-container {
+  padding-bottom: 2px;
+  border-radius: 0 0 1px 0;
+  transition: padding-bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              border-radius 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Blue Glow Background */
+.blue-glow-bg {
+  flex-grow: 1;
+  min-height: 1px;
+  min-width: 1px;
+  position: relative;
+  flex-shrink: 0;
+  width: 100%;
+  height: auto;
+  border-radius: 14px 14px 12px 12px;
+  background: radial-gradient(80.06% 68.91% at 50% 50.42%, #00161A 0%, #0B626D 100%);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: visible;
+}
+
+.button-blue:hover .blue-glow-bg {
+  background: radial-gradient(55.94% 48.14% at 50% -11.34%, #00161A 0%, #0B626D 100%);
+}
+
+.button-blue.pressed .blue-glow-bg {
+  height: auto;
+  border-radius: 12px;
+  background: radial-gradient(104.47% 89.92% at 50% -7.56%, #00161A 0%, #0B626D 100%);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.blue-glow-border {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  border-radius: 14px 14px 12px 12px;
+  transition: border-radius 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.button-blue.pressed .blue-glow-border {
+  border-radius: 12px;
+  transition: border-radius 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Blue Blur Effect */
+.blue-blur-container {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 14px);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.button-blue.pressed .blue-blur-container {
+  left: 0px;
+  height: calc(100% - 10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.blue-blur-inner {
+  position: absolute;
+  border-radius: 8px;
+  height: calc(100% - 8px);
+  width: calc(100% - 16px);
+  left: 8px;
+  top: 4px;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.button-blue.pressed .blue-blur-inner {
+  height: calc(100% - 4px);
+  width: calc(100% - 12px);
+  left: 6px;
+  top: 2px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.blue-blur-edge {
+  position: absolute;
+  pointer-events: none;
+  border: 3px solid rgba(71, 251, 245, 0.98);
+  border-radius: 9.5px;
+  inset: -1.5px;
+  opacity: 0.85;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.button-blue:hover .blue-blur-edge {
+  opacity: 1;
+}
+
+.button-blue.pressed .blue-blur-edge {
+  border-width: 3px 4px 5px;
+  border-radius: 10px 10px 9.5px 9.5px;
+  inset: -1.5px -2px -2.5px -2px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.blue-blur-glow {
+  position: absolute;
+  border-radius: 14px;
+  height: calc(100% + 8px);
+  width: calc(100% + 16px);
+  left: 0;
+  top: 0;
+  border: 8px solid #47effb;
+  filter: blur(8px);
+  box-shadow: 0px 1px 4px 0px rgba(34, 237, 255, 0.5);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.button-blue:hover .blue-blur-glow {
+  filter: blur(9px);
+  box-shadow: 0px 2px 6px 0px rgba(34, 237, 255, 0.6), 0px 0px 16px 0px rgba(34, 237, 255, 0.4);
+}
+
+.button-blue.pressed .blue-blur-glow {
+  height: calc(100% + 12px);
+  left: 1px;
+  filter: blur(14px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Icon */
+.blue-icon {
+  display: inline-grid;
+  grid-template-columns: max-content;
+  grid-template-rows: max-content;
+  line-height: 0;
+  place-items: start;
+  position: relative;
+  flex-shrink: 0;
+  overflow: visible;
+  transform: scale(0.9);
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.button-blue:hover .blue-icon {
+  transform: scale(0.8);
+}
+
+/* SVG Path Animations */
+.blue-icon svg path,
+.blue-icon svg ellipse {
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.button-blue:hover .blue-icon svg path:nth-child(1) {
+  animation: rocketFlame1 0.8s ease-in-out infinite;
+}
+
+.button-blue:hover .blue-icon svg path:nth-child(2) {
+  animation: rocketFlame2 0.8s ease-in-out infinite 0.2s;
+}
+
+.button-blue:hover .blue-icon svg path:nth-child(3) {
+  animation: rocketBody 2s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.button-blue:hover .blue-icon svg ellipse {
+  animation: rocketWindow 3s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.button-blue:hover .blue-icon svg path:nth-child(5) {
+  animation: rocketFlame3 0.8s ease-in-out infinite 0.4s;
+}
+
+@keyframes rocketFlame1 {
+  0%, 100% {
+    opacity: 1;
+    transform: translateY(0px) scaleY(1);
+  }
+  25% {
+    opacity: 0.7;
+    transform: translateY(2px) scaleY(1.2);
+  }
+  50% {
+    opacity: 0.9;
+    transform: translateY(1px) scaleY(0.9);
+  }
+  75% {
+    opacity: 0.8;
+    transform: translateY(3px) scaleY(1.3);
+  }
+}
+
+@keyframes rocketFlame2 {
+  0%, 100% {
+    opacity: 1;
+    transform: translateX(0px) scaleX(1);
+  }
+  33% {
+    opacity: 0.6;
+    transform: translateX(-1px) scaleX(1.15);
+  }
+  66% {
+    opacity: 0.8;
+    transform: translateX(1px) scaleX(0.85);
+  }
+}
+
+@keyframes rocketFlame3 {
+  0%, 100% {
+    opacity: 1;
+    transform: translateY(0px) scale(1);
+  }
+  30% {
+    opacity: 0.7;
+    transform: translateY(2px) scale(1.1);
+  }
+  60% {
+    opacity: 0.9;
+    transform: translateY(-1px) scale(0.95);
+  }
+}
+
+@keyframes rocketBody {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-3px) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-5px) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-3px) rotate(1deg);
+  }
+}
+
+@keyframes rocketWindow {
+  0%, 100% {
+    opacity: 1;
+    filter: brightness(1);
+  }
+  50% {
+    opacity: 0.8;
+    filter: brightness(1.3);
+  }
+}
+
+/* Text Label */
+.blue-text-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: normal;
+  font-style: normal;
+  padding: 0 18px;
+  position: relative;
+  color: #A0E6F6;
+  text-align: center;
+  width: 100%;
+  text-shadow: 0px 4px 24px #009cef;
+}
+
+.blue-text-title {
+  font-family: 'IBM Plex Sans Condensed', sans-serif;
+  font-weight: bold;
+  position: relative;
+  flex-shrink: 0;
+  font-size: 20px;
+  width: 100%;
+  color: #A0E6F6;
+}
+
+.blue-text-subtitle {
+  font-family: 'IBM Plex Sans Condensed', sans-serif;
+  font-weight: 600;
+  position: relative;
+  flex-shrink: 0;
+  font-size: 12px;
+  width: 100%;
+}
