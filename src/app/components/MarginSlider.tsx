@@ -16,7 +16,9 @@ export default function MarginSlider({ value, onChange }: MarginSliderProps) {
 
   // Update value when selectedIndex changes
   useEffect(() => {
-    onChange(marginOptions[selectedIndex]);
+    if (onChange && typeof onChange === 'function') {
+      onChange(marginOptions[selectedIndex]);
+    }
     
     // Determine animation direction based on index change
     if (selectedIndex > prevIndexRef.current) {
@@ -27,7 +29,7 @@ export default function MarginSlider({ value, onChange }: MarginSliderProps) {
     
     prevIndexRef.current = selectedIndex;
     setAnimationKey(prev => prev + 1); // Trigger animation on value change
-  }, [selectedIndex, onChange]);
+  }, [selectedIndex]); // Removed onChange from dependencies
 
   const updateSliderFromPosition = (clientX: number) => {
     if (!sliderRef.current) return;

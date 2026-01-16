@@ -64,23 +64,6 @@ function Title() {
 }
 
 // State-specific components
-function EntryPriceFloat({ entryPrice }: { entryPrice?: number }) {
-  return (
-    <div className="content-stretch flex gap-px items-center relative shrink-0" data-name="entry price">
-      <div className="bg-[rgba(255,255,255,0.16)] content-stretch flex flex-col items-center justify-center px-[4px] py-0 relative rounded-bl-[4px] rounded-tl-[4px] shrink-0">
-        <div className="flex flex-col font-sans justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-white w-full">
-          <p className="leading-[20px] whitespace-pre-wrap">Entry Price</p>
-        </div>
-      </div>
-      <div className="bg-[#1f61b7] content-stretch flex items-center justify-center px-[4px] py-0 relative rounded-br-[4px] rounded-tr-[4px] shrink-0">
-        <div className="flex flex-col font-sans justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-white whitespace-nowrap">
-          <p className="leading-[20px] whitespace-pre">{entryPrice?.toFixed(2) || '3,932.04'}</p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function StatusOpened({ direction }: { direction?: 'up' | 'down' }) {
   return (
     <div className="bg-[rgba(0,0,0,0.32)] content-stretch flex items-center justify-center px-[4px] py-0 relative rounded-[4px] shrink-0 animate-[slideInFromRight_0.3s_ease-out]" data-name="bg">
@@ -99,25 +82,31 @@ function StatusOpened({ direction }: { direction?: 'up' | 'down' }) {
   );
 }
 
-function StatusLive({ direction }: { direction?: 'up' | 'down' }) {
+function UpDown({ direction }: { direction?: 'up' | 'down' }) {
   return (
-    <div className="bg-[rgba(0,0,0,0.32)] content-stretch flex items-center justify-center px-[4px] py-0 relative rounded-[4px] shrink-0" data-name="bg">
-      <div className="flex flex-col font-sans justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-[rgba(255,255,255,0.72)] whitespace-nowrap">
-        <p className="leading-[20px] whitespace-pre">Live Round  -</p>
-      </div>
-      <div className="h-[20px] relative shrink-0 w-[24px]" data-name="up down">
-        <div 
-          className="absolute flex flex-col font-sans font-semibold inset-0 justify-center leading-[0] not-italic text-[12px] text-center"
-          style={{ color: direction === 'down' ? '#ff3232' : '#48bee5' }}
-        >
-          <p className="leading-[20px] whitespace-pre-wrap">{direction === 'down' ? 'DOWN' : 'UP'}</p>
-        </div>
+    <div className="h-[20px] relative shrink-0 w-[24px]" data-name="up down">
+      <div 
+        className="absolute flex flex-col font-sans font-semibold inset-0 justify-center leading-[0] not-italic text-[12px] text-center"
+        style={{ color: direction === 'down' ? '#ff3232' : '#48bee5' }}
+      >
+        <p className="leading-[20px] whitespace-pre-wrap">{direction === 'down' ? 'DOWN' : 'UP'}</p>
       </div>
     </div>
   );
 }
 
-function FloatingOverlay({ state, direction, showElements, entryPrice }: { state: LiveChartState; direction?: 'up' | 'down'; showElements: boolean; entryPrice?: number }) {
+function Bg({ direction }: { direction?: 'up' | 'down' }) {
+  return (
+    <div className="backdrop-blur-[4px] bg-[rgba(0,0,0,0.16)] content-stretch flex items-center justify-center px-[4px] py-0 relative rounded-tl-[4px] rounded-tr-[4px] shrink-0" data-name="bg">
+      <div className="flex flex-col font-sans font-medium justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-[rgba(255,255,255,0.72)]">
+        <p className="leading-[20px] whitespace-pre">{`Live Round  -`}</p>
+      </div>
+      <UpDown direction={direction} />
+    </div>
+  );
+}
+
+function FloatingOverlay({ state, direction, showElements }: { state: LiveChartState; direction?: 'up' | 'down'; showElements: boolean }) {
   if (state === 'idle') return null;
   
   return (
@@ -125,11 +114,8 @@ function FloatingOverlay({ state, direction, showElements, entryPrice }: { state
       <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col gap-[4px] items-start relative w-full">
         {showElements && (
           <>
-            <div className="animate-[slideInFromRight_0.3s_ease-out]">
-              <EntryPriceFloat entryPrice={entryPrice} />
-            </div>
             {state === 'opened' && <StatusOpened direction={direction} />}
-            {state === 'live' && <StatusLive direction={direction} />}
+            {state === 'live' && <Bg direction={direction} />}
           </>
         )}
       </div>
@@ -137,12 +123,18 @@ function FloatingOverlay({ state, direction, showElements, entryPrice }: { state
   );
 }
 
-function LiveIndicator({ currentPriceY }: { currentPriceY: number }) {
-  // currentPriceY is the actual Y coordinate in SVG space (0-180)
-  // Move dash down by 28px to center it with the dot
-  const dashY = currentPriceY + 28;
-  const greenHeight = dashY;
-  const redHeight = 180 - dashY;
+function LiveIndicator({ currentPriceY, entryPriceY, direction, entryPriceValue }: { currentPriceY: number; entryPriceY: number; direction?: 'up' | 'down'; entryPriceValue?: number }) {
+  // entryPriceY is the Y coordinate where we should draw the entry price line
+  const greenHeight = entryPriceY;
+  const redHeight = 180 - entryPriceY;
+  
+  // Format price with comma separator and 2 decimals
+  const formatPrice = (price: number) => {
+    return price.toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  };
   
   return (
     <div className="absolute h-[180px] left-0 top-0 w-full pointer-events-none" data-name="liveindicator">
@@ -153,10 +145,10 @@ function LiveIndicator({ currentPriceY }: { currentPriceY: number }) {
             <rect fill="url(#paint0_linear_live_indicator)" height={greenHeight} width="324" />
           </g>
           {/* Dashed line at entry price */}
-          <line id="dash" stroke="white" strokeDasharray="2 2" strokeOpacity="0.72" x2="324" y1={dashY} y2={dashY} />
+          <line id="dash" stroke="white" strokeDasharray="2 2" strokeOpacity="0.72" x2="324" y1={entryPriceY} y2={entryPriceY} />
           {/* Red zone - below entry price */}
           <g id="redzone">
-            <rect fill="url(#paint1_linear_live_indicator)" height={redHeight} transform={`translate(0 ${dashY})`} width="324" />
+            <rect fill="url(#paint1_linear_live_indicator)" height={redHeight} transform={`translate(0 ${entryPriceY})`} width="324" />
           </g>
         </g>
         <defs>
@@ -173,15 +165,43 @@ function LiveIndicator({ currentPriceY }: { currentPriceY: number }) {
           </linearGradient>
         </defs>
       </svg>
+      
+      {/* Entry Price Badge - positioned at entry price line */}
+      <div 
+        className="absolute pointer-events-none left-[16px]"
+        style={{ 
+          top: `${entryPriceY}px`,
+          transform: 'translate(0, -50%)',
+        }}
+      >
+        <div className="content-stretch flex gap-px items-center relative shrink-0" data-name="entry price">
+          <div className="backdrop-blur-[4px] bg-[rgba(0,0,0,0.16)] content-stretch flex flex-col items-center justify-center px-[4px] py-0 relative rounded-bl-[4px] rounded-tl-[4px] shrink-0">
+            <div className="flex flex-col font-sans font-medium justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-white w-full">
+              <p className="leading-[20px] whitespace-nowrap">Entry Price</p>
+            </div>
+          </div>
+          <div 
+            className="content-stretch flex items-center justify-center px-[4px] py-0 relative rounded-br-[4px] rounded-tr-[4px] shrink-0"
+            style={{
+              backgroundColor: direction === 'up' ? '#1f61b7' : '#b7341f'
+            }}
+          >
+            <div className="flex flex-col font-sans font-medium justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-white whitespace-nowrap">
+              <p className="leading-[20px] whitespace-pre">{entryPriceValue ? formatPrice(entryPriceValue) : '0.00'}</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
 
-function Chart1AndPrice({ state, onPriceUpdate }: { state: LiveChartState; onPriceUpdate?: (price: number) => void }) {
+function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice }: { state: LiveChartState; onPriceUpdate?: (price: number) => void; direction?: 'up' | 'down'; entryPrice?: number }) {
   const [dataPoints, setDataPoints] = useState<number[]>([]);
   const [prices, setPrices] = useState<string[]>(['3936.17', '3935.17', '3935.09', '3934.17', '3933.04', '3932.00']);
   const [currentPrice, setCurrentPrice] = useState(96500);
   const [prevPrice, setPrevPrice] = useState(96500);
+  const [entryDataPoint, setEntryDataPoint] = useState<number>(100); // Store entry price as data point
 
   useEffect(() => {
     // Initialize with 50 data points
@@ -189,6 +209,13 @@ function Chart1AndPrice({ state, onPriceUpdate }: { state: LiveChartState; onPri
       return 100 + Math.sin(i * 0.3) * 30 + Math.random() * 20;
     });
     setDataPoints(initial);
+
+    // Capture the entry price data point when transitioning to live state
+    if (state === 'live' && entryPrice && initial.length > 0) {
+      // The entry price corresponds to the last data point when entering live state
+      const lastPoint = initial[initial.length - 1];
+      setEntryDataPoint(lastPoint);
+    }
 
     // Animate chart - update every 400ms for more real-time feel
     const interval = setInterval(() => {
@@ -227,7 +254,7 @@ function Chart1AndPrice({ state, onPriceUpdate }: { state: LiveChartState; onPri
     }, 400);
 
     return () => clearInterval(interval);
-  }, [currentPrice]);
+  }, [currentPrice, state, entryPrice]);
 
   // Separate useEffect to call onPriceUpdate after currentPrice changes
   useEffect(() => {
@@ -323,7 +350,7 @@ function Chart1AndPrice({ state, onPriceUpdate }: { state: LiveChartState; onPri
           data-name="chart-container"
         >
           {/* Live indicator overlay - only in live state */}
-          {state === 'live' && <LiveIndicator currentPriceY={currentPriceYCoord} />}
+          {state === 'live' && <LiveIndicator currentPriceY={currentPriceYCoord} entryPriceY={entryDataPoint} direction={direction} entryPriceValue={entryPrice} />}
           
           <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 324 180">
             <defs>
@@ -446,12 +473,12 @@ function Price({ prices }: { prices: string[] }) {
   );
 }
 
-function Content({ state, onPriceUpdate }: { state: LiveChartState; onPriceUpdate?: (price: number) => void }) {
+function Content({ state, onPriceUpdate, direction, entryPrice }: { state: LiveChartState; onPriceUpdate?: (price: number) => void; direction?: 'up' | 'down'; entryPrice?: number }) {
   return (
     <div className="flex-[1_0_0] min-h-px min-w-px relative w-full h-full" data-name="content">
       <div className="flex flex-row justify-end size-full">
         <div className="content-stretch flex gap-[9px] items-start justify-end pl-0 pr-[6px] py-0 relative size-full">
-          <Chart1AndPrice state={state} onPriceUpdate={onPriceUpdate} />
+          <Chart1AndPrice state={state} onPriceUpdate={onPriceUpdate} direction={direction} entryPrice={entryPrice} />
         </div>
       </div>
     </div>
@@ -496,11 +523,11 @@ function Time() {
   );
 }
 
-function Chart({ state, onPriceUpdate }: { state: LiveChartState; onPriceUpdate?: (price: number) => void }) {
+function Chart({ state, onPriceUpdate, direction, entryPrice }: { state: LiveChartState; onPriceUpdate?: (price: number) => void; direction?: 'up' | 'down'; entryPrice?: number }) {
   return (
     <div className="flex-[1_0_0] min-h-px min-w-px relative w-full z-[2]" data-name="chart">
       <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start justify-between relative size-full">
-        <Content state={state} onPriceUpdate={onPriceUpdate} />
+        <Content state={state} onPriceUpdate={onPriceUpdate} direction={direction} entryPrice={entryPrice} />
         <Time />
       </div>
     </div>
@@ -627,7 +654,7 @@ function Footer({
         {state !== 'idle' && (
           <div className="relative shrink-0 z-[1] animate-[footerSlideRight_0.5s_ease-out]">
             <div className="flex flex-col font-sans font-medium justify-center leading-[0] not-italic text-[12px] text-[rgba(255,255,255,0.72)] text-center whitespace-nowrap">
-              <p className="leading-[20px] whitespace-pre">Amount: {betAmount}</p>
+              <p className="leading-[20px] whitespace-pre">Bet Amount: {betAmount}</p>
             </div>
           </div>
         )}
@@ -665,11 +692,11 @@ function Inside({
   };
 
   return (
-    <div className="flex-[1_0_0] min-h-px min-w-px relative rounded-[8px] w-full" data-name="inside" style={{ background: "radial-gradient(131.72% 191.3% at 28.74% -94.84%, #323842 0%, #1F2026 52.33%, #1D1F27 72.1%, #080910 100%)" }}>
+    <div className="flex-[1_0_0] min-h-px min-w-px relative rounded-[8px] w-full z-[6]" data-name="inside" style={{ background: "radial-gradient(131.72% 191.3% at 28.74% -94.84%, #323842 0%, #1F2026 52.33%, #1D1F27 72.1%, #080910 100%)" }}>
       <div className="flex flex-col items-center justify-center overflow-clip rounded-[inherit] size-full">
         <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col isolate items-center justify-center pl-[8px] pr-[2px] py-[8px] relative size-full gap-[4px]">
           <FloatingOverlay state={state} direction={direction} showElements={showElements} entryPrice={entryPrice} />
-          <Chart state={state} onPriceUpdate={handleInternalPriceUpdate} />
+          <Chart state={state} onPriceUpdate={handleInternalPriceUpdate} direction={direction} entryPrice={entryPrice} />
           <div className="absolute bottom-[-100px] flex h-[148px] items-center justify-center left-[calc(50%-1px)] mix-blend-screen translate-x-[-50%] w-[384px] z-[1]">
             <div className="flex-none rotate-[180deg]">
               <div className="h-[148px] relative w-[384px]" data-name="glowing">
@@ -718,10 +745,11 @@ export default function LiveChartWithStates({
   showWinToast = false, 
   finalPnL = 0,
   countdown, 
-  mode, 
+  mode = '30s', 
   direction, 
   entryPrice, 
-  onPriceUpdate 
+  onPriceUpdate,
+  betAmount
 }: LiveChartWithStatesProps) {
   const [showElements, setShowElements] = useState(false);
   const [currentPrice, setCurrentPrice] = useState<number>(96500);
@@ -746,7 +774,7 @@ export default function LiveChartWithStates({
   };
 
   return (
-    <div className="bg-gradient-to-b content-stretch flex flex-col from-[#0e4b60] gap-[4px] items-start pb-[8px] pt-[10px] px-[8px] relative rounded-[12px] shadow-[0px_4px_0px_0px_#191e27,0px_8px_12px_-2px_rgba(14,17,22,0.69)] size-full to-[#272d38]" data-name="live chart">
+    <div className="bg-gradient-to-b content-stretch flex flex-col from-[#0e4b60] gap-[4px] items-start pb-[8px] pt-[10px] px-[8px] relative rounded-[12px] shadow-[0px_4px_0px_0px_#191e27,0px_8px_12px_-2px_rgba(14,17,22,0.69)] size-full to-[#272d38] overflow-hidden" data-name="live chart">
       {/* Keyframe animation */}
       <style>{`
         @keyframes slideInFromRight {
@@ -769,7 +797,39 @@ export default function LiveChartWithStates({
             transform: translateX(0);
           }
         }
+        @keyframes sweepGradientOuter {
+          0% {
+            transform: translateX(-100%) skewX(-15deg);
+            opacity: 0;
+          }
+          20% {
+            opacity: 0.4;
+          }
+          50% {
+            opacity: 0.6;
+          }
+          80% {
+            opacity: 0.4;
+          }
+          100% {
+            transform: translateX(200%) skewX(-15deg);
+            opacity: 0;
+          }
+        }
       `}</style>
+
+      {/* Animated sweep effect on outer container - only visible during live state */}
+      {state === 'live' && (
+        <div 
+          className="absolute inset-0 pointer-events-none z-[5]"
+          style={{
+            background: 'linear-gradient(90deg, transparent 0%, rgba(72, 190, 229, 0.15) 20%, rgba(160, 230, 246, 0.25) 40%, rgba(175, 215, 123, 0.3) 50%, rgba(160, 230, 246, 0.25) 60%, rgba(72, 190, 229, 0.15) 80%, transparent 100%)',
+            width: '70%',
+            animation: 'sweepGradientOuter 5s ease-in-out infinite',
+            mixBlendMode: 'screen',
+          }}
+        />
+      )}
 
       {/* Win Toast Overlay */}
       {showWinToast && (
@@ -790,7 +850,7 @@ export default function LiveChartWithStates({
       )}
       
       <Title />
-      <Inside state={state} countdown={countdown} mode={mode} direction={direction} showElements={showElements} entryPrice={entryPrice} onPriceUpdate={handlePriceUpdate} />
+      <Inside state={state} countdown={countdown} mode={mode} direction={direction} showElements={showElements} entryPrice={entryPrice} onPriceUpdate={handlePriceUpdate} betAmount={betAmount} />
       <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0.5px_1px_0px_0px_rgba(88,102,123,0.33),inset_0px_0.2px_1px_0.5px_rgba(133,140,150,0.55)]" />
     </div>
   );

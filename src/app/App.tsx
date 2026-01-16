@@ -16,7 +16,7 @@ export default function App() {
   const [showWinToast, setShowWinToast] = useState(false);
   const [finalPnL, setFinalPnL] = useState<number>(0);
   const [activeButton, setActiveButton] = useState<'up' | 'down' | null>(null);
-  const [timeMode, setTimeMode] = useState<'30s' | '60s' | 'price'>('price');
+  const [timeMode, setTimeMode] = useState<'30s' | '60s' | 'price'>('30s');
   const [countdown, setCountdown] = useState<number | undefined>(undefined);
   const [entryPrice, setEntryPrice] = useState<number | undefined>(undefined);
   const [currentPrice, setCurrentPrice] = useState<number>(96500);
