@@ -14,11 +14,13 @@ export default function App() {
   const [chartState, setChartState] = useState<LiveChartState>('idle');
   const [showTradingPanel, setShowTradingPanel] = useState(true);
   const [showWinToast, setShowWinToast] = useState(false);
+  const [finalPnL, setFinalPnL] = useState<number>(0);
   const [activeButton, setActiveButton] = useState<'up' | 'down' | null>(null);
   const [timeMode, setTimeMode] = useState<'30s' | '60s' | 'price'>('price');
   const [countdown, setCountdown] = useState<number | undefined>(undefined);
   const [entryPrice, setEntryPrice] = useState<number | undefined>(undefined);
   const [currentPrice, setCurrentPrice] = useState<number>(96500);
+  const [betAmount, setBetAmount] = useState(400);
   
   const countdownRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -92,7 +94,18 @@ export default function App() {
       
       if (remaining <= 0) {
         if (countdownRef.current) clearInterval(countdownRef.current);
-        // Show win toast
+        
+        // Calculate final result based on current price and entry price
+        // This simulates the actual settlement logic
+        const currentMark = currentPrice;
+        const entry = entryPrice;
+        const isUp = activeButton === 'up';
+        const win = isUp ? (currentMark > (entry || 0)) : (currentMark < (entry || 0));
+        
+        const payoutMultiplier = 1.95;
+        const netProfit = betAmount * (payoutMultiplier - 1);
+        
+        setFinalPnL(win ? netProfit : -betAmount);
         setShowWinToast(true);
         
         // After 2s, hide toast and reset to idle
@@ -153,11 +166,13 @@ export default function App() {
             <LiveChartWithStates 
               state={chartState} 
               showWinToast={showWinToast}
+              finalPnL={finalPnL}
               countdown={countdown}
               mode={timeMode}
               direction={activeButton || undefined}
               entryPrice={entryPrice}
               onPriceUpdate={setCurrentPrice}
+              betAmount={betAmount}
             />
           </div>
 
@@ -169,7 +184,7 @@ export default function App() {
               opacity: showTradingPanel ? 1 : 0
             }}
           >
-            <TradingPanel />
+            <TradingPanel value={betAmount} onChange={setBetAmount} />
           </div>
 
           {/* Button Container - Two Buttons Side by Side */}

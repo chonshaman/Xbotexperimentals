@@ -1,10 +1,7 @@
-import { useState } from 'react';
 import './TradingPanelCSS.css';
 import MarginSlider from './MarginSlider';
 
-export default function TradingPanel() {
-  const [margin, setMargin] = useState(400);
-
+export default function TradingPanel({ value, onChange }: { value: number; onChange: (val: number) => void }) {
   return (
     <div className="trading-panel">
       {/* Yellow Container */}
@@ -12,7 +9,7 @@ export default function TradingPanel() {
         <div className="trading-panel-yellow-inner">
           
           {/* Slider Section */}
-          <MarginSlider value={margin} onChange={setMargin} />
+          <MarginSlider value={value} onChange={onChange} />
 
         </div>
       </div>

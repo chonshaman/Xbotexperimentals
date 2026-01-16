@@ -7,11 +7,13 @@ export type LiveChartState = 'idle' | 'opened' | 'live';
 interface LiveChartWithStatesProps {
   state?: LiveChartState;
   showWinToast?: boolean;
+  finalPnL?: number;
   countdown?: number;
   mode?: '30s' | '60s' | 'price';
   direction?: 'up' | 'down';
   entryPrice?: number;
   onPriceUpdate?: (price: number) => void;
+  betAmount?: number;
 }
 
 function PriceRight() {
@@ -41,7 +43,7 @@ function PriceRight() {
   };
 
   return (
-    <div className="content-stretch flex gap-[4px] items-center relative shrink-0" data-name="price right">
+    <div className="content-stretch flex gap-[4px] items-center relative shrink-0 text-[12px] opacity-90 font-sans" data-name="price right">
       <p className="relative shrink-0 text-white">{`Price: `}</p>
       <p className={`relative shrink-0 transition-colors duration-300 ${isUp ? 'text-[#2ddb64]' : 'text-[#ff3232]'}`}>
         ${formatPrice(price)} ({isUp ? '+' : ''}{percentage.toFixed(2)}%)
@@ -53,8 +55,8 @@ function PriceRight() {
 function Title() {
   return (
     <div className="relative shrink-0 w-full" data-name="title">
-      <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex font-['IBM_Plex_Sans_Condensed:SemiBold',sans-serif] items-start justify-between leading-[normal] not-italic relative text-[16px] w-full whitespace-pre">
-        <p className="relative shrink-0 text-white">BTC/USDT LIVE CHART</p>
+      <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex font-sans font-semibold items-start justify-between leading-[normal] not-italic relative text-[14px] w-full whitespace-pre">
+        <p className="relative shrink-0 text-white uppercase tracking-tight">BTC/USDT LIVE CHART</p>
         <PriceRight />
       </div>
     </div>
@@ -66,12 +68,12 @@ function EntryPriceFloat({ entryPrice }: { entryPrice?: number }) {
   return (
     <div className="content-stretch flex gap-px items-center relative shrink-0" data-name="entry price">
       <div className="bg-[rgba(255,255,255,0.16)] content-stretch flex flex-col items-center justify-center px-[4px] py-0 relative rounded-bl-[4px] rounded-tl-[4px] shrink-0">
-        <div className="flex flex-col font-['IBM_Plex_Sans:Regular',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-white w-full">
+        <div className="flex flex-col font-sans justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-white w-full">
           <p className="leading-[20px] whitespace-pre-wrap">Entry Price</p>
         </div>
       </div>
       <div className="bg-[#1f61b7] content-stretch flex items-center justify-center px-[4px] py-0 relative rounded-br-[4px] rounded-tr-[4px] shrink-0">
-        <div className="flex flex-col font-['IBM_Plex_Sans:Regular',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-white whitespace-nowrap">
+        <div className="flex flex-col font-sans justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-white whitespace-nowrap">
           <p className="leading-[20px] whitespace-pre">{entryPrice?.toFixed(2) || '3,932.04'}</p>
         </div>
       </div>
@@ -82,12 +84,12 @@ function EntryPriceFloat({ entryPrice }: { entryPrice?: number }) {
 function StatusOpened({ direction }: { direction?: 'up' | 'down' }) {
   return (
     <div className="bg-[rgba(0,0,0,0.32)] content-stretch flex items-center justify-center px-[4px] py-0 relative rounded-[4px] shrink-0 animate-[slideInFromRight_0.3s_ease-out]" data-name="bg">
-      <div className="flex flex-col font-['IBM_Plex_Sans:Regular',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-[rgba(255,255,255,0.72)] whitespace-nowrap">
+      <div className="flex flex-col font-sans justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-[rgba(255,255,255,0.72)] whitespace-nowrap">
         <p className="leading-[20px] whitespace-pre">Position Opened -</p>
       </div>
       <div className="h-[20px] relative shrink-0 w-[24px]" data-name="up down">
         <div 
-          className="absolute flex flex-col font-['IBM_Plex_Sans:SemiBold',sans-serif] inset-0 justify-center leading-[0] not-italic text-[12px] text-center"
+          className="absolute flex flex-col font-sans font-semibold inset-0 justify-center leading-[0] not-italic text-[12px] text-center"
           style={{ color: direction === 'down' ? '#ff3232' : '#48bee5' }}
         >
           <p className="leading-[20px] whitespace-pre-wrap">{direction === 'down' ? 'DOWN' : 'UP'}</p>
@@ -100,12 +102,12 @@ function StatusOpened({ direction }: { direction?: 'up' | 'down' }) {
 function StatusLive({ direction }: { direction?: 'up' | 'down' }) {
   return (
     <div className="bg-[rgba(0,0,0,0.32)] content-stretch flex items-center justify-center px-[4px] py-0 relative rounded-[4px] shrink-0" data-name="bg">
-      <div className="flex flex-col font-['IBM_Plex_Sans:Regular',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-[rgba(255,255,255,0.72)] whitespace-nowrap">
+      <div className="flex flex-col font-sans justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-[rgba(255,255,255,0.72)] whitespace-nowrap">
         <p className="leading-[20px] whitespace-pre">Live Round  -</p>
       </div>
       <div className="h-[20px] relative shrink-0 w-[24px]" data-name="up down">
         <div 
-          className="absolute flex flex-col font-['IBM_Plex_Sans:SemiBold',sans-serif] inset-0 justify-center leading-[0] not-italic text-[12px] text-center"
+          className="absolute flex flex-col font-sans font-semibold inset-0 justify-center leading-[0] not-italic text-[12px] text-center"
           style={{ color: direction === 'down' ? '#ff3232' : '#48bee5' }}
         >
           <p className="leading-[20px] whitespace-pre-wrap">{direction === 'down' ? 'DOWN' : 'UP'}</p>
@@ -119,7 +121,7 @@ function FloatingOverlay({ state, direction, showElements, entryPrice }: { state
   if (state === 'idle') return null;
   
   return (
-    <div className="absolute left-[8px] top-[26px] w-[376px] z-[4]" data-name="floating">
+    <div className="absolute left-[8px] top-[16px] w-[376px] z-[4]" data-name="floating">
       <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col gap-[4px] items-start relative w-full">
         {showElements && (
           <>
@@ -288,7 +290,7 @@ function Chart1AndPrice({ state, onPriceUpdate }: { state: LiveChartState; onPri
   // Format price with comma separator and 2 decimals
   const formatPrice = (price: number) => {
     return price.toLocaleString('en-US', {
-      minimumFractionDigals: 2,
+      minimumFractionDigits: 2,
       maximumFractionDigits: 2
     });
   };
@@ -411,7 +413,7 @@ function Chart1AndPrice({ state, onPriceUpdate }: { state: LiveChartState; onPri
             }}
           >
             <div 
-              className="font-['IBM_Plex_Sans:SemiBold',sans-serif] text-[11px] text-white px-[6px] py-[2px] rounded-[4px] shadow-lg transition-colors duration-300"
+              className="font-sans font-semibold text-[11px] text-white px-[6px] py-[2px] rounded-[4px] shadow-lg transition-colors duration-300"
               style={{
                 backgroundColor: isPriceUp ? '#2ddb64' : '#ff3232',
               }}
@@ -436,7 +438,7 @@ function Price({ prices }: { prices: string[] }) {
   };
 
   return (
-    <div className="content-stretch flex flex-col font-['IBM_Plex_Sans:Regular',sans-serif] h-full items-start justify-between leading-[20px] not-italic relative shrink-0 text-[10px] text-[rgba(255,255,255,0.7)] whitespace-pre" data-name="price">
+    <div className="content-stretch flex flex-col font-sans h-full items-start justify-between leading-[20px] not-italic relative shrink-0 text-[10px] text-[rgba(255,255,255,0.7)] whitespace-pre" data-name="price">
       {prices.map((price, index) => (
         <p key={index} className="relative shrink-0">{formatPrice(price)}</p>
       ))}
@@ -482,7 +484,7 @@ function Time() {
   return (
     <div className="relative shrink-0 w-full" data-name="time">
       <div className="flex flex-row items-end size-full">
-        <div className="content-stretch flex font-['IBM_Plex_Sans:Regular',sans-serif] items-end justify-between leading-[0] not-italic pl-0 pr-[40px] py-0 relative text-[10px] text-[rgba(255,255,255,0.7)] w-full">
+        <div className="content-stretch flex font-sans items-end justify-between leading-[0] not-italic pl-0 pr-[40px] py-0 relative text-[10px] text-[rgba(255,255,255,0.7)] w-full">
           {times.map((time, index) => (
             <div key={index} className={`flex flex-col justify-center relative shrink-0 ${index >= 3 ? 'w-[54px]' : 'whitespace-nowrap'}`}>
               <p className={`leading-[20px] ${index >= 3 ? 'whitespace-pre-wrap' : 'whitespace-pre'}`}>{time}</p>
@@ -511,7 +513,8 @@ function Footer({
   mode, 
   entryPrice, 
   currentPrice: externalCurrentPrice, 
-  direction 
+  direction,
+  betAmount = 400
 }: { 
   state: LiveChartState; 
   countdown?: number; 
@@ -519,6 +522,7 @@ function Footer({
   entryPrice?: number; 
   currentPrice?: number; 
   direction?: 'up' | 'down';
+  betAmount?: number;
 }) {
   const [internalPrice, setInternalPrice] = useState(externalCurrentPrice || 96500);
 
@@ -540,7 +544,7 @@ function Footer({
     if (!entryPrice || !internalPrice || !direction || countdown === undefined) return 0;
     
     const sigma = 0.0001; 
-    const stake = 100;
+    const stake = betAmount;
     const payoutMultiplier = 1.95; 
     const netProfit = stake * (payoutMultiplier - 1);
     const t = Math.max(1, countdown);
@@ -575,14 +579,14 @@ function Footer({
         }
       `}</style>
       <div aria-hidden="true" className="absolute border border-[rgba(130,207,255,0.1)] border-solid inset-0 pointer-events-none rounded-[10px]" />
-      <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex isolate items-center px-[8px] py-[4px] relative w-full" style={{ justifyContent: state === 'idle' ? 'center' : 'space-between' }}>
+      <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex isolate items-center px-[10px] py-[4px] relative w-full" style={{ justifyContent: state === 'idle' ? 'center' : 'space-between' }}>
         {/* Settle Status - Left (Transform smoothly from right to left) */}
         {state !== 'idle' && (
           <div className="content-stretch flex items-center gap-2 py-0 relative shrink-0 z-[3] animate-[footerSlideLeft_0.5s_ease-out]" data-name="settle status">
             {state === 'opened' && (
               <Loader2 className="w-4 h-4 text-[rgba(255,255,255,0.72)] animate-spin" />
             )}
-            <div className="flex flex-col font-['IBM_Plex_Sans_Condensed:Medium',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-[rgba(255,255,255,0.72)] text-center whitespace-nowrap">
+            <div className="flex flex-col font-sans font-medium justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-[rgba(255,255,255,0.72)] text-center whitespace-nowrap">
               <p className="leading-[20px] whitespace-pre">
                 {getSettleText()}
               </p>
@@ -592,7 +596,7 @@ function Footer({
 
         {/* Center Text - only in idle state */}
         {state === 'idle' && (
-          <div className="flex flex-col font-['IBM_Plex_Sans_Condensed:Medium',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-[rgba(255,255,255,0.72)] text-center z-[2] whitespace-nowrap">
+          <div className="flex flex-col font-sans font-medium justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-[rgba(255,255,255,0.72)] text-center z-[2] whitespace-nowrap">
             <p className="leading-[20px] whitespace-pre">Pick UP or DOWN to start</p>
           </div>
         )}
@@ -603,7 +607,7 @@ function Footer({
             <div className="content-stretch flex gap-px items-center relative shrink-0">
               <div className="bg-[rgba(255,255,255,0.2)] content-stretch flex flex-col h-[20px] items-center justify-center px-[4px] py-0 relative rounded-bl-[4px] shrink-0">
                 <div aria-hidden="true" className="absolute border-[rgba(255,255,255,0.2)] border-b-2 border-dashed border-t-2 inset-[-2px_0] pointer-events-none rounded-bl-[4px]" />
-                <div className="flex flex-col font-['IBM_Plex_Sans:Medium',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-white w-full">
+                <div className="flex flex-col font-sans font-medium justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-white w-full">
                   <p className="leading-[20px] whitespace-pre-wrap">PnL</p>
                 </div>
               </div>
@@ -611,7 +615,7 @@ function Footer({
                 className={`content-stretch flex items-center justify-center px-[4px] py-0 relative rounded-br-[4px] shrink-0 w-[54px] transition-colors duration-300 ${isPositive ? 'bg-[#188b3c]' : 'bg-[#ff3232]'}`}
               >
                 <div aria-hidden="true" className="absolute border border-white/20 border-dashed inset-[-1px] pointer-events-none rounded-br-[5px]" />
-                <div className="flex flex-col font-['IBM_Plex_Sans:Medium',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[11px] text-white whitespace-nowrap">
+                <div className="flex flex-col font-sans font-medium justify-center leading-[0] not-italic relative shrink-0 text-[11px] text-white whitespace-nowrap">
                   <p className="leading-[20px] whitespace-pre">{isPositive ? '+' : ''}{pnl.toFixed(2)}</p>
                 </div>
               </div>
@@ -622,8 +626,8 @@ function Footer({
         {/* Bet Amount - Right (Transform smoothly from left to right) */}
         {state !== 'idle' && (
           <div className="relative shrink-0 z-[1] animate-[footerSlideRight_0.5s_ease-out]">
-            <div className="flex flex-col font-['IBM_Plex_Sans_Condensed:Medium',sans-serif] justify-center leading-[0] not-italic text-[12px] text-[rgba(255,255,255,0.72)] text-center whitespace-nowrap">
-              <p className="leading-[20px] whitespace-pre">Amount: 100</p>
+            <div className="flex flex-col font-sans font-medium justify-center leading-[0] not-italic text-[12px] text-[rgba(255,255,255,0.72)] text-center whitespace-nowrap">
+              <p className="leading-[20px] whitespace-pre">Amount: {betAmount}</p>
             </div>
           </div>
         )}
@@ -639,7 +643,8 @@ function Inside({
   direction, 
   showElements, 
   entryPrice, 
-  onPriceUpdate 
+  onPriceUpdate,
+  betAmount
 }: { 
   state: LiveChartState; 
   countdown?: number; 
@@ -647,7 +652,8 @@ function Inside({
   direction?: 'up' | 'down'; 
   showElements: boolean; 
   entryPrice?: number; 
-  onPriceUpdate?: (price: number) => void 
+  onPriceUpdate?: (price: number) => void;
+  betAmount?: number;
 }) {
   const [currentPrice, setCurrentPrice] = useState<number>(96500);
 
@@ -698,6 +704,7 @@ function Inside({
             entryPrice={entryPrice} 
             currentPrice={currentPrice} 
             direction={direction} 
+            betAmount={betAmount}
           />
         </div>
       </div>
@@ -709,6 +716,7 @@ function Inside({
 export default function LiveChartWithStates({ 
   state = 'idle', 
   showWinToast = false, 
+  finalPnL = 0,
   countdown, 
   mode, 
   direction, 
@@ -766,10 +774,16 @@ export default function LiveChartWithStates({
       {/* Win Toast Overlay */}
       {showWinToast && (
         <div className="absolute inset-0 flex items-center justify-center z-[20] pointer-events-none rounded-[12px]">
-          <div className="animate-[bounceIn_0.5s_ease-out] bg-gradient-to-b from-[#2ddb64] to-[#1fb74f] px-12 py-6 rounded-2xl shadow-[0px_8px_24px_rgba(45,219,100,0.4),0px_4px_8px_rgba(0,0,0,0.3),inset_0px_2px_4px_rgba(255,255,255,0.3)]">
+          <div 
+            className={`animate-[bounceIn_0.5s_ease-out] px-12 py-6 rounded-2xl shadow-lg border border-white/20 ${finalPnL >= 0 ? 'bg-gradient-to-b from-[#2ddb64] to-[#1fb74f]' : 'bg-gradient-to-b from-[#ff4d4d] to-[#cc0000]'}`}
+          >
             <div className="text-white text-center">
-              <div className="text-5xl font-bold mb-2 drop-shadow-lg font-['IBM_Plex_Sans:Bold',sans-serif]">WIN!</div>
-              <div className="text-2xl font-semibold font-['IBM_Plex_Sans:SemiBold',sans-serif]">+95.00</div>
+              <div className="text-5xl font-bold mb-2 drop-shadow-lg font-sans">
+                {finalPnL >= 0 ? 'WIN!' : 'LOSS'}
+              </div>
+              <div className="text-2xl font-semibold font-sans">
+                {finalPnL >= 0 ? `+${finalPnL.toFixed(2)}` : finalPnL.toFixed(2)}
+              </div>
             </div>
           </div>
         </div>
