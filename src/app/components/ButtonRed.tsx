@@ -174,7 +174,7 @@ export default function ButtonRed({ state = 'default', onClick }: ButtonRedProps
                   <div className="red-glow-border" aria-hidden="true" />
                   <div className="flex flex-row items-center justify-center size-full relative z-10">
                     <div className="flex items-center justify-center px-[4px] py-[6px] relative size-full">
-                      <div className={`flex flex-row gap-[8px] items-center justify-center h-full min-h-px min-w-px relative rounded-[6px] ${state === 'disabled' ? 'opacity-20' : ''}`}>
+                      <div className={`flex flex-row gap-[4px] items-center justify-center h-full min-h-px min-w-px relative rounded-[6px] ${state === 'disabled' ? 'opacity-20' : ''}`}>
                         <div className="red-icon">
                           <BombBlurredLayer />
                           <BombMainLayer />

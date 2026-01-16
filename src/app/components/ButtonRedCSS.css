@@ -65,8 +65,14 @@
   pointer-events: none;
 }
 
+/* Remove hover effects - use click/tap only */
 .button-red:hover {
+  transform: none;
+}
+
+.button-red.pressed {
   transform: translateY(-6px);
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Disabled State - No Hover */
@@ -79,7 +85,7 @@
   transform: none;
 }
 
-.button-red.pressed {
+.button-red.pressed.state-default {
   transform: scale(0.95) translateY(-3px);
   padding: 4px 5px 8px 5px;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
@@ -130,7 +136,10 @@
     rgb(75, 75, 75) 100%);
 }
 
-.button-red:hover .red-metallic-border,
+.button-red:hover .red-metallic-border {
+  /* Remove hover effect */
+}
+
 .button-red.pressed .red-metallic-border {
   border-radius: 16px;
   transition: border-radius 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -289,10 +298,6 @@
   transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.button-red:hover .red-glow-bg {
-  background: radial-gradient(55.94% 48.14% at 50% -11.34%, #1A0005 0%, #6D0B0B 100%);
-}
-
 .button-red.pressed .red-glow-bg {
   height: auto;
   border-radius: 12px;
@@ -357,8 +362,13 @@
   transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.button-red:hover .red-blur-edge {
-  opacity: 1;
+/* Disabled State - Reduce Glow Border Opacity */
+.button-red.state-disabled .red-blur-edge {
+  opacity: 0.2;
+}
+
+.button-red.state-entry-locked .red-blur-edge {
+  opacity: 0.2;
 }
 
 .button-red.pressed .red-blur-edge {
@@ -379,11 +389,6 @@
   filter: blur(8px);
   box-shadow: 0px 1px 4px 0px rgba(255, 34, 34, 0.5);
   transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.button-red:hover .red-blur-glow {
-  filter: blur(9px);
-  box-shadow: 0px 2px 6px 0px rgba(255, 34, 34, 0.6), 0px 0px 16px 0px rgba(255, 34, 34, 0.4);
 }
 
 .button-red.pressed .red-blur-glow {
@@ -407,10 +412,6 @@
   transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.button-red:hover .red-icon {
-  transform: scale(0.92);
-}
-
 /* SVG Path Animations */
 .red-icon svg path:nth-child(1),
 .red-icon svg path:nth-child(2),
@@ -418,48 +419,6 @@
 .red-icon svg path:nth-child(4),
 .red-icon svg path:nth-child(5) {
   transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.button-red:hover .red-icon svg path:nth-child(1) {
-  animation: sparkle1 1.5s ease-in-out infinite;
-}
-
-.button-red:hover .red-icon svg path:nth-child(2) {
-  animation: sparkle2 1.5s ease-in-out infinite 0.2s;
-}
-
-.button-red:hover .red-icon svg path:nth-child(3) {
-  animation: sparkle3 1.5s ease-in-out infinite 0.4s;
-}
-
-.button-red:hover .red-icon svg path:nth-child(4) {
-  animation: sparkle1 1.5s ease-in-out infinite 0.6s;
-}
-
-.button-red:hover .red-icon svg path:nth-child(5) {
-  animation: sparkle2 1.5s ease-in-out infinite 0.8s;
-}
-
-.button-red:hover .red-icon svg path:nth-child(6) {
-  animation: bombBody 2s ease-in-out infinite;
-  transform-origin: center;
-}
-
-.button-red:hover .red-icon svg path:nth-child(7) {
-  animation: bombSwing 2.5s ease-in-out infinite;
-  transform-origin: center;
-}
-
-.button-red:hover .red-icon svg ellipse:nth-child(1) {
-  animation: eyeBlink 3s ease-in-out infinite;
-}
-
-.button-red:hover .red-icon svg ellipse:nth-child(2) {
-  animation: eyeBlink 3s ease-in-out infinite 0.1s;
-}
-
-.button-red:hover .red-icon svg path:last-child {
-  animation: mouthWiggle 2s ease-in-out infinite;
 }
 
 @keyframes sparkle1 {
