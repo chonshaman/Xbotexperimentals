@@ -1,8 +1,12 @@
 import { useState } from 'react';
 import './HeaderCSS.css';
 
-export default function Header() {
-  const [timeMode, setTimeMode] = useState<'30s' | '60s' | 'price'>('price');
+interface HeaderProps {
+  timeMode: '30s' | '60s' | 'price';
+  onTimeModeChange: (mode: '30s' | '60s' | 'price') => void;
+}
+
+export default function Header({ timeMode, onTimeModeChange }: HeaderProps) {
   const [martingaleEnabled, setMartingaleEnabled] = useState(true);
 
   return (
@@ -39,19 +43,19 @@ export default function Header() {
             />
             <button 
               className={`time-button ${timeMode === '30s' ? 'active' : ''}`}
-              onClick={() => setTimeMode('30s')}
+              onClick={() => onTimeModeChange('30s')}
             >
               30s
             </button>
             <button 
               className={`time-button ${timeMode === '60s' ? 'active' : ''}`}
-              onClick={() => setTimeMode('60s')}
+              onClick={() => onTimeModeChange('60s')}
             >
               60s
             </button>
             <button 
               className={`time-button price ${timeMode === 'price' ? 'active' : ''}`}
-              onClick={() => setTimeMode('price')}
+              onClick={() => onTimeModeChange('price')}
             >
               $
             </button>

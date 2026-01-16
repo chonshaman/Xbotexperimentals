@@ -7,6 +7,9 @@ export type LiveChartState = 'idle' | 'opened' | 'live';
 interface LiveChartWithStatesProps {
   state?: LiveChartState;
   showWinToast?: boolean;
+  countdown?: number;
+  mode?: '30s' | '60s' | 'price';
+  direction?: 'up' | 'down';
 }
 
 function PriceRight() {
@@ -74,45 +77,57 @@ function EntryPriceFloat() {
   );
 }
 
-function StatusOpened() {
+function StatusOpened({ direction }: { direction?: 'up' | 'down' }) {
   return (
-    <div className="bg-[rgba(0,0,0,0.32)] content-stretch flex items-center justify-center px-[4px] py-0 relative rounded-[4px] shrink-0" data-name="bg">
+    <div className="bg-[rgba(0,0,0,0.32)] content-stretch flex items-center justify-center px-[4px] py-0 relative rounded-[4px] shrink-0 animate-[slideInFromRight_0.3s_ease-out]" data-name="bg">
       <div className="flex flex-col font-['IBM_Plex_Sans:Regular',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-[rgba(255,255,255,0.72)] whitespace-nowrap">
         <p className="leading-[20px] whitespace-pre">Position Opened -</p>
       </div>
       <div className="h-[20px] relative shrink-0 w-[24px]" data-name="up down">
-        <div className="absolute flex flex-col font-['IBM_Plex_Sans:SemiBold',sans-serif] inset-0 justify-center leading-[0] not-italic text-[#48bee5] text-[12px] text-center">
-          <p className="leading-[20px] whitespace-pre-wrap">UP</p>
+        <div 
+          className="absolute flex flex-col font-['IBM_Plex_Sans:SemiBold',sans-serif] inset-0 justify-center leading-[0] not-italic text-[12px] text-center"
+          style={{ color: direction === 'down' ? '#ff3232' : '#48bee5' }}
+        >
+          <p className="leading-[20px] whitespace-pre-wrap">{direction === 'down' ? 'DOWN' : 'UP'}</p>
         </div>
       </div>
     </div>
   );
 }
 
-function StatusLive() {
+function StatusLive({ direction }: { direction?: 'up' | 'down' }) {
   return (
     <div className="bg-[rgba(0,0,0,0.32)] content-stretch flex items-center justify-center px-[4px] py-0 relative rounded-[4px] shrink-0" data-name="bg">
       <div className="flex flex-col font-['IBM_Plex_Sans:Regular',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-[rgba(255,255,255,0.72)] whitespace-nowrap">
         <p className="leading-[20px] whitespace-pre">Live Round  -</p>
       </div>
       <div className="h-[20px] relative shrink-0 w-[24px]" data-name="up down">
-        <div className="absolute flex flex-col font-['IBM_Plex_Sans:SemiBold',sans-serif] inset-0 justify-center leading-[0] not-italic text-[#48bee5] text-[12px] text-center">
-          <p className="leading-[20px] whitespace-pre-wrap">UP</p>
+        <div 
+          className="absolute flex flex-col font-['IBM_Plex_Sans:SemiBold',sans-serif] inset-0 justify-center leading-[0] not-italic text-[12px] text-center"
+          style={{ color: direction === 'down' ? '#ff3232' : '#48bee5' }}
+        >
+          <p className="leading-[20px] whitespace-pre-wrap">{direction === 'down' ? 'DOWN' : 'UP'}</p>
         </div>
       </div>
     </div>
   );
 }
 
-function FloatingOverlay({ state }: { state: LiveChartState }) {
+function FloatingOverlay({ state, direction, showElements }: { state: LiveChartState; direction?: 'up' | 'down'; showElements: boolean }) {
   if (state === 'idle') return null;
   
   return (
     <div className="absolute left-[8px] top-[26px] w-[376px] z-[4]" data-name="floating">
       <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col gap-[4px] items-start relative w-full">
-        <EntryPriceFloat />
-        {state === 'opened' && <StatusOpened />}
-        {state === 'live' && <StatusLive />}
+        {showElements && (
+          <>
+            <div className="animate-[slideInFromRight_0.3s_ease-out]">
+              <EntryPriceFloat />
+            </div>
+            {state === 'opened' && <StatusOpened direction={direction} />}
+            {state === 'live' && <StatusLive direction={direction} />}
+          </>
+        )}
       </div>
     </div>
   );
@@ -485,7 +500,15 @@ function Chart({ state }: { state: LiveChartState }) {
   );
 }
 
-function Footer({ state }: { state: LiveChartState }) {
+function Footer({ state, countdown, mode }: { state: LiveChartState; countdown?: number; mode?: '30s' | '60s' | 'price' }) {
+  const getSettleText = () => {
+    if (state === 'opened') return 'Starting round…';
+    if (state === 'live' && countdown !== undefined) {
+      return `Settles in ${countdown}s`;
+    }
+    return '';
+  };
+
   return (
     <div className="relative rounded-[10px] shrink-0 w-full z-[0]" data-name="footer" style={{ backgroundImage: "url('data:image/svg+xml;utf8,<svg viewBox=\\'0 0 376 28\\' xmlns=\\'http://www.w3.org/2000/svg\\' preserveAspectRatio=\\'none\\'><rect x=\\'0\\' y=\\'0\\' height=\\'100%\\' width=\\'100%\\' fill=\\'url(%23grad)\\' opacity=\\'0.6000000238418579\\'/><defs><radialGradient id=\\'grad\\' gradientUnits=\\'userSpaceOnUse\\' cx=\\'0\\' cy=\\'0\\' r=\\'10\\' gradientTransform=\\'matrix(16.035 4.6542e-15 8.0454e-12 0.039007 170.49 0.73684)\\'><stop stop-color=\\'rgba(160,230,246,1)\\' offset=\\'0\\'/><stop stop-color=\\'rgba(160,230,246,1)\\' offset=\\'0.22115\\'/><stop stop-color=\\'rgba(160,230,246,0)\\' offset=\\'1\\'/></radialGradient></defs></svg>'), url('data:image/svg+xml;utf8,<svg viewBox=\\'0 0 376 28\\' xmlns=\\'http://www.w3.org/2000/svg\\' preserveAspectRatio=\\'none\\'><rect x=\\'0\\' y=\\'0\\' height=\\'100%\\' width=\\'100%\\' fill=\\'url(%23grad)\\' opacity=\\'0.6000000238418579\\'/><defs><radialGradient id=\\'grad\\' gradientUnits=\\'userSpaceOnUse\\' cx=\\'0\\' cy=\\'0\\' r=\\'10\\' gradientTransform=\\'matrix(14.837 1.3021e-15 1.648e-12 0.02123 178.78 26.526)\\'><stop stop-color=\\'rgba(160,230,246,1)\\' offset=\\'0\\'/><stop stop-color=\\'rgba(160,230,246,1)\\' offset=\\'0.22115\\'/><stop stop-color=\\'rgba(160,230,246,0)\\' offset=\\'1\\'/></radialGradient></defs></svg>'), linear-gradient(1.0372e-07deg, rgb(12, 8, 17) 37.778%, rgb(41, 45, 52) 100%)" }}>
       <div aria-hidden="true" className="absolute border border-[rgba(130,207,255,0.1)] border-solid inset-0 pointer-events-none rounded-[10px]" />
@@ -498,8 +521,7 @@ function Footer({ state }: { state: LiveChartState }) {
             )}
             <div className="flex flex-col font-['IBM_Plex_Sans_Condensed:Medium',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-[rgba(255,255,255,0.72)] text-center whitespace-nowrap">
               <p className="leading-[20px] whitespace-pre">
-                {state === 'opened' && 'Starting round…'}
-                {state === 'live' && 'Settles in 18s'}
+                {getSettleText()}
               </p>
             </div>
           </div>
@@ -545,12 +567,12 @@ function Footer({ state }: { state: LiveChartState }) {
   );
 }
 
-function Inside({ state }: { state: LiveChartState }) {
+function Inside({ state, countdown, mode, direction, showElements }: { state: LiveChartState; countdown?: number; mode?: '30s' | '60s' | 'price'; direction?: 'up' | 'down'; showElements: boolean }) {
   return (
     <div className="flex-[1_0_0] min-h-px min-w-px relative rounded-[8px] w-full" data-name="inside" style={{ background: "radial-gradient(131.72% 191.3% at 28.74% -94.84%, #323842 0%, #1F2026 52.33%, #1D1F27 72.1%, #080910 100%)" }}>
       <div className="flex flex-col items-center justify-center overflow-clip rounded-[inherit] size-full">
         <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col isolate items-center justify-center pl-[8px] pr-[2px] py-[8px] relative size-full">
-          <FloatingOverlay state={state} />
+          <FloatingOverlay state={state} direction={direction} showElements={showElements} />
           <Chart state={state} />
           <div className="absolute bottom-[-100px] flex h-[148px] items-center justify-center left-[calc(50%-1px)] mix-blend-screen translate-x-[-50%] w-[384px] z-[1]">
             <div className="flex-none rotate-[180deg]">
@@ -579,7 +601,7 @@ function Inside({ state }: { state: LiveChartState }) {
               </div>
             </div>
           </div>
-          <Footer state={state} />
+          <Footer state={state} countdown={countdown} mode={mode} />
         </div>
       </div>
       <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0px_1px_1px_0px_rgba(0,0,0,0.25)]" />
@@ -587,9 +609,37 @@ function Inside({ state }: { state: LiveChartState }) {
   );
 }
 
-export default function LiveChartWithStates({ state = 'idle', showWinToast = false }: LiveChartWithStatesProps) {
+export default function LiveChartWithStates({ state = 'idle', showWinToast = false, countdown, mode, direction }: LiveChartWithStatesProps) {
+  const [showElements, setShowElements] = useState(false);
+
+  useEffect(() => {
+    if (state === 'opened') {
+      // Add a delay before showing the elements for smooth animation
+      const timer = setTimeout(() => {
+        setShowElements(true);
+      }, 200); // 200ms delay after clicking button
+      return () => clearTimeout(timer);
+    } else if (state === 'idle') {
+      setShowElements(false);
+    }
+  }, [state]);
+
   return (
     <div className="bg-gradient-to-b content-stretch flex flex-col from-[#0e4b60] gap-[4px] items-start pb-[8px] pt-[10px] px-[8px] relative rounded-[12px] shadow-[0px_4px_0px_0px_#191e27,0px_8px_12px_-2px_rgba(14,17,22,0.69)] size-full to-[#272d38]" data-name="live chart">
+      {/* Keyframe animation */}
+      <style>{`
+        @keyframes slideInFromRight {
+          from {
+            opacity: 0;
+            transform: translateX(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+      `}</style>
+
       {/* Win Toast Overlay */}
       {showWinToast && (
         <div className="absolute inset-0 flex items-center justify-center z-[20] pointer-events-none rounded-[12px]">
@@ -603,7 +653,7 @@ export default function LiveChartWithStates({ state = 'idle', showWinToast = fal
       )}
       
       <Title />
-      <Inside state={state} />
+      <Inside state={state} countdown={countdown} mode={mode} direction={direction} showElements={showElements} />
       <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0.5px_1px_0px_0px_rgba(88,102,123,0.33),inset_0px_0.2px_1px_0.5px_rgba(133,140,150,0.55)]" />
     </div>
   );
