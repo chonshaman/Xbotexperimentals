@@ -11,9 +11,9 @@ interface ButtonBlueProps {
 
 function RocketBlurredLayer() {
   return (
-    <div className="[grid-area:1_/_1] h-[52px] ml-0 mt-0 relative w-[51px]">
-      <svg width="51" height="52" fill="none" xmlns="http://www.w3.org/2000/svg" className="block size-full" preserveAspectRatio="none" viewBox="0 0 51 52">
-        <g filter="url(#blue_rocket_filter_blur)" strokeWidth="2">
+    <div className="[grid-area:1_/_1] h-[48px] ml-0 mt-0 relative w-[48px]">
+      <svg width="48" height="48" fill="none" xmlns="http://www.w3.org/2000/svg" className="block size-full" preserveAspectRatio="none" viewBox="0 0 51 52">
+        <g id="blueiconblur" filter="url(#blue_rocket_filter_blur)" strokeWidth="2">
           <path d="M23.875 41.051v-5.928a1 1 0 01.488-.858l5.969-3.564a.988.988 0 011.498.804c.075 1.881.112 4.132-.078 4.86-.207.791-3.673 3.527-6.304 5.485-.654.486-1.573.015-1.573-.799z" stroke="url(#blue_rocket_grad_b)"/>
           <path d="M10.039 27.06l5.867-.211a.996.996 0 00.797-.448l3.554-5.409a.988.988 0 00-.826-1.534c-1.982.006-4.397.064-5.105.26-.765.211-3.27 3.322-5.12 5.767-.504.665-.002 1.606.833 1.576z" stroke="url(#blue_rocket_grad_c)"/>
           <path d="M26.288 14.074c-4.014 3.233-8.884 11.557-11.04 16.27a.979.979 0 00.213 1.108l4.408 4.31a.976.976 0 001.057.212c4.218-1.747 12.595-6.153 16.682-11.704 3.94-5.35 4.328-11.44 3.98-14.428a.9.9 0 00-.833-.792c-2.749-.213-8.33.05-14.467 5.024z" stroke="url(#blue_rocket_grad_d)"/>
@@ -54,13 +54,15 @@ function RocketBlurredLayer() {
 
 function RocketMainLayer() {
   return (
-    <div className="[grid-area:1_/_1] h-[52px] ml-0 mt-0 relative w-[51px]">
-      <svg width="51" height="52" fill="none" xmlns="http://www.w3.org/2000/svg" className="block size-full" preserveAspectRatio="none" viewBox="0 0 51 52">
-        <path d="M23.875 34.555v6.496c0 .814.919 1.285 1.573.799 2.631-1.958 6.097-4.694 6.304-5.485.252-.965.105-4.602 0-6.513" stroke="url(#blue_rocket_main_g)" strokeWidth="2"/>
-        <path d="M16.672 26.848l-6.642.22c-.832.027-1.332-.913-.83-1.576 1.851-2.446 4.36-5.563 5.126-5.774.955-.265 5.02-.278 6.934-.251" stroke="url(#blue_rocket_main_h)" strokeWidth="2"/>
-        <path d="M26.288 14.074c-4.014 3.233-8.884 11.557-11.04 16.27a.979.979 0 00.213 1.108l4.408 4.31a.976.976 0 001.057.212c4.218-1.747 12.595-6.153 16.682-11.704 3.94-5.35 4.328-11.44 3.98-14.428a.9.9 0 00-.833-.792c-2.749-.213-8.33.05-14.467 5.024z" stroke="url(#blue_rocket_main_i)" strokeWidth="2"/>
-        <ellipse cx="31" cy="19.25" rx="3.563" ry="3.393" stroke="url(#blue_rocket_main_j)" strokeWidth="2"/>
-        <path d="M12.775 33.67c-1.372.88-3.275 4.027-3.144 7.25.008.193.161.347.354.36 2.945.2 5.013-.86 6.765-3.667" stroke="url(#blue_rocket_main_k)" strokeWidth="2"/>
+    <div className="[grid-area:1_/_1] h-[48px] ml-0 mt-0 relative w-[48px]">
+      <svg width="48" height="48" fill="none" xmlns="http://www.w3.org/2000/svg" className="block size-full" preserveAspectRatio="none" viewBox="0 0 51 52">
+        <g id="blueicondefault" strokeWidth="2">
+          <path d="M23.875 34.555v6.496c0 .814.919 1.285 1.573.799 2.631-1.958 6.097-4.694 6.304-5.485.252-.965.105-4.602 0-6.513" stroke="url(#blue_rocket_main_g)"/>
+          <path d="M16.672 26.848l-6.642.22c-.832.027-1.332-.913-.83-1.576 1.851-2.446 4.36-5.563 5.126-5.774.955-.265 5.02-.278 6.934-.251" stroke="url(#blue_rocket_main_h)"/>
+          <path d="M26.288 14.074c-4.014 3.233-8.884 11.557-11.04 16.27a.979.979 0 00.213 1.108l4.408 4.31a.976.976 0 001.057.212c4.218-1.747 12.595-6.153 16.682-11.704 3.94-5.35 4.328-11.44 3.98-14.428a.9.9 0 00-.833-.792c-2.749-.213-8.33.05-14.467 5.024z" stroke="url(#blue_rocket_main_i)"/>
+          <ellipse cx="31" cy="19.25" rx="3.563" ry="3.393" stroke="url(#blue_rocket_main_j)"/>
+          <path d="M12.775 33.67c-1.372.88-3.275 4.027-3.144 7.25.008.193.161.347.354.36 2.945.2 5.013-.86 6.765-3.667" stroke="url(#blue_rocket_main_k)"/>
+        </g>
         <defs>
           <linearGradient id="blue_rocket_main_g" x1="27.883" y1="29.852" x2="27.883" y2="43" gradientUnits="userSpaceOnUse">
             <stop stopColor="#47FBF5" stopOpacity=".984"/>
@@ -131,7 +133,6 @@ export default function ButtonBlue({ state = 'default', onClick, active }: Butto
       className={`button-blue ${isPressed ? 'pressed' : ''} ${state !== 'default' ? `state-${state}` : ''}`}
       onMouseDown={handlePressStart}
       onMouseUp={handlePressEnd}
-      onMouseLeave={handlePressEnd}
       onTouchStart={handlePressStart}
       onTouchEnd={handlePressEnd}
       onTouchCancel={handlePressEnd}
@@ -146,7 +147,7 @@ export default function ButtonBlue({ state = 'default', onClick, active }: Butto
                   <div className="blue-glow-border" aria-hidden="true" />
                   <div className="flex flex-row items-center justify-center size-full relative z-10">
                     <div className="flex items-center justify-center px-[4px] py-[6px] relative size-full">
-                      <div className={`flex flex-row gap-[4px] items-center justify-center h-full min-h-px min-w-px relative rounded-[6px] ${state === 'disabled' ? 'opacity-20' : ''}`}>
+                      <div className={`flex flex-row gap-0 items-center justify-center h-full min-h-px min-w-px relative rounded-[6px] ${state === 'disabled' ? 'opacity-20' : ''}`}>
                         <div className="blue-icon">
                           <RocketBlurredLayer />
                           <RocketMainLayer />

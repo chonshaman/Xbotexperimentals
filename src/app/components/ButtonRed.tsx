@@ -10,9 +10,9 @@ interface ButtonRedProps {
 
 function BombBlurredLayer() {
   return (
-    <div className="[grid-area:1_/_1] h-[64px] ml-0 mt-0 relative w-[64px]">
-      <svg width="64" height="64" fill="none" xmlns="http://www.w3.org/2000/svg" className="block size-full" preserveAspectRatio="none">
-        <g filter="url(#a)">
+    <div className="[grid-area:1_/_1] h-[48px] ml-0 mt-0 relative w-[48px]">
+      <svg width="48" height="48" fill="none" xmlns="http://www.w3.org/2000/svg" className="block size-full" preserveAspectRatio="none" viewBox="0 0 64 64">
+        <g id="rediconblur" filter="url(#a)">
           <path d="M50.25 23.558l-4.736 1.652" stroke="url(#b)" strokeWidth="2"/>
           <path d="M38.41 12.653l-1.015 4.957" stroke="url(#c)" strokeWidth="2"/>
           <path d="M23.865 12.323l1.691 4.956" stroke="url(#d)" strokeWidth="2"/>
@@ -66,18 +66,20 @@ function BombBlurredLayer() {
 
 function BombMainLayer() {
   return (
-    <div className="[grid-area:1_/_1] h-[64px] ml-0 mt-0 relative w-[64px]">
-      <svg width="64" height="64" fill="none" xmlns="http://www.w3.org/2000/svg" className="block size-full" preserveAspectRatio="none">
-        <path d="M50.25 23.558l-4.736 1.652" stroke="url(#i)" strokeWidth="2"/>
-        <path d="M38.41 12.653l-1.015 4.957" stroke="url(#j)" strokeWidth="2"/>
-        <path d="M23.865 12.323l1.691 4.956" stroke="url(#k)" strokeWidth="2"/>
-        <path d="M13.04 23.558l4.736 1.652" stroke="url(#l)" strokeWidth="2"/>
-        <path d="M12.364 37.766l5.074-1.982" stroke="url(#m)" strokeWidth="2"/>
-        <path d="M25.182 36.796l2.299-3.208a.1.1 0 00-.038-.148l-4.367-2.134a.1.1 0 01.023-.187l4.329-.907a.1.1 0 00.07-.138l-2.193-4.899a.1.1 0 01.14-.128l4.365 2.437a.1.1 0 00.144-.058l1.249-3.963a.1.1 0 01.181-.02l1.24 2.118" stroke="url(#n)" strokeWidth="1.6"/>
-        <path d="M26.57 45.697v-6.123a.1.1 0 00-.14-.091l-9.036 4.098a.1.1 0 01-.127-.143l5.19-8.556a.1.1 0 00-.037-.14l-8.148-4.457a.1.1 0 01.022-.184l8.102-2.216a.1.1 0 00.063-.14L16.898 16.24a.1.1 0 01.138-.131l10.46 5.747a.1.1 0 00.137-.042l3.915-7.65a.1.1 0 01.181.006l3.593 8.295a.1.1 0 00.14.048l9.788-5.418a.1.1 0 01.14.128l-3.597 7.987M30.968 43.714c.257 1.756 1.753 1.866 2.579 1.684a.104.104 0 01.127.1v3.125a.1.1 0 00.037.078l1.965 1.6a.1.1 0 00.064.022h8.053a.1.1 0 00.054-.016l1.954-1.273a.1.1 0 00.045-.093l-.322-3.465a.1.1 0 01.1-.11h1.243c2.653-.259 2.271-3.292 2.043-5.175-.007-.06.04-.111.099-.119.382-.048.972-.35 1.24-1.314.296-1.066 0-3.305-.676-4.957-1.263-3.083-6.089-7.6-12.854-5.948-6.766 1.652-7.442 8.922-7.442 9.913 0 .992 1.353.661 1.353 1.653 0 .99 0 1.982.338 4.295z" stroke="url(#o)" strokeWidth="2"/>
-        <ellipse cx="35.704" cy="38.758" rx="2.706" ry="2.643" fill="#FAC56D"/>
-        <ellipse cx="44.499" cy="38.758" rx="2.706" ry="2.643" fill="#FAC56D"/>
-        <path d="M37.734 43.384v1.322l2.03.66 1.69-.66v-1.322l-1.69-2.313-2.03 2.313z" fill="#FAC56D"/>
+    <div className="[grid-area:1_/_1] h-[48px] ml-0 mt-0 relative w-[48px]">
+      <svg width="48" height="48" fill="none" xmlns="http://www.w3.org/2000/svg" className="block size-full" preserveAspectRatio="none" viewBox="0 0 64 64">
+        <g id="redicondefault">
+          <path d="M50.25 23.558l-4.736 1.652" stroke="url(#i)" strokeWidth="2"/>
+          <path d="M38.41 12.653l-1.015 4.957" stroke="url(#j)" strokeWidth="2"/>
+          <path d="M23.865 12.323l1.691 4.956" stroke="url(#k)" strokeWidth="2"/>
+          <path d="M13.04 23.558l4.736 1.652" stroke="url(#l)" strokeWidth="2"/>
+          <path d="M12.364 37.766l5.074-1.982" stroke="url(#m)" strokeWidth="2"/>
+          <path d="M25.182 36.796l2.299-3.208a.1.1 0 00-.038-.148l-4.367-2.134a.1.1 0 01.023-.187l4.329-.907a.1.1 0 00.07-.138l-2.193-4.899a.1.1 0 01.14-.128l4.365 2.437a.1.1 0 00.144-.058l1.249-3.963a.1.1 0 01.181-.02l1.24 2.118" stroke="url(#n)" strokeWidth="1.6"/>
+          <path d="M26.57 45.697v-6.123a.1.1 0 00-.14-.091l-9.036 4.098a.1.1 0 01-.127-.143l5.19-8.556a.1.1 0 00-.037-.14l-8.148-4.457a.1.1 0 01.022-.184l8.102-2.216a.1.1 0 00.063-.14L16.898 16.24a.1.1 0 01.138-.131l10.46 5.747a.1.1 0 00.137-.042l3.915-7.65a.1.1 0 01.181.006l3.593 8.295a.1.1 0 00.14.048l9.788-5.418a.1.1 0 01.14.128l-3.597 7.987M30.968 43.714c.257 1.756 1.753 1.866 2.579 1.684a.104.104 0 01.127.1v3.125a.1.1 0 00.037.078l1.965 1.6a.1.1 0 00.064.022h8.053a.1.1 0 00.054-.016l1.954-1.273a.1.1 0 00.045-.093l-.322-3.465a.1.1 0 01.1-.11h1.243c2.653-.259 2.271-3.292 2.043-5.175-.007-.06.04-.111.099-.119.382-.048.972-.35 1.24-1.314.296-1.066 0-3.305-.676-4.957-1.263-3.083-6.089-7.6-12.854-5.948-6.766 1.652-7.442 8.922-7.442 9.913 0 .992 1.353.661 1.353 1.653 0 .99 0 1.982.338 4.295z" stroke="url(#o)" strokeWidth="2"/>
+          <ellipse cx="35.704" cy="38.758" rx="2.706" ry="2.643" fill="#FAC56D"/>
+          <ellipse cx="44.499" cy="38.758" rx="2.706" ry="2.643" fill="#FAC56D"/>
+          <path d="M37.734 43.384v1.322l2.03.66 1.69-.66v-1.322l-1.69-2.313-2.03 2.313z" fill="#FAC56D"/>
+        </g>
         <defs>
           <linearGradient id="i" x1="47.565" y1="23.561" x2="47.565" y2="25" gradientUnits="userSpaceOnUse">
             <stop stopColor="#FBD747" stopOpacity=".984"/>
@@ -143,10 +145,6 @@ export default function ButtonRed({ state = 'default', onClick }: ButtonRedProps
     } else {
       setIsPressed(false);
     }
-
-    if (onClick) {
-      onClick();
-    }
   };
 
   useEffect(() => {
@@ -160,10 +158,10 @@ export default function ButtonRed({ state = 'default', onClick }: ButtonRedProps
       className={`button-red ${isPressed ? 'pressed' : ''} ${state !== 'default' ? `state-${state}` : ''}`}
       onMouseDown={handlePressStart}
       onMouseUp={handlePressEnd}
-      onMouseLeave={handlePressEnd}
       onTouchStart={handlePressStart}
       onTouchEnd={handlePressEnd}
       onTouchCancel={handlePressEnd}
+      onClick={onClick}
     >
       <div className="red-metallic-border">
         <div className="red-dark-bg">
@@ -174,7 +172,7 @@ export default function ButtonRed({ state = 'default', onClick }: ButtonRedProps
                   <div className="red-glow-border" aria-hidden="true" />
                   <div className="flex flex-row items-center justify-center size-full relative z-10">
                     <div className="flex items-center justify-center px-[4px] py-[6px] relative size-full">
-                      <div className={`flex flex-row gap-[4px] items-center justify-center h-full min-h-px min-w-px relative rounded-[6px] ${state === 'disabled' ? 'opacity-20' : ''}`}>
+                      <div className={`flex flex-row gap-0 items-center justify-center h-full min-h-px min-w-px relative rounded-[6px] ${state === 'disabled' ? 'opacity-20' : ''}`}>
                         <div className="red-icon">
                           <BombBlurredLayer />
                           <BombMainLayer />

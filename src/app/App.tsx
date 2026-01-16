@@ -17,6 +17,7 @@ export default function App() {
   const [activeButton, setActiveButton] = useState<'up' | 'down' | null>(null);
   const [timeMode, setTimeMode] = useState<'30s' | '60s' | 'price'>('price');
   const [countdown, setCountdown] = useState<number | undefined>(undefined);
+  const [entryPrice, setEntryPrice] = useState<number | undefined>(undefined);
   
   const countdownRef = useRef<NodeJS.Timeout | null>(null);
 

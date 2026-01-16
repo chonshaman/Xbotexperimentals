@@ -1,5 +1,27 @@
 /* Blue Button Styles */
 
+/* Keyframe for icon pulse animation */
+@keyframes bluePulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 2px rgba(71, 251, 245, 0.4));
+  }
+  50% {
+    transform: scale(1.04);
+    filter: drop-shadow(0 0 8px rgba(71, 251, 245, 0.6));
+  }
+}
+
+/* Keyframe for icon glow */
+@keyframes blueGlow {
+  0%, 100% {
+    opacity: 0.85;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 .button-blue {
   display: flex;
   align-items: center;
@@ -55,9 +77,9 @@
   pointer-events: none;
 }
 
-/* Remove hover effects - use click/tap only */
+/* Hover effects */
 .button-blue:hover {
-  transform: none;
+  transform: translateY(-6px);
 }
 
 .button-blue.pressed {
@@ -125,10 +147,6 @@
     rgb(142, 142, 142) 98.714%, 
     rgb(109, 109, 109) 99.357%, 
     rgb(75, 75, 75) 100%);
-}
-
-.button-blue:hover .blue-metallic-border {
-  /* Remove hover effect */
 }
 
 .button-blue.pressed .blue-metallic-border {
@@ -273,8 +291,6 @@
 .button-blue.pressed .blue-inner-container {
   padding-bottom: 2px;
   border-radius: 0 0 1px 0;
-  transition: padding-bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-              border-radius 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Blue Glow Background */
@@ -296,7 +312,6 @@
   height: auto;
   border-radius: 12px;
   background: radial-gradient(104.47% 89.92% at 50% -7.56%, #00161A 0%, #0B626D 100%);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .blue-glow-border {
@@ -310,7 +325,6 @@
 
 .button-blue.pressed .blue-glow-border {
   border-radius: 12px;
-  transition: border-radius 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Blue Blur Effect */
@@ -326,7 +340,6 @@
 .button-blue.pressed .blue-blur-container {
   left: 0px;
   height: calc(100% - 10px);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .blue-blur-inner {
@@ -344,7 +357,6 @@
   width: calc(100% - 12px);
   left: 6px;
   top: 2px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .blue-blur-edge {
@@ -370,7 +382,6 @@
   border-width: 3px 4px 5px;
   border-radius: 10px 10px 9.5px 9.5px;
   inset: -1.5px -2px -2.5px -2px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .blue-blur-glow {
@@ -390,7 +401,6 @@
   height: calc(100% + 12px);
   left: 1px;
   filter: blur(14px);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Icon */
@@ -403,88 +413,107 @@
   position: relative;
   flex-shrink: 0;
   overflow: visible;
-  transform: scale(0.9);
+  transform: scale(0.72);
   transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Apply animations only in default state */
+.button-blue.state-default .blue-icon svg g[id^="blueicon"] {
+  animation: bluePulse 3s ease-in-out infinite, blueGlow 3s ease-in-out infinite;
+}
+
+/* Apply rocket animations to individual elements in default state */
+.button-blue.state-default .blue-icon svg g[id^="blueicon"] path:nth-child(1) {
+  animation: rocketFlameBottom 0.6s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+.button-blue.state-default .blue-icon svg g[id^="blueicon"] path:nth-child(2) {
+  animation: rocketFlameLeft 0.8s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+.button-blue.state-default .blue-icon svg g[id^="blueicon"] path:nth-child(3) {
+  animation: rocketBodyFloat 4s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+.button-blue.state-default .blue-icon svg g[id^="blueicon"] ellipse {
+  animation: rocketWindowGlow 2s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+.button-blue.state-default .blue-icon svg g[id^="blueicon"] path:nth-child(5) {
+  animation: rocketFlameTail 0.7s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+
 /* SVG Path Animations */
-.blue-icon svg path,
-.blue-icon svg ellipse {
-  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes rocketFlame1 {
+@keyframes rocketFlameBottom {
   0%, 100% {
-    opacity: 1;
-    transform: translateY(0px) scaleY(1);
-  }
-  25% {
-    opacity: 0.7;
-    transform: translateY(2px) scaleY(1.2);
-  }
-  50% {
-    opacity: 0.9;
-    transform: translateY(1px) scaleY(0.9);
-  }
-  75% {
-    opacity: 0.8;
-    transform: translateY(3px) scaleY(1.3);
-  }
-}
-
-@keyframes rocketFlame2 {
-  0%, 100% {
-    opacity: 1;
-    transform: translateX(0px) scaleX(1);
-  }
-  33% {
-    opacity: 0.6;
-    transform: translateX(-1px) scaleX(1.15);
-  }
-  66% {
-    opacity: 0.8;
-    transform: translateX(1px) scaleX(0.85);
-  }
-}
-
-@keyframes rocketFlame3 {
-  0%, 100% {
-    opacity: 1;
-    transform: translateY(0px) scale(1);
-  }
-  30% {
-    opacity: 0.7;
-    transform: translateY(2px) scale(1.1);
-  }
-  60% {
-    opacity: 0.9;
-    transform: translateY(-1px) scale(0.95);
-  }
-}
-
-@keyframes rocketBody {
-  0%, 100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  25% {
-    transform: translateY(-3px) rotate(-1deg);
-  }
-  50% {
-    transform: translateY(-5px) rotate(0deg);
-  }
-  75% {
-    transform: translateY(-3px) rotate(1deg);
-  }
-}
-
-@keyframes rocketWindow {
-  0%, 100% {
+    transform: translateY(0) scaleY(1);
     opacity: 1;
     filter: brightness(1);
   }
   50% {
-    opacity: 0.8;
-    filter: brightness(1.3);
+    transform: translateY(2px) scaleY(1.3);
+    opacity: 0.7;
+    filter: brightness(1.4);
+  }
+}
+
+@keyframes rocketFlameLeft {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-1.5px, 0.5px) rotate(-3deg);
+    opacity: 0.6;
+  }
+}
+
+@keyframes rocketFlameTail {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(1.5px, 1.5px) scale(1.2);
+    opacity: 0.5;
+    filter: brightness(1.5);
+  }
+}
+
+@keyframes rocketBodyFloat {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(0.5px, -3px) rotate(-1deg);
+  }
+  50% {
+    transform: translate(0, -6px) rotate(0deg);
+  }
+  75% {
+    transform: translate(-0.5px, -3px) rotate(1deg);
+  }
+}
+
+@keyframes rocketWindowGlow {
+  0%, 100% {
+    filter: brightness(1) drop-shadow(0 0 1px #47FBF5);
+    opacity: 0.9;
+  }
+  50% {
+    filter: brightness(1.8) drop-shadow(0 0 6px #47FBF5);
+    opacity: 1;
   }
 }
 
