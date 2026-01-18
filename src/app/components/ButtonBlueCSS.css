@@ -1,17 +1,5 @@
 /* Blue Button Styles */
 
-/* Keyframe for icon pulse animation */
-@keyframes bluePulse {
-  0%, 100% {
-    transform: scale(1);
-    filter: drop-shadow(0 0 2px rgba(71, 251, 245, 0.4));
-  }
-  50% {
-    transform: scale(1.04);
-    filter: drop-shadow(0 0 8px rgba(71, 251, 245, 0.6));
-  }
-}
-
 /* Keyframe for icon glow */
 @keyframes blueGlow {
   0%, 100% {
@@ -19,6 +7,16 @@
   }
   50% {
     opacity: 1;
+  }
+}
+
+/* Sweep effect for entry-locked state */
+@keyframes sweepGradient {
+  0% {
+    background-position: -200% center, center center;
+  }
+  100% {
+    background-position: 200% center, center center;
   }
 }
 
@@ -70,21 +68,217 @@
 .button-blue.state-disabled {
   cursor: not-allowed;
   pointer-events: none;
+     background: 
+    linear-gradient(9deg, rgba(0, 0, 0, 0.9) 0%,
+                    rgba(0, 0, 0, 0.7) 100%),
+    conic-gradient(from 90deg, 
+      rgb(75, 75, 75) 0%, 
+      rgb(102, 102, 102) 0.6%, 
+      rgb(129, 129, 129) 1.18%, 
+      rgb(156, 156, 156) 1.78%, 
+      rgb(183, 183, 183) 2.36%, 
+      rgb(149, 149, 149) 5.52%, 
+      rgb(114, 114, 114) 8.68%, 
+      rgb(149, 149, 149) 12.73%, 
+      rgb(184, 184, 184) 16.77%, 
+      rgb(157, 157, 157) 18.74%, 
+      rgb(130, 130, 130) 20.70%, 
+      rgb(172, 172, 172) 23.57%, 
+      rgb(125, 125, 125) 25.90%, 
+      rgb(135, 135, 135) 46.71%, 
+      rgb(181, 181, 181) 49.98%, 
+      rgb(208, 208, 208) 51.92%, 
+      rgb(179, 179, 179) 56.02%, 
+      rgb(149, 149, 149) 60.12%, 
+      rgb(177, 177, 177) 71.22%, 
+      rgb(137, 137, 137) 74.79%, 
+      rgb(170, 170, 170) 75.76%, 
+      rgb(203, 203, 203) 76.73%, 
+      rgb(155, 155, 155) 86.81%, 
+      rgb(131, 131, 131) 91.85%, 
+      rgb(107, 107, 107) 96.89%, 
+      rgb(142, 142, 142) 98.71%, 
+      rgb(109, 109, 109) 99.35%, 
+      rgb(75, 75, 75) 100%);
+}
+
+/* Disabled State - Add dark overlay to outer metallic border */
+.button-blue.state-disabled .blue-metallic-border {
+     background: 
+    linear-gradient(9deg, rgba(0, 0, 0, 0.9) 0%,
+                    rgba(0, 0, 0, 0.7) 100%),
+    conic-gradient(from 90deg, 
+      rgb(75, 75, 75) 0%, 
+      rgb(102, 102, 102) 0.6%, 
+      rgb(129, 129, 129) 1.18%, 
+      rgb(156, 156, 156) 1.78%, 
+      rgb(183, 183, 183) 2.36%, 
+      rgb(149, 149, 149) 5.52%, 
+      rgb(114, 114, 114) 8.68%, 
+      rgb(149, 149, 149) 12.73%, 
+      rgb(184, 184, 184) 16.77%, 
+      rgb(157, 157, 157) 18.74%, 
+      rgb(130, 130, 130) 20.70%, 
+      rgb(172, 172, 172) 23.57%, 
+      rgb(125, 125, 125) 25.90%, 
+      rgb(135, 135, 135) 46.71%, 
+      rgb(181, 181, 181) 49.98%, 
+      rgb(208, 208, 208) 51.92%, 
+      rgb(179, 179, 179) 56.02%, 
+      rgb(149, 149, 149) 60.12%, 
+      rgb(177, 177, 177) 71.22%, 
+      rgb(137, 137, 137) 74.79%, 
+      rgb(170, 170, 170) 75.76%, 
+      rgb(203, 203, 203) 76.73%, 
+      rgb(155, 155, 155) 86.81%, 
+      rgb(131, 131, 131) 91.85%, 
+      rgb(107, 107, 107) 96.89%, 
+      rgb(142, 142, 142) 98.71%, 
+      rgb(109, 109, 109) 99.35%, 
+      rgb(75, 75, 75) 100%);
+}
+
+/* Disabled State - Change Colors to Dark Gray/Black Metallic */
+.button-blue.state-disabled .blue-glow-bg {
+  background: radial-gradient(80.06% 68.91% at 50% 50.42%, 
+    rgba(73, 73, 73, 1) 0%, 
+    rgba(50, 50, 50, 1) 50%, 
+    rgba(27, 27, 27, 1) 100%);
+}
+
+/* Disabled State - Reduce Glow Border Opacity */
+.button-blue.state-disabled .blue-blur-edge {
+  opacity: 0.1;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Disabled State - Reduce Blur Glow */
+.button-blue.state-disabled .blue-blur-glow {
+  opacity: 0.1;
 }
 
 /* Entry Locked State - Prevent All Interactions */
 .button-blue.state-entry-locked {
+   background: 
+    linear-gradient(9deg, rgba(0, 0, 0, 0.9) 0%,
+                    rgba(0, 0, 0, 0.7) 100%),
+    conic-gradient(from 90deg, 
+      rgb(75, 75, 75) 0%, 
+      rgb(102, 102, 102) 0.6%, 
+      rgb(129, 129, 129) 1.18%, 
+      rgb(156, 156, 156) 1.78%, 
+      rgb(183, 183, 183) 2.36%, 
+      rgb(149, 149, 149) 5.52%, 
+      rgb(114, 114, 114) 8.68%, 
+      rgb(149, 149, 149) 12.73%, 
+      rgb(184, 184, 184) 16.77%, 
+      rgb(157, 157, 157) 18.74%, 
+      rgb(130, 130, 130) 20.70%, 
+      rgb(172, 172, 172) 23.57%, 
+      rgb(125, 125, 125) 25.90%, 
+      rgb(135, 135, 135) 46.71%, 
+      rgb(181, 181, 181) 49.98%, 
+      rgb(208, 208, 208) 51.92%, 
+      rgb(179, 179, 179) 56.02%, 
+      rgb(149, 149, 149) 60.12%, 
+      rgb(177, 177, 177) 71.22%, 
+      rgb(137, 137, 137) 74.79%, 
+      rgb(170, 170, 170) 75.76%, 
+      rgb(203, 203, 203) 76.73%, 
+      rgb(155, 155, 155) 86.81%, 
+      rgb(131, 131, 131) 91.85%, 
+      rgb(107, 107, 107) 96.89%, 
+      rgb(142, 142, 142) 98.71%, 
+      rgb(109, 109, 109) 99.35%, 
+      rgb(75, 75, 75) 100%);
   pointer-events: none;
 }
 
-/* Hover effects */
-.button-blue:hover {
-  transform: translateY(-6px);
+/* Entry Locked State - Add dark overlay to outer metallic border */
+.button-blue.state-entry-locked .blue-metallic-border {
+  background: 
+    linear-gradient(9deg, rgba(0, 0, 0, 0.9) 0%,
+                    rgba(0, 0, 0, 0.7) 100%),
+    conic-gradient(from 90deg, 
+      rgb(75, 75, 75) 0%, 
+      rgb(102, 102, 102) 0.6%, 
+      rgb(129, 129, 129) 1.18%, 
+      rgb(156, 156, 156) 1.78%, 
+      rgb(183, 183, 183) 2.36%, 
+      rgb(149, 149, 149) 5.52%, 
+      rgb(114, 114, 114) 8.68%, 
+      rgb(149, 149, 149) 12.73%, 
+      rgb(184, 184, 184) 16.77%, 
+      rgb(157, 157, 157) 18.74%, 
+      rgb(130, 130, 130) 20.70%, 
+      rgb(172, 172, 172) 23.57%, 
+      rgb(125, 125, 125) 25.90%, 
+      rgb(135, 135, 135) 46.71%, 
+      rgb(181, 181, 181) 49.98%, 
+      rgb(208, 208, 208) 51.92%, 
+      rgb(179, 179, 179) 56.02%, 
+      rgb(149, 149, 149) 60.12%, 
+      rgb(177, 177, 177) 71.22%, 
+      rgb(137, 137, 137) 74.79%, 
+      rgb(170, 170, 170) 75.76%, 
+      rgb(203, 203, 203) 76.73%, 
+      rgb(155, 155, 155) 86.81%, 
+      rgb(131, 131, 131) 91.85%, 
+      rgb(107, 107, 107) 96.89%, 
+      rgb(142, 142, 142) 98.71%, 
+      rgb(109, 109, 109) 99.35%, 
+      rgb(75, 75, 75) 100%);
+}
+
+/* Entry Locked State - Change Colors to Dark Gray/Black Metallic */
+.button-blue.state-entry-locked .blue-glow-bg {
+  background: radial-gradient(80.06% 68.91% at 50% 50.42%, 
+    rgba(73, 73, 73, 1) 0%, 
+    rgba(50, 50, 50, 1) 50%, 
+    rgba(27, 27, 27, 1) 100%);
+  position: relative;
+}
+
+/* Sweep effect as a pseudo-element with blur */
+.button-blue.state-entry-locked .blue-glow-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(120deg, 
+    transparent 0%, 
+    transparent 44%,
+    rgba(255, 255, 255, 0.05) 47%, 
+    rgba(255, 255, 255, 0.1) 50%, 
+    rgba(255, 255, 255, 0.05) 53%, 
+    transparent 56%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  background-position: -200% center;
+  animation: sweepGradient 5s linear infinite;
+  filter: blur(16px);
+  pointer-events: none;
+}
+
+/* Entry Locked State - Reduce Glow Border Opacity */
+.button-blue.state-entry-locked .blue-blur-edge {
+  opacity: 0.1;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Entry Locked State - Reduce Blur Glow */
+.button-blue.state-entry-locked .blue-blur-glow {
+  opacity: 0.1;
 }
 
 .button-blue.pressed {
   transform: translateY(-6px);
   transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+/* Hover effects */
+.button-blue:hover {
+  transform: translateY(-6px);
 }
 
 /* Disabled State - No Hover */
@@ -369,15 +563,6 @@
   transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Disabled State - Reduce Glow Border Opacity */
-.button-blue.state-disabled .blue-blur-edge {
-  opacity: 0.2;
-}
-
-.button-blue.state-entry-locked .blue-blur-edge {
-  opacity: 0.2;
-}
-
 .button-blue.pressed .blue-blur-edge {
   border-width: 3px 4px 5px;
   border-radius: 10px 10px 9.5px 9.5px;
@@ -413,13 +598,23 @@
   position: relative;
   flex-shrink: 0;
   overflow: visible;
-  transform: scale(0.72);
+  transform: scale(0.7776);
   transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Apply animations only in default state */
+/* Apply animations in default state */
 .button-blue.state-default .blue-icon svg g[id^="blueicon"] {
-  animation: bluePulse 3s ease-in-out infinite, blueGlow 3s ease-in-out infinite;
+  animation: blueGlow 3s ease-in-out infinite;
+}
+
+/* Apply animations on hover (non-disabled) */
+.button-blue:not(.state-disabled):hover .blue-icon svg g[id^="blueicon"] {
+  animation: blueGlow 3s ease-in-out infinite;
+}
+
+/* Apply animations in entry-locked state */
+.button-blue.state-entry-locked .blue-icon svg g[id^="blueicon"] {
+  animation: blueGlow 3s ease-in-out infinite;
 }
 
 /* Apply rocket animations to individual elements in default state */
@@ -453,6 +648,76 @@
   transform-box: fill-box;
 }
 
+/* Apply rocket animations on hover (non-disabled) */
+.button-blue:not(.state-disabled):hover .blue-icon svg g[id^="blueicon"] path:nth-child(1) {
+  animation: rocketFlameBottom 0.6s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+.button-blue:not(.state-disabled):hover .blue-icon svg g[id^="blueicon"] path:nth-child(2) {
+  animation: rocketFlameLeft 0.8s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+.button-blue:not(.state-disabled):hover .blue-icon svg g[id^="blueicon"] path:nth-child(3) {
+  animation: rocketBodyFloat 4s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+.button-blue:not(.state-disabled):hover .blue-icon svg g[id^="blueicon"] ellipse {
+  animation: rocketWindowGlow 2s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+.button-blue:not(.state-disabled):hover .blue-icon svg g[id^="blueicon"] path:nth-child(5) {
+  animation: rocketFlameTail 0.7s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+/* Apply rocket animations in entry-locked state */
+.button-blue.state-entry-locked .blue-icon svg g[id^="blueicon"] path:nth-child(1) {
+  animation: rocketFlameBottom 0.6s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+.button-blue.state-entry-locked .blue-icon svg g[id^="blueicon"] path:nth-child(2) {
+  animation: rocketFlameLeft 0.8s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+.button-blue.state-entry-locked .blue-icon svg g[id^="blueicon"] path:nth-child(3) {
+  animation: rocketBodyFloat 4s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+.button-blue.state-entry-locked .blue-icon svg g[id^="blueicon"] ellipse {
+  animation: rocketWindowGlow 2s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+.button-blue.state-entry-locked .blue-icon svg g[id^="blueicon"] path:nth-child(5) {
+  animation: rocketFlameTail 0.7s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+/* Disabled state - NO animations */
+.button-blue.state-disabled .blue-icon svg g[id^="blueicon"] {
+  animation: none;
+}
+
+.button-blue.state-disabled .blue-icon svg g[id^="blueicon"] * {
+  animation: none;
+}
 
 /* SVG Path Animations */
 @keyframes rocketFlameBottom {
@@ -508,11 +773,11 @@
 
 @keyframes rocketWindowGlow {
   0%, 100% {
-    filter: brightness(1) drop-shadow(0 0 1px #47FBF5);
+    filter: brightness(1) drop-shadow(0 0 0.5px #47FBF5);
     opacity: 0.9;
   }
   50% {
-    filter: brightness(1.8) drop-shadow(0 0 6px #47FBF5);
+    filter: brightness(1.8) drop-shadow(0 0 3px #47FBF5);
     opacity: 1;
   }
 }

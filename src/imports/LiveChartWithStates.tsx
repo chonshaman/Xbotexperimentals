@@ -110,7 +110,7 @@ function FloatingOverlay({ state, direction, showElements }: { state: LiveChartS
   );
 }
 
-function LiveIndicator({ currentPriceY, entryPriceY, direction, entryPriceValue }: { currentPriceY: number; entryPriceY: number; direction?: 'up' | 'down'; entryPriceValue?: number }) {
+function LiveIndicator({ currentPriceY, entryPriceY, direction, entryPriceValue, currentPriceValue }: { currentPriceY: number; entryPriceY: number; direction?: 'up' | 'down'; entryPriceValue?: number; currentPriceValue?: number }) {
   // entryPriceY is the Y coordinate where we should draw the entry price line
   const greenHeight = entryPriceY;
   const redHeight = 180 - entryPriceY;
@@ -147,36 +147,33 @@ function LiveIndicator({ currentPriceY, entryPriceY, direction, entryPriceValue 
           </linearGradient>
           <linearGradient gradientUnits="userSpaceOnUse" id="paint1_linear_live_indicator" x1="162" x2="162" y1="0" y2={redHeight}>
             <stop stopColor="#E5484B" stopOpacity="0.6" />
-            <stop offset="0.5625" stopColor="#E5484B" stopOpacity="0.2" />
+            <stop offset="0.5625" stopColor="###E5484B" stopOpacity="0.2" />
             <stop offset="0.95" stopColor="#E5484B" stopOpacity="0" />
           </linearGradient>
         </defs>
       </svg>
       
-      {/* Entry Price Badge - positioned at entry price line */}
+      {/* Entry Price - 2 rows with dashed line in center */}
       <div 
-        className="absolute pointer-events-none left-[16px]"
+        className="absolute pointer-events-none left-[44px]"
         style={{ 
           top: `${entryPriceY}px`,
           transform: 'translate(0, -50%)',
         }}
       >
-        <div className="content-stretch flex gap-px items-center relative shrink-0" data-name="entry price">
-          <div className="backdrop-blur-[4px] bg-[rgba(0,0,0,0.16)] content-stretch flex flex-col items-center justify-center px-[4px] py-0 relative rounded-bl-[4px] rounded-tl-[4px] shrink-0">
-            <div className="flex flex-col font-sans font-medium justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-white w-full">
-              <p className="leading-[20px] whitespace-nowrap">Entry Price</p>
-            </div>
-          </div>
-          <div 
-            className="content-stretch flex items-center justify-center px-[4px] py-0 relative rounded-br-[4px] rounded-tr-[4px] shrink-0"
-            style={{
-              backgroundColor: direction === 'up' ? '#1f61b7' : '#b7341f'
-            }}
-          >
-            <div className="flex flex-col font-sans font-medium justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-white whitespace-nowrap">
-              <p className="leading-[20px] whitespace-pre">{entryPriceValue ? formatPrice(entryPriceValue) : '0.00'}</p>
-            </div>
-          </div>
+        {/* Row 1: Entry Price Label */}
+        <div className="backdrop-blur-[4px] bg-[rgba(0,0,0,0.16)] flex items-center justify-center px-[8px] py-[3px] rounded-tl-[4px] rounded-tr-[4px] shrink-0 h-[22px]">
+          <p className="text-[12px] font-sans font-medium text-white leading-none whitespace-nowrap">Entry Price</p>
+        </div>
+        
+        {/* Row 2: Entry Price Value */}
+        <div 
+          className="flex items-center justify-center px-[8px] py-[3px] rounded-bl-[4px] rounded-br-[4px] shrink-0 h-[22px]"
+          style={{
+            backgroundColor: direction === 'up' ? '#1f61b7' : '#b7341f'
+          }}
+        >
+          <p className="text-[12px] font-sans font-medium text-white leading-none whitespace-nowrap">{entryPriceValue ? formatPrice(entryPriceValue) : '0.00'}</p>
         </div>
       </div>
     </div>
@@ -188,7 +185,7 @@ function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice }: { state
   const [prices, setPrices] = useState<string[]>(['3936.17', '3935.17', '3935.09', '3934.17', '3933.04', '3932.00']);
   const [currentPrice, setCurrentPrice] = useState(96500);
   const [prevPrice, setPrevPrice] = useState(96500);
-  const [entryDataPoint, setEntryDataPoint] = useState<number>(100); // Store entry price as data point
+  const [entryDataPoint, setEntryDataPoint] = useState<number>(90); // Store entry price Y coordinate (180 - dataPoint)
 
   useEffect(() => {
     // Initialize with 50 data points
@@ -197,11 +194,13 @@ function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice }: { state
     });
     setDataPoints(initial);
 
-    // Capture the entry price data point when transitioning to live state
-    if (state === 'live' && entryPrice && initial.length > 0) {
+    // Capture the entry price Y coordinate when transitioning to live state
+    if (state === 'live' && initial.length > 0) {
       // The entry price corresponds to the last data point when entering live state
       const lastPoint = initial[initial.length - 1];
-      setEntryDataPoint(lastPoint);
+      // Convert to Y coordinate: in SVG, Y=0 is at top, so we use 180 - dataPoint
+      const entryY = 180 - lastPoint;
+      setEntryDataPoint(entryY);
     }
 
     // Animate chart - update every 400ms for more real-time feel
@@ -241,8 +240,8 @@ function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice }: { state
     }, 400);
 
     return () => clearInterval(interval);
-  }, [currentPrice, state, entryPrice]);
-
+  }, [currentPrice, state]);
+  
   // Separate useEffect to call onPriceUpdate after currentPrice changes
   useEffect(() => {
     if (onPriceUpdate) {
@@ -337,7 +336,7 @@ function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice }: { state
           data-name="chart-container"
         >
           {/* Live indicator overlay - only in live state */}
-          {state === 'live' && <LiveIndicator currentPriceY={currentPriceYCoord} entryPriceY={entryDataPoint} direction={direction} entryPriceValue={entryPrice} />}
+          {state === 'live' && <LiveIndicator currentPriceY={currentPriceYCoord} entryPriceY={entryDataPoint} direction={direction} entryPriceValue={entryPrice} currentPriceValue={currentPrice} />}
           
           <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 324 180">
             <defs>
@@ -761,7 +760,46 @@ export default function LiveChartWithStates({
   };
 
   return (
-    <div className="bg-gradient-to-b content-stretch flex flex-col from-[#0e4b60] gap-[4px] items-start pb-[8px] pt-[10px] px-[8px] relative rounded-[12px] shadow-[0px_4px_0px_0px_#191e27,0px_8px_12px_-2px_rgba(14,17,22,0.69)] size-full to-[#272d38] overflow-hidden" data-name="live chart">
+    <div 
+      className="relative size-full" 
+      style={{ 
+        filter: (state === 'opened' || state === 'live') 
+          ? 'drop-shadow(0 0 8px rgba(17, 247, 255, 0.1))' 
+          : 'drop-shadow(0 0 0px rgba(17, 247, 255, 0))',
+        transition: 'filter 1.5s cubic-bezier(0.4, 0, 0.2, 1)'
+      }}
+    >
+      {/* Animated Running Shadow Container - wraps outside to prevent clipping */}
+      <div 
+        className="absolute pointer-events-none z-[-1]"
+        style={{
+          animation: (state === 'opened' || state === 'live') ? 'runningShadow 3s ease-in-out infinite' : 'none',
+          opacity: (state === 'opened' || state === 'live') ? 1 : 0,
+          transition: 'opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1)'
+        }}
+      />
+
+      {/* Neon Border Trim - only visible during live state */}
+      <div 
+        className="absolute inset-[-1px] pointer-events-none rounded-[15px] z-3]"
+        style={{
+          backgroundImage: 'linear-gradient(90deg, rgba(123, 168, 215, 0.9), rgba(123, 168, 215, 0.5), rgba(123, 168, 215, 0.6), rgba(123, 168, 215, 1), rgba(123, 168, 215, 0.9))',
+          backgroundSize: '200% 200%',
+          backgroundPosition: '0% 50%',
+          animation: state === 'live' ? 'neonBorderSpin 3s linear infinite, neonPulse 2s ease-in-out infinite' : 'none',
+          WebkitMaskImage: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+          WebkitMaskComposite: 'xor',
+          maskImage: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+          maskComposite: 'exclude',
+          padding: '3px',
+          filter: 'blur(4px)',
+          boxShadow: '2px 4px 48px 0 rgba(17, 247, 255, 0.36), 2px 4px 8px 0 rgba(17, 247, 255, 0.36)',
+          opacity: state === 'live' ? 1 : 0,
+          transition: 'opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1)'
+        }}
+      />
+      
+      <div className="bg-gradient-to-b content-stretch flex flex-col from-[#0e4b60] gap-[4px] items-start pb-[8px] pt-[10px] px-[8px] relative rounded-[12px] shadow-[0px_4px_0px_0px_#191e27,0px_8px_12px_-2px_rgba(14,17,22,0.69)] size-full to-[#272d38] overflow-hidden" data-name="live chart">
       {/* Keyframe animation */}
       <style>{`
         @keyframes slideInFromRight {
@@ -790,10 +828,10 @@ export default function LiveChartWithStates({
             opacity: 0;
           }
           20% {
-            opacity: 0.4;
+            opacity: 0.8;
           }
           50% {
-            opacity: 0.6;
+            opacity: 1;
           }
           80% {
             opacity: 0.4;
@@ -803,6 +841,52 @@ export default function LiveChartWithStates({
             opacity: 0;
           }
         }
+        @keyframes neonBorderSpin {
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
+          }
+        }
+        @keyframes neonPulse {
+          0%, 100% {
+            opacity: 0.8;
+          }
+          50% {
+            opacity: 1;
+          }
+        }
+        @keyframes runningShadow {
+          0% {
+            box-shadow: 
+              2px 4px 48px 0 rgba(17, 247, 255, 0.36),
+              0 0 20px 4px gba(17, 247, 255, 0.7);
+          }
+          25% {
+            box-shadow: 
+              8px 0 30px 8px rgba(17, 247, 255, 0.36),
+              0 0 20px 4px rgba(17, 247, 255, 0.7);
+          }
+          50% {
+            box-shadow: 
+              2px 4px 48px 0 rgba(17, 247, 255, 0.36),
+              0 0 20px 4px rgba(17, 247, 255, 0.7);
+          }
+          75% {
+            box-shadow: 
+              -8px 0 30px 8px rgba(17, 247, 255, 0.36),
+              0 0 20px 4px rgba(17, 247, 255, 0.7);
+          }
+          100% {
+            box-shadow: 
+              0 -8px 30px 8px rgba(17, 247, 255, 0.36),
+              0 0 20px 4px rgba(17, 247, 255, 0.7);
+          }
+        }
       `}</style>
 
       {/* Animated sweep effect on outer container - only visible during live state */}
@@ -810,14 +894,14 @@ export default function LiveChartWithStates({
         <div 
           className="absolute inset-0 pointer-events-none z-[5]"
           style={{
-            background: 'linear-gradient(90deg, transparent 0%, rgba(72, 190, 229, 0.15) 20%, rgba(160, 230, 246, 0.25) 40%, rgba(175, 215, 123, 0.3) 50%, rgba(160, 230, 246, 0.25) 60%, rgba(72, 190, 229, 0.15) 80%, transparent 100%)',
+            background: 'linear-gradient(90deg, transparent 0%, rgba(72, 190, 229, 0.15) 20%, rgba(160, 230, 255, 0.25) 40%, rgba(175, 215, 123, 0.3) 50%, rgba(160, 230, 246, 0.25) 60%, rgba(72, 190, 229, 0.15) 80%, transparent 100%)',
             width: '70%',
             animation: 'sweepGradientOuter 5s ease-in-out infinite',
             mixBlendMode: 'screen',
           }}
         />
       )}
-
+      
       {/* Win Toast Overlay */}
       {showWinToast && (
         <div className="absolute inset-0 flex items-center justify-center z-[20] pointer-events-none rounded-[12px]">
@@ -839,6 +923,7 @@ export default function LiveChartWithStates({
       <Title currentPrice={currentPrice} entryPrice={entryPrice} />
       <Inside state={state} countdown={countdown} mode={mode} direction={direction} showElements={showElements} entryPrice={entryPrice} onPriceUpdate={handlePriceUpdate} betAmount={betAmount} />
       <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0.5px_1px_0px_0px_rgba(88,102,123,0.33),inset_0px_0.2px_1px_0.5px_rgba(133,140,150,0.55)]" />
+    </div>
     </div>
   );
 }
