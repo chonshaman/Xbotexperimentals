@@ -97,7 +97,7 @@ function FloatingOverlay({ state, direction, showElements }: { state: LiveChartS
   if (state === 'idle') return null;
   
   return (
-    <div className="absolute left-[8px] top-[16px] w-[376px] z-[4]" data-name="floating">
+    <div className="absolute left-[8px] bottom-[68px] w-[376px] z-[4]" data-name="floating">
       <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col gap-[4px] items-start relative w-full">
         {showElements && (
           <>
@@ -110,10 +110,55 @@ function FloatingOverlay({ state, direction, showElements }: { state: LiveChartS
   );
 }
 
-function LiveIndicator({ currentPriceY, entryPriceY, direction, entryPriceValue, currentPriceValue }: { currentPriceY: number; entryPriceY: number; direction?: 'up' | 'down'; entryPriceValue?: number; currentPriceValue?: number }) {
-  // entryPriceY is the Y coordinate where we should draw the entry price line
-  const greenHeight = entryPriceY;
-  const redHeight = 180 - entryPriceY;
+function LiveIndicator({ 
+  currentPriceY, 
+  entryPriceY, 
+  direction, 
+  entryPriceValue, 
+  currentPriceValue,
+  yMin,
+  yMax 
+}: { 
+  currentPriceY: number; 
+  entryPriceY: number; 
+  direction?: 'up' | 'down'; 
+  entryPriceValue?: number; 
+  currentPriceValue?: number;
+  yMin: number;
+  yMax: number;
+}) {
+  if (!entryPriceValue || !yMin || !yMax) return null;
+  
+  // Clamp entry price to visible range
+  const entryClamped = Math.max(yMin, Math.min(yMax, entryPriceValue));
+  
+  // Calculate entry Y position based on clamped entry price
+  const normalizedPosition = (yMax - entryClamped) / (yMax - yMin);
+  const entryY = normalizedPosition * 180;
+  const clampedEntryY = Math.max(0, Math.min(180, entryY));
+  
+  // Define Profit/Loss Zones in price space
+  let profitRange: [number, number];
+  let lossRange: [number, number];
+  
+  if (direction === 'up') {
+    // UP: Profit = above entry, Loss = below entry
+    profitRange = [entryClamped, yMax];
+    lossRange = [yMin, entryClamped];
+  } else {
+    // DOWN: Profit = below entry, Loss = above entry
+    profitRange = [yMin, entryClamped];
+    lossRange = [entryClamped, yMax];
+  }
+  
+  // Convert price ranges to Y coordinates (SVG: 0 = top, 180 = bottom)
+  const profitYStart = ((yMax - profitRange[1]) / (yMax - yMin)) * 180;
+  const profitYEnd = ((yMax - profitRange[0]) / (yMax - yMin)) * 180;
+  const profitHeight = profitYEnd - profitYStart;
+  
+  const lossYStart = ((yMax - lossRange[1]) / (yMax - yMin)) * 180;
+  const lossYEnd = ((yMax - lossRange[0]) / (yMax - yMin)) * 180;
+  const lossHeight = lossYEnd - lossYStart;
   
   // Format price with comma separator and 2 decimals
   const formatPrice = (price: number) => {
@@ -124,58 +169,134 @@ function LiveIndicator({ currentPriceY, entryPriceY, direction, entryPriceValue,
   };
   
   return (
-    <div className="absolute h-[180px] left-0 top-0 w-full pointer-events-none" data-name="liveindicator">
+    <div className="absolute inset-0 pointer-events-none" data-name="liveindicator">
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 324 180">
         <g id="liveindicator">
-          {/* Green zone - above entry price */}
-          <g id="greenzone">
-            <rect fill="url(#paint0_linear_live_indicator)" height={greenHeight} width="324" />
+          {/* Profit zone (green) */}
+          <g id="profitzone">
+            <rect 
+              fill="url(#paint_profit_gradient)" 
+              y={profitYStart}
+              height={profitHeight} 
+              width="324" 
+              style={{
+                transition: 'all 400ms ease-out'
+              }}
+            />
           </g>
-          {/* Dashed line at entry price */}
-          <line id="dash" stroke="white" strokeDasharray="2 2" strokeOpacity="0.72" x2="324" y1={entryPriceY} y2={entryPriceY} />
-          {/* Red zone - below entry price */}
-          <g id="redzone">
-            <rect fill="url(#paint1_linear_live_indicator)" height={redHeight} transform={`translate(0 ${entryPriceY})`} width="324" />
+          
+          {/* Loss zone (red) */}
+          <g id="losszone">
+            <rect 
+              fill="url(#paint_loss_gradient)" 
+              y={lossYStart}
+              height={lossHeight} 
+              width="324" 
+              style={{
+                transition: 'all 400ms ease-out'
+              }}
+            />
           </g>
+          
+          {/* Entry dashed line */}
+          <line 
+            id="entry-dash" 
+            stroke="white" 
+            strokeDasharray="2 2" 
+            strokeOpacity="0.72" 
+            x1="0"
+            x2="324" 
+            y1={clampedEntryY} 
+            y2={clampedEntryY}
+            style={{
+              transition: 'all 400ms ease-out'
+            }}
+          />
         </g>
+        
         <defs>
-          <linearGradient gradientUnits="userSpaceOnUse" id="paint0_linear_live_indicator" x1="162" x2="162" y1="0" y2={greenHeight}>
-            <stop stopColor="#8BB91E" stopOpacity="0" />
-            <stop offset="0.207696" stopColor="#5DBC3D" stopOpacity="0.04" />
-            <stop offset="0.4375" stopColor="#39BF56" stopOpacity="0.2" />
-            <stop offset="1" stopColor="#36B91E" stopOpacity="0.6" />
+          {/* Green gradient for profit zones */}
+          <linearGradient 
+            gradientUnits="userSpaceOnUse" 
+            id="paint_profit_gradient" 
+            x1="162" 
+            x2="162" 
+            y1={profitYStart} 
+            y2={profitYEnd}
+          >
+            {direction === 'up' ? (
+              // UP direction: gradient from top (opacity=0) to bottom/entry (higher opacity)
+              <>
+                <stop offset="0" stopColor="#8BB91E" stopOpacity="0" />
+                <stop offset="0.207696" stopColor="#5DBC3D" stopOpacity="0.04" />
+                <stop offset="0.5625" stopColor="#39BF56" stopOpacity="0.2" />
+                <stop offset="1" stopColor="#36B91E" stopOpacity="0.6" />
+              </>
+            ) : (
+              // DOWN direction: gradient from top/entry (higher opacity) to bottom (opacity=0)
+              <>
+                <stop offset="0" stopColor="#36B91E" stopOpacity="0.6" />
+                <stop offset="0.4375" stopColor="#39BF56" stopOpacity="0.2" />
+                <stop offset="0.792304" stopColor="#5DBC3D" stopOpacity="0.04" />
+                <stop offset="1" stopColor="#8BB91E" stopOpacity="0" />
+              </>
+            )}
           </linearGradient>
-          <linearGradient gradientUnits="userSpaceOnUse" id="paint1_linear_live_indicator" x1="162" x2="162" y1="0" y2={redHeight}>
-            <stop stopColor="#E5484B" stopOpacity="0.6" />
-            <stop offset="0.5625" stopColor="###E5484B" stopOpacity="0.2" />
-            <stop offset="0.95" stopColor="#E5484B" stopOpacity="0" />
+          
+          {/* Red gradient for loss zones */}
+          <linearGradient 
+            gradientUnits="userSpaceOnUse" 
+            id="paint_loss_gradient" 
+            x1="162" 
+            x2="162" 
+            y1={lossYStart} 
+            y2={lossYEnd}
+          >
+            {direction === 'up' ? (
+              // UP direction: gradient from top/entry (higher opacity) to bottom (opacity=0)
+              <>
+                <stop offset="0" stopColor="#E5484B" stopOpacity="0.6" />
+                <stop offset="0.5625" stopColor="#E5484B" stopOpacity="0.2" />
+                <stop offset="1" stopColor="#E5484B" stopOpacity="0" />
+              </>
+            ) : (
+              // DOWN direction: gradient from top (opacity=0) to bottom/entry (higher opacity)
+              <>
+                <stop offset="0" stopColor="#E5484B" stopOpacity="0" />
+                <stop offset="0.4375" stopColor="#E5484B" stopOpacity="0.2" />
+                <stop offset="1" stopColor="#E5484B" stopOpacity="0.6" />
+              </>
+            )}
           </linearGradient>
         </defs>
       </svg>
       
-      {/* Entry Price - 2 rows with dashed line in center */}
-      <div 
-        className="absolute pointer-events-none left-[44px]"
-        style={{ 
-          top: `${entryPriceY}px`,
-          transform: 'translate(0, -50%)',
-        }}
-      >
-        {/* Row 1: Entry Price Label */}
-        <div className="backdrop-blur-[4px] bg-[rgba(0,0,0,0.16)] flex items-center justify-center px-[8px] py-[3px] rounded-tl-[4px] rounded-tr-[4px] shrink-0 h-[22px]">
-          <p className="text-[12px] font-sans font-medium text-white leading-none whitespace-nowrap">Entry Price</p>
-        </div>
-        
-        {/* Row 2: Entry Price Value */}
+      {/* Entry Price Label - only show if entry is within visible range */}
+      {entryPriceValue >= yMin && entryPriceValue <= yMax && (
         <div 
-          className="flex items-center justify-center px-[8px] py-[3px] rounded-bl-[4px] rounded-br-[4px] shrink-0 h-[22px]"
-          style={{
-            backgroundColor: direction === 'up' ? '#1f61b7' : '#b7341f'
+          className="absolute pointer-events-none left-[48px]"
+          style={{ 
+            top: `${(clampedEntryY / 180) * 100}%`,
+            transform: 'translate(0, -50%)',
+            transition: 'all 400ms ease-out'
           }}
         >
-          <p className="text-[12px] font-sans font-medium text-white leading-none whitespace-nowrap">{entryPriceValue ? formatPrice(entryPriceValue) : '0.00'}</p>
+          {/* Row 1: Entry Price Label */}
+          <div className="backdrop-blur-[4px] bg-[rgba(0,0,0,0.16)] flex items-center justify-center px-[8px] py-[3px] rounded-tl-[4px] rounded-tr-[4px] shrink-0 h-[22px]">
+            <p className="text-[12px] font-sans font-medium text-white leading-none whitespace-nowrap">Entry Price</p>
+          </div>
+          
+          {/* Row 2: Entry Price Value */}
+          <div 
+            className="flex items-center justify-center px-[8px] py-[3px] rounded-bl-[4px] rounded-br-[4px] shrink-0 h-[22px] transition-colors duration-300"
+            style={{
+              backgroundColor: direction === 'up' ? '#1f61b7' : '#b7341f'
+            }}
+          >
+            <p className="text-[12px] font-sans font-medium text-white leading-none whitespace-nowrap">{formatPrice(entryPriceValue)}</p>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -185,7 +306,8 @@ function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice }: { state
   const [prices, setPrices] = useState<string[]>(['3936.17', '3935.17', '3935.09', '3934.17', '3933.04', '3932.00']);
   const [currentPrice, setCurrentPrice] = useState(96500);
   const [prevPrice, setPrevPrice] = useState(96500);
-  const [entryDataPoint, setEntryDataPoint] = useState<number>(90); // Store entry price Y coordinate (180 - dataPoint)
+  const [minPrice, setMinPrice] = useState(96500);
+  const [maxPrice, setMaxPrice] = useState(96500);
 
   useEffect(() => {
     // Initialize with 50 data points
@@ -193,15 +315,6 @@ function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice }: { state
       return 100 + Math.sin(i * 0.3) * 30 + Math.random() * 20;
     });
     setDataPoints(initial);
-
-    // Capture the entry price Y coordinate when transitioning to live state
-    if (state === 'live' && initial.length > 0) {
-      // The entry price corresponds to the last data point when entering live state
-      const lastPoint = initial[initial.length - 1];
-      // Convert to Y coordinate: in SVG, Y=0 is at top, so we use 180 - dataPoint
-      const entryY = 180 - lastPoint;
-      setEntryDataPoint(entryY);
-    }
 
     // Animate chart - update every 400ms for more real-time feel
     const interval = setInterval(() => {
@@ -217,18 +330,51 @@ function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice }: { state
         const maxValue = Math.max(...newPoints);
         const minValue = Math.min(...newPoints);
         const range = maxValue - minValue;
-        const step = range / 5;
         
+        // Calculate base price range from data
+        const basePrice = 96500;
+        const maxPriceFromData = basePrice + ((maxValue - 100) / 100) * 80;
+        const minPriceFromData = basePrice + ((minValue - 100) / 100) * 80;
+        
+        // If we have an entry price, ensure it's always visible by expanding the range
+        let finalMaxPrice = maxPriceFromData;
+        let finalMinPrice = minPriceFromData;
+        
+        if (entryPrice) {
+          // Check if entry price is outside current range
+          if (entryPrice > maxPriceFromData) {
+            // Entry price is above range - expand upward
+            finalMaxPrice = entryPrice + (maxPriceFromData - minPriceFromData) * 0.1; // Add 10% padding
+          } else if (entryPrice < minPriceFromData) {
+            // Entry price is below range - expand downward
+            finalMinPrice = entryPrice - (maxPriceFromData - minPriceFromData) * 0.1; // Add 10% padding
+          }
+          
+          // Always ensure entry price has some breathing room (at least 15% of range above/below)
+          const currentRange = finalMaxPrice - finalMinPrice;
+          const paddingNeeded = currentRange * 0.15;
+          
+          if (entryPrice + paddingNeeded > finalMaxPrice) {
+            finalMaxPrice = entryPrice + paddingNeeded;
+          }
+          if (entryPrice - paddingNeeded < finalMinPrice) {
+            finalMinPrice = entryPrice - paddingNeeded;
+          }
+        }
+        
+        setMaxPrice(finalMaxPrice);
+        setMinPrice(finalMinPrice);
+        
+        // Recalculate Y-axis labels based on new range
+        const step = (finalMaxPrice - finalMinPrice) / 5;
         const newPrices = Array.from({ length: 6 }, (_, i) => {
-          const value = maxValue - (i * step);
-          const basePrice = 96500;
-          const priceVariation = ((value - 100) / 100) * 80;
-          return (basePrice + priceVariation).toFixed(2);
+          const value = finalMaxPrice - (i * step);
+          return value.toFixed(2);
         });
         
         setPrices(newPrices);
         
-        const basePrice = 96500;
+        // Calculate current price based on the new point
         const priceVariation = ((newPoint - 100) / 100) * 80;
         const newCurrentPrice = basePrice + priceVariation;
         
@@ -240,7 +386,7 @@ function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice }: { state
     }, 400);
 
     return () => clearInterval(interval);
-  }, [currentPrice, state]);
+  }, [currentPrice, state, entryPrice]);
   
   // Separate useEffect to call onPriceUpdate after currentPrice changes
   useEffect(() => {
@@ -256,10 +402,33 @@ function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice }: { state
     const height = 180;
     const xStep = width / (points.length - 1);
     
-    let path = `M 0 ${height - points[0]}`;
-    for (let i = 1; i < points.length; i++) {
+    // Convert data points to prices, then to Y coordinates using the same system as the dot
+    const pointsToPrices = points.map(point => {
+      const basePrice = 96500;
+      const priceVariation = ((point - 100) / 100) * 80;
+      return basePrice + priceVariation;
+    });
+    
+    // Map prices to Y coordinates (same system as current price dot)
+    const priceRange = maxPrice - minPrice;
+    if (priceRange === 0) {
+      // Fallback if no range
+      let path = `M 0 ${height / 2}`;
+      for (let i = 1; i < points.length; i++) {
+        path += ` L ${i * xStep} ${height / 2}`;
+      }
+      return path;
+    }
+    
+    const priceToY = (price: number) => {
+      const normalizedPosition = (maxPrice - price) / priceRange;
+      return normalizedPosition * height;
+    };
+    
+    let path = `M 0 ${priceToY(pointsToPrices[0])}`;
+    for (let i = 1; i < pointsToPrices.length; i++) {
       const x = i * xStep;
-      const y = height - points[i];
+      const y = priceToY(pointsToPrices[i]);
       path += ` L ${x} ${y}`;
     }
     return path;
@@ -272,13 +441,32 @@ function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice }: { state
     const height = 180;
     const xStep = width / (points.length - 1);
     
+    // Convert data points to prices, then to Y coordinates using the same system as the dot
+    const pointsToPrices = points.map(point => {
+      const basePrice = 96500;
+      const priceVariation = ((point - 100) / 100) * 80;
+      return basePrice + priceVariation;
+    });
+    
+    // Map prices to Y coordinates (same system as current price dot)
+    const priceRange = maxPrice - minPrice;
+    if (priceRange === 0) {
+      // Fallback if no range
+      return `M 0 ${height / 2} L ${width} ${height / 2} L ${width} ${height} L 0 ${height} Z`;
+    }
+    
+    const priceToY = (price: number) => {
+      const normalizedPosition = (maxPrice - price) / priceRange;
+      return normalizedPosition * height;
+    };
+    
     // Start from the first point on the line
-    let path = `M 0 ${height - points[0]}`;
+    let path = `M 0 ${priceToY(pointsToPrices[0])}`;
     
     // Draw along the line
-    for (let i = 1; i < points.length; i++) {
+    for (let i = 1; i < pointsToPrices.length; i++) {
       const x = i * xStep;
-      const y = height - points[i];
+      const y = priceToY(pointsToPrices[i]);
       path += ` L ${x} ${y}`;
     }
     
@@ -292,10 +480,38 @@ function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice }: { state
   const linePath = generatePath(dataPoints);
   const areaPath = generateAreaPath(dataPoints);
   
-  // Get the latest point position for the dot - calculate as percentage
-  const latestPoint = dataPoints[dataPoints.length - 1] || 100;
-  const dotYPosition = ((180 - latestPoint) / 180) * 100; // Convert to percentage
-  const currentPriceYCoord = 180 - latestPoint; // Y coordinate in SVG pixels where the line ends
+  // Calculate current price Y position based on actual price values (same system as entry price)
+  const calculateCurrentPriceYPercent = (): number => {
+    if (minPrice === maxPrice) return 50; // Default middle if no valid data
+    
+    // Normalize current price within the current min-max range
+    // If current price is at maxPrice, Y should be 0% (top)
+    // If current price is at minPrice, Y should be 100% (bottom)
+    const normalizedPosition = (maxPrice - currentPrice) / (maxPrice - minPrice);
+    return normalizedPosition * 100; // Convert to percentage
+  };
+  
+  const dotYPosition = calculateCurrentPriceYPercent();
+  
+  // Calculate Y coordinate in SVG pixels (0-180 range) for overlay calculations
+  const currentPriceYCoord = (dotYPosition / 100) * 180;
+  
+  // Calculate dynamic entry price Y position based on current price scale
+  // Map entry price to Y coordinate within current visible price range
+  const calculateEntryPriceY = (): number => {
+    if (!entryPrice || minPrice === maxPrice) return 90; // Default middle if no valid data
+    
+    // Normalize entry price within the current min-max range
+    // If entry price is at maxPrice, Y should be 0 (top)
+    // If entry price is at minPrice, Y should be 180 (bottom)
+    const normalizedPosition = (maxPrice - entryPrice) / (maxPrice - minPrice);
+    const entryY = normalizedPosition * 180;
+    
+    // Clamp to valid range with some padding
+    return Math.max(10, Math.min(170, entryY));
+  };
+  
+  const entryPriceY = calculateEntryPriceY();
   
   // Determine price direction
   const isPriceUp = currentPrice >= prevPrice;
@@ -332,11 +548,11 @@ function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice }: { state
       <div className="h-full relative shrink-0 w-full" data-name="chart">
         {/* Combined stroke and fill in one SVG to eliminate gaps */}
         <div 
-          className={`transition-all duration-500 ease-out ${state === 'live' ? 'absolute inset-0' : 'absolute inset-[8.51%_0_22%_0]'}`}
+          className="absolute inset-0 transition-all duration-500 ease-out"
           data-name="chart-container"
         >
           {/* Live indicator overlay - only in live state */}
-          {state === 'live' && <LiveIndicator currentPriceY={currentPriceYCoord} entryPriceY={entryDataPoint} direction={direction} entryPriceValue={entryPrice} currentPriceValue={currentPrice} />}
+          {state === 'live' && <LiveIndicator currentPriceY={currentPriceYCoord} entryPriceY={entryPriceY} direction={direction} entryPriceValue={entryPrice} currentPriceValue={currentPrice} yMin={minPrice} yMax={maxPrice} />}
           
           <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 324 180">
             <defs>
@@ -365,7 +581,7 @@ function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice }: { state
             </defs>
             
             {/* Background gradient fill */}
-            <path d={areaPath} fill={`url(#${getFillGradientId()})`} />
+            <path d={areaPath} fill={`url(#${getFillGradientId()})`} className="transition-all duration-400 ease-out" />
             
             {/* Glowing stroke line on top */}
             <path 
@@ -377,12 +593,13 @@ function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice }: { state
               strokeLinejoin="round"
               fill="none"
               filter={`url(#glow_filter_${state})`}
+              className="transition-all duration-400 ease-out"
             />
           </svg>
           
           {/* Current position dot - positioned using percentage like LiveChart.tsx */}
           <div 
-            className="absolute pointer-events-none"
+            className="absolute pointer-events-none transition-all duration-[400ms] ease-out"
             style={{ 
               right: '0px',
               top: `${dotYPosition}%`,
@@ -418,7 +635,7 @@ function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice }: { state
           
           {/* Price Badge - moves with dot */}
           <div 
-            className="absolute pointer-events-none"
+            className="absolute pointer-events-none transition-all duration-[400ms] ease-out"
             style={{ 
               right: '24px',
               top: `${dotYPosition}%`,
@@ -678,9 +895,9 @@ function Inside({
   };
 
   return (
-    <div className="flex-[1_0_0] min-h-px min-w-px relative rounded-[8px] w-full z-[6]" data-name="inside" style={{ background: "radial-gradient(131.72% 191.3% at 28.74% -94.84%, #323842 0%, #1F2026 52.33%, #1D1F27 72.1%, #080910 100%)" }}>
-      <div className="flex flex-col items-center justify-center overflow-clip rounded-[inherit] size-full">
-        <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col isolate items-center justify-center pl-[8px] pr-[2px] py-[8px] relative size-full gap-[4px]">
+    <div className="flex-[1_0_0] min-h-px min-w-px relative rounded-[8px] w-full z-[6] overflow-hidden" data-name="inside" style={{ background: "radial-gradient(131.72% 191.3% at 28.74% -94.84%, #323842 0%, #1F2026 52.33%, #1D1F27 72.1%, #080910 100%)" }}>
+      <div className="flex flex-col items-center justify-between rounded-[inherit] size-full">
+        <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col isolate items-center justify-between pl-[8px] pr-[2px] py-[8px] relative size-full gap-[4px]">
           <FloatingOverlay state={state} direction={direction} showElements={showElements} entryPrice={entryPrice} />
           <Chart state={state} onPriceUpdate={handleInternalPriceUpdate} direction={direction} entryPrice={entryPrice} />
           <div className="absolute bottom-[-100px] flex h-[148px] items-center justify-center left-[calc(50%-1px)] mix-blend-screen translate-x-[-50%] w-[384px] z-[1]">
