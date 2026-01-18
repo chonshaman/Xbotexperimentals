@@ -187,7 +187,14 @@ export default function ComponentsShowcase() {
             <div className="bg-gray-800 rounded-xl p-6">
               <h3 className="text-lg font-semibold text-white mb-4 text-center">Live Round</h3>
               <div className="h-[400px] bg-gray-900 rounded-lg overflow-hidden">
-                <LiveChartWithStates state="live" />
+                <LiveChartWithStates 
+                  state="live" 
+                  countdown={18}
+                  mode="30s"
+                  direction="UP"
+                  entryPrice={96500}
+                  betAmount={400}
+                />
               </div>
               <p className="text-gray-400 text-sm mt-4 text-center">
                 Shows green/red zones, PnL display, "Settles in 18s"

@@ -176,17 +176,17 @@ export default function App() {
   }
 
   return (
-    <div className="size-full flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      {/* Components Button - Outside Game Zone */}
+    <div className="size-full flex items-center justify-center bg-black">
+      {/* Components Button - Hidden on mobile (320-440px), visible on larger screens */}
       <button
         onClick={() => setShowComponents(true)}
-        className="fixed top-4 right-4 z-50 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors shadow-lg font-semibold"
+        className="hidden md:block fixed top-4 right-4 z-50 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors shadow-lg font-semibold"
       >
         Components
       </button>
 
       {/* Main Content - Responsive Container */}
-      <div className="w-full min-w-[320px] max-w-[440px] h-screen bg-gradient-to-b from-gray-950 to-black flex flex-col">
+      <div className="w-full min-w-[320px] max-w-[440px] h-full bg-gradient-to-b from-gray-950 to-black flex flex-col">
         
         {/* Header - Full Width, No Padding */}
         <div className="w-full flex-shrink-0">
@@ -201,8 +201,14 @@ export default function App() {
           }}
         >
           
-          {/* Live Chart - Flexible height */}
-          <div className="w-full flex-1 min-h-0">
+          {/* Live Chart - Min height 256px, expands when live */}
+          <div 
+            className="w-full transition-all duration-300 ease-in-out"
+            style={{
+              minHeight: '256px',
+              flex: chartState === 'live' ? '1' : '0 0 256px'
+            }}
+          >
             <LiveChartWithStates 
               state={chartState} 
               showWinToast={showWinToast}
