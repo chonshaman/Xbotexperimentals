@@ -176,7 +176,7 @@ export default function App() {
   }
 
   return (
-    <div className="size-full flex items-center justify-center bg-black">
+    <div className="size-full flex items-center justify-center bg-black overflow-x-hidden">
       {/* Components Button - Hidden on mobile (320-440px), visible on larger screens */}
       <button
         onClick={() => setShowComponents(true)}
@@ -186,7 +186,7 @@ export default function App() {
       </button>
 
       {/* Main Content - Responsive Container */}
-      <div className="w-full min-w-[320px] max-w-[440px] h-full bg-gradient-to-b from-gray-950 to-black flex flex-col">
+      <div className="w-full min-w-[320px] max-w-[440px] h-full bg-gradient-to-b from-gray-950 to-black flex flex-col overflow-x-hidden">
         
         {/* Header - Full Width, No Padding */}
         <div className="w-full flex-shrink-0">
@@ -195,7 +195,7 @@ export default function App() {
 
         {/* Content Area with Padding and Gaps */}
         <div 
-          className="flex-1 flex flex-col px-[14px] pb-[14px] pt-[14px] min-h-0 transition-all duration-300 ease-in-out"
+          className="flex-1 flex flex-col px-[14px] pb-[14px] pt-[14px] min-h-0 transition-all duration-300 ease-in-out overflow-x-hidden"
           style={{ 
             gap: chartState === 'idle' ? '14px' : '11px' 
           }}
