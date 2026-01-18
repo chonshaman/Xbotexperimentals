@@ -599,7 +599,17 @@
   flex-shrink: 0;
   overflow: visible;
   transform: scale(0.7776);
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Icon scale on hover (non-disabled, non-entry-locked) */
+.button-blue:not(.state-disabled):not(.state-entry-locked):hover .blue-icon {
+  transform: scale(0.8554); /* 0.7776 * 1.1 */
+}
+
+/* Icon scale on entry-locked */
+.button-blue.state-entry-locked .blue-icon {
+  transform: scale(0.9331); /* 0.7776 * 1.2 */
 }
 
 /* Apply animations in default state */

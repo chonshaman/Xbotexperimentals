@@ -5,6 +5,7 @@ import TradingPanel from './components/TradingPanel';
 import LiveChartWithStates from '@/imports/LiveChartWithStates';
 import type { LiveChartState } from '@/imports/LiveChartWithStates';
 import History from './components/History';
+import type { HistoryRef, HistoryItem } from './components/History';
 import Header from './components/Header';
 import ComponentsShowcase from './components/ComponentsShowcase';
 import WinToast from './components/WinToast';
@@ -21,8 +22,10 @@ export default function App() {
   const [entryPrice, setEntryPrice] = useState<number | undefined>(undefined);
   const [currentPrice, setCurrentPrice] = useState<number>(96500);
   const [betAmount, setBetAmount] = useState(400);
+  const [balance, setBalance] = useState(10000); // Initial balance
   
   const countdownRef = useRef<NodeJS.Timeout | null>(null);
+  const historyRef = useRef<HistoryRef>(null);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -34,6 +37,9 @@ export default function App() {
   const handleUpClick = () => {
     if (chartState !== 'idle') return;
     
+    // ✅ Deduct balance when position opens
+    setBalance(prev => prev - betAmount);
+    
     setActiveButton('up');
     setChartState('opened');
     setEntryPrice(currentPrice);
@@ -42,6 +48,9 @@ export default function App() {
     setTimeout(() => {
       setChartState('live');
       setShowTradingPanel(false);
+      
+      // ✅ Start flashing next history cell
+      historyRef.current?.setNextFlashing(true);
       
       // Set up countdown based on mode
       if (timeMode === '30s') {
@@ -61,6 +70,9 @@ export default function App() {
   const handleDownClick = () => {
     if (chartState !== 'idle') return;
     
+    // ✅ Deduct balance when position opens
+    setBalance(prev => prev - betAmount);
+    
     setActiveButton('down');
     setChartState('opened');
     setEntryPrice(currentPrice);
@@ -69,6 +81,9 @@ export default function App() {
     setTimeout(() => {
       setChartState('live');
       setShowTradingPanel(false);
+      
+      // ✅ Start flashing next history cell
+      historyRef.current?.setNextFlashing(true);
       
       // Set up countdown based on mode
       if (timeMode === '30s') {
@@ -105,8 +120,33 @@ export default function App() {
         const payoutMultiplier = 1.95;
         const netProfit = betAmount * (payoutMultiplier - 1);
         
-        setFinalPnL(win ? netProfit : -betAmount);
+        const finalPnLValue = win ? netProfit : -betAmount;
+        setFinalPnL(finalPnLValue);
         setShowWinToast(true);
+        
+        // ✅ Update balance based on win/lose
+        if (win) {
+          // Win: Add bet amount back + profit (balance was already deducted)
+          setBalance(prev => prev + betAmount + netProfit);
+        }
+        // Lose: Balance already deducted, no additional change needed
+        
+        // ✅ Add to history when trade SETTLES (OPEN → SETTLED)
+        const historyItem: HistoryItem = {
+          id: `trade-${Date.now()}`,
+          symbol: 'BTC/USDT',
+          direction: isUp ? 'UP' : 'DOWN',  // what user tapped
+          result: win ? 'WIN' : 'LOSE',      // settlement outcome
+          entryPrice: entry || 0,
+          exitPrice: currentMark,
+          betAmount: betAmount,
+          pnl: finalPnLValue,
+          settledAt: Date.now()
+        };
+        historyRef.current?.addSettledTrade(historyItem);
+        
+        // ✅ Stop flashing the next cell
+        historyRef.current?.setNextFlashing(false);
         
         // After 2s, hide toast and reset to idle
         setTimeout(() => {
@@ -150,7 +190,7 @@ export default function App() {
         
         {/* Header - Full Width, No Padding */}
         <div className="w-full flex-shrink-0">
-          <Header timeMode={timeMode} onTimeModeChange={setTimeMode} />
+          <Header timeMode={timeMode} onTimeModeChange={setTimeMode} balance={balance} />
         </div>
 
         {/* Content Area with Padding and Gaps */}
@@ -213,7 +253,7 @@ export default function App() {
 
           {/* History Panel */}
           <div className="w-full flex-shrink-0">
-            <History />
+            <History ref={historyRef} />
           </div>
         </div>
       </div>

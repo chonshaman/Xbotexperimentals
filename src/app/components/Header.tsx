@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import './HeaderCSS.css';
+import AnimatedBalance from './AnimatedBalance';
 
 interface HeaderProps {
   timeMode: '30s' | '60s' | 'price';
   onTimeModeChange: (mode: '30s' | '60s' | 'price') => void;
+  balance: number;
 }
 
-export default function Header({ timeMode, onTimeModeChange }: HeaderProps) {
+export default function Header({ timeMode, onTimeModeChange, balance }: HeaderProps) {
   const [martingaleEnabled, setMartingaleEnabled] = useState(true);
 
   return (
@@ -16,7 +18,7 @@ export default function Header({ timeMode, onTimeModeChange }: HeaderProps) {
         <div className="balance-border-wrapper">
           <div className="balance-content">
             <span className="balance-label">BALANCE</span>
-            <span className="balance-value">10,000 USDT</span>
+            <AnimatedBalance balance={balance} className="balance-value" />
           </div>
         </div>
       </div>

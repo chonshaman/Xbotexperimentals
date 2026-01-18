@@ -53,7 +53,7 @@ function Title({ currentPrice, entryPrice }: { currentPrice?: number; entryPrice
 // State-specific components
 function StatusOpened({ direction }: { direction?: 'up' | 'down' }) {
   return (
-    <div className="bg-[rgba(0,0,0,0.32)] content-stretch flex items-center justify-center px-[4px] py-0 relative rounded-[4px] shrink-0 animate-[slideInFromRight_0.3s_ease-out]" data-name="bg">
+    <div className="backdrop-blur-[8px] bg-[rgba(0,0,0,0.32)] content-stretch flex items-center justify-center px-[4px] py-0 relative rounded-[4px] shrink-0 animate-[slideInFromRight_0.3s_ease-out]" data-name="bg">
       <div className="flex flex-col font-sans justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-[rgba(255,255,255,0.72)] whitespace-nowrap">
         <p className="leading-[20px] whitespace-pre">Position Opened -</p>
       </div>
@@ -84,7 +84,7 @@ function UpDown({ direction }: { direction?: 'up' | 'down' }) {
 
 function Bg({ direction }: { direction?: 'up' | 'down' }) {
   return (
-    <div className="backdrop-blur-[4px] bg-[rgba(0,0,0,0.16)] content-stretch flex items-center justify-center px-[4px] py-0 relative rounded-tl-[4px] rounded-tr-[4px] shrink-0 w-fit" data-name="bg">
+    <div className="backdrop-blur-[8px] bg-[rgba(0,0,0,0.16)] content-stretch flex items-center justify-center px-[4px] py-0 relative rounded-tl-[4px] rounded-tr-[4px] shrink-0" data-name="bg">
       <div className="flex flex-col font-sans font-medium justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-[rgba(255,255,255,0.72)]">
         <p className="leading-[20px] whitespace-pre">{`Live Round - `}</p>
       </div>
@@ -97,8 +97,8 @@ function FloatingOverlay({ state, direction, showElements }: { state: LiveChartS
   if (state === 'idle') return null;
   
   return (
-    <div className="absolute left-[8px] bottom-[68px] w-[376px] z-[4]" data-name="floating">
-      <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col gap-[4px] items-start relative w-full">
+    <div className="absolute left-[8px] bottom-[68px] z-[4]" data-name="floating">
+      <div className="bg-clip-padding border-0 border-[transparent] border-solid flex flex-col gap-[4px] items-start relative">
         {showElements && (
           <>
             {state === 'opened' && <StatusOpened direction={direction} />}
@@ -302,91 +302,122 @@ function LiveIndicator({
 }
 
 function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice }: { state: LiveChartState; onPriceUpdate?: (price: number) => void; direction?: 'up' | 'down'; entryPrice?: number }) {
-  const [dataPoints, setDataPoints] = useState<number[]>([]);
-  const [prices, setPrices] = useState<string[]>(['3936.17', '3935.17', '3935.09', '3934.17', '3933.04', '3932.00']);
+  const [prices, setPrices] = useState<string[]>(['96500.00', '96490.00', '96480.00', '96470.00', '96460.00', '96450.00', '96440.00']);
   const [currentPrice, setCurrentPrice] = useState(96500);
   const [prevPrice, setPrevPrice] = useState(96500);
   const [minPrice, setMinPrice] = useState(96500);
   const [maxPrice, setMaxPrice] = useState(96500);
+  const [priceHistory, setPriceHistory] = useState<number[]>([]);
 
+  // Mock price simulation only
   useEffect(() => {
-    // Initialize with 50 data points
-    const initial = Array.from({ length: 50 }, (_, i) => {
-      return 100 + Math.sin(i * 0.3) * 30 + Math.random() * 20;
-    });
-    setDataPoints(initial);
+    let updateInterval: NodeJS.Timeout;
+    let isComponentMounted = true;
 
-    // Animate chart - update every 400ms for more real-time feel
-    const interval = setInterval(() => {
-      setDataPoints(prev => {
-        const newPoints = [...prev];
-        newPoints.shift();
-        const lastPoint = newPoints[newPoints.length - 1];
-        // Increased volatility for more dramatic price action
-        const change = (Math.random() - 0.5) * 25; 
-        const newPoint = Math.max(40, Math.min(160, lastPoint + change));
-        newPoints.push(newPoint);
+    // Initialize with mock price
+    const basePrice = 96500; // Mock BTC price
+    
+    setCurrentPrice(basePrice);
+    setPrevPrice(basePrice);
+    
+    // Initialize with 50 historical points around base price
+    const initial = Array.from({ length: 50 }, (_, i) => {
+      // Create visible wave pattern with ±$5 variation (within $10 range)
+      const wave = Math.sin(i * 0.3) * 2.5; // Sine wave 2.5
+      const noise = (Math.random() - 0.5) * 2; // Random noise ±1
+      return basePrice + wave + noise;
+    });
+    setPriceHistory(initial);
+    
+    // Set initial min/max with fixed $10 range centered on current price
+    const finalMax = basePrice + 5;
+    const finalMin = basePrice - 5;
+    
+    setMaxPrice(finalMax);
+    setMinPrice(finalMin);
+    
+    // Calculate Y-axis labels with 7 steps (6 intervals)
+    const step = (finalMax - finalMin) / 6;
+    const newPrices = Array.from({ length: 7 }, (_, i) => {
+      const value = finalMax - (i * step);
+      return value.toFixed(2);
+    });
+    setPrices(newPrices);
+
+    // Simulate realistic price movements with 1 second interval
+    updateInterval = setInterval(() => {
+      if (!isComponentMounted) return;
+      
+      setPriceHistory(prev => {
+        const newHistory = [...prev];
+        const lastPrice = newHistory[newHistory.length - 1];
         
-        const maxValue = Math.max(...newPoints);
-        const minValue = Math.min(...newPoints);
-        const range = maxValue - minValue;
+        // Simulate realistic price movement
+        const change = (Math.random() - 0.5) * 2; // ±$1 per update
+        const newPrice = lastPrice + change;
         
-        // Calculate base price range from data
-        const basePrice = 96500;
-        const maxPriceFromData = basePrice + ((maxValue - 100) / 100) * 80;
-        const minPriceFromData = basePrice + ((minValue - 100) / 100) * 80;
+        newHistory.shift();
+        newHistory.push(newPrice);
         
-        // If we have an entry price, ensure it's always visible by expanding the range
-        let finalMaxPrice = maxPriceFromData;
-        let finalMinPrice = minPriceFromData;
+        // Calculate Y-axis range inline
+        const fixedRange = 10;
+        const halfRange = fixedRange / 2;
+        let centerPrice = newPrice;
         
         if (entryPrice) {
-          // Check if entry price is outside current range
-          if (entryPrice > maxPriceFromData) {
-            // Entry price is above range - expand upward
-            finalMaxPrice = entryPrice + (maxPriceFromData - minPriceFromData) * 0.1; // Add 10% padding
-          } else if (entryPrice < minPriceFromData) {
-            // Entry price is below range - expand downward
-            finalMinPrice = entryPrice - (maxPriceFromData - minPriceFromData) * 0.1; // Add 10% padding
-          }
-          
-          // Always ensure entry price has some breathing room (at least 15% of range above/below)
-          const currentRange = finalMaxPrice - finalMinPrice;
-          const paddingNeeded = currentRange * 0.15;
-          
-          if (entryPrice + paddingNeeded > finalMaxPrice) {
-            finalMaxPrice = entryPrice + paddingNeeded;
-          }
-          if (entryPrice - paddingNeeded < finalMinPrice) {
-            finalMinPrice = entryPrice - paddingNeeded;
+          const priceDiff = Math.abs(newPrice - entryPrice);
+          if (priceDiff > halfRange * 0.7) {
+            centerPrice = (newPrice + entryPrice) / 2;
+            const neededRange = priceDiff * 1.4;
+            if (neededRange > fixedRange) {
+              const expandedHalf = Math.min(neededRange / 2, 40);
+              const finalMaxPrice = centerPrice + expandedHalf;
+              const finalMinPrice = centerPrice - expandedHalf;
+              
+              setMaxPrice(finalMaxPrice);
+              setMinPrice(finalMinPrice);
+              
+              const step = (finalMaxPrice - finalMinPrice) / 6;
+              const newPrices = Array.from({ length: 7 }, (_, i) => {
+                const value = finalMaxPrice - (i * step);
+                return value.toFixed(2);
+              });
+              setPrices(newPrices);
+              setPrevPrice(currentPrice);
+              setCurrentPrice(newPrice);
+              return newHistory;
+            }
           }
         }
+        
+        const finalMaxPrice = centerPrice + halfRange;
+        const finalMinPrice = centerPrice - halfRange;
         
         setMaxPrice(finalMaxPrice);
         setMinPrice(finalMinPrice);
         
-        // Recalculate Y-axis labels based on new range
-        const step = (finalMaxPrice - finalMinPrice) / 5;
-        const newPrices = Array.from({ length: 6 }, (_, i) => {
+        const step = (finalMaxPrice - finalMinPrice) / 6;
+        const newPrices = Array.from({ length: 7 }, (_, i) => {
           const value = finalMaxPrice - (i * step);
           return value.toFixed(2);
         });
-        
         setPrices(newPrices);
         
-        // Calculate current price based on the new point
-        const priceVariation = ((newPoint - 100) / 100) * 80;
-        const newCurrentPrice = basePrice + priceVariation;
-        
         setPrevPrice(currentPrice);
-        setCurrentPrice(newCurrentPrice);
+        setCurrentPrice(newPrice);
         
-        return newPoints;
+        return newHistory;
       });
-    }, 400);
+    }, 1000);
 
-    return () => clearInterval(interval);
-  }, [currentPrice, state, entryPrice]);
+    // Cleanup
+    return () => {
+      isComponentMounted = false;
+      if (updateInterval) {
+        clearInterval(updateInterval);
+      }
+    };
+  }, [entryPrice, state]);
   
   // Separate useEffect to call onPriceUpdate after currentPrice changes
   useEffect(() => {
@@ -397,24 +428,17 @@ function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice }: { state
 
   // Generate SVG path from data points for stroke
   const generatePath = (points: number[]) => {
-    if (points.length === 0) return '';
+    if (priceHistory.length === 0) return '';
     const width = 324;
     const height = 180;
-    const xStep = width / (points.length - 1);
+    const xStep = width / (priceHistory.length - 1);
     
-    // Convert data points to prices, then to Y coordinates using the same system as the dot
-    const pointsToPrices = points.map(point => {
-      const basePrice = 96500;
-      const priceVariation = ((point - 100) / 100) * 80;
-      return basePrice + priceVariation;
-    });
-    
-    // Map prices to Y coordinates (same system as current price dot)
+    // Use real price history directly
     const priceRange = maxPrice - minPrice;
     if (priceRange === 0) {
       // Fallback if no range
       let path = `M 0 ${height / 2}`;
-      for (let i = 1; i < points.length; i++) {
+      for (let i = 1; i < priceHistory.length; i++) {
         path += ` L ${i * xStep} ${height / 2}`;
       }
       return path;
@@ -425,10 +449,10 @@ function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice }: { state
       return normalizedPosition * height;
     };
     
-    let path = `M 0 ${priceToY(pointsToPrices[0])}`;
-    for (let i = 1; i < pointsToPrices.length; i++) {
+    let path = `M 0 ${priceToY(priceHistory[0])}`;
+    for (let i = 1; i < priceHistory.length; i++) {
       const x = i * xStep;
-      const y = priceToY(pointsToPrices[i]);
+      const y = priceToY(priceHistory[i]);
       path += ` L ${x} ${y}`;
     }
     return path;
@@ -436,19 +460,12 @@ function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice }: { state
 
   // Generate area path (for gradient fill) - starts from the line and goes down
   const generateAreaPath = (points: number[]) => {
-    if (points.length === 0) return '';
+    if (priceHistory.length === 0) return '';
     const width = 324;
     const height = 180;
-    const xStep = width / (points.length - 1);
+    const xStep = width / (priceHistory.length - 1);
     
-    // Convert data points to prices, then to Y coordinates using the same system as the dot
-    const pointsToPrices = points.map(point => {
-      const basePrice = 96500;
-      const priceVariation = ((point - 100) / 100) * 80;
-      return basePrice + priceVariation;
-    });
-    
-    // Map prices to Y coordinates (same system as current price dot)
+    // Use real price history directly
     const priceRange = maxPrice - minPrice;
     if (priceRange === 0) {
       // Fallback if no range
@@ -461,12 +478,12 @@ function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice }: { state
     };
     
     // Start from the first point on the line
-    let path = `M 0 ${priceToY(pointsToPrices[0])}`;
+    let path = `M 0 ${priceToY(priceHistory[0])}`;
     
     // Draw along the line
-    for (let i = 1; i < pointsToPrices.length; i++) {
+    for (let i = 1; i < priceHistory.length; i++) {
       const x = i * xStep;
-      const y = priceToY(pointsToPrices[i]);
+      const y = priceToY(priceHistory[i]);
       path += ` L ${x} ${y}`;
     }
     
@@ -477,8 +494,8 @@ function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice }: { state
     return path;
   };
 
-  const linePath = generatePath(dataPoints);
-  const areaPath = generateAreaPath(dataPoints);
+  const linePath = generatePath(priceHistory);
+  const areaPath = generateAreaPath(priceHistory);
   
   // Calculate current price Y position based on actual price values (same system as entry price)
   const calculateCurrentPriceYPercent = (): number => {
@@ -678,7 +695,7 @@ function Price({ prices }: { prices: string[] }) {
 
 function Content({ state, onPriceUpdate, direction, entryPrice }: { state: LiveChartState; onPriceUpdate?: (price: number) => void; direction?: 'up' | 'down'; entryPrice?: number }) {
   return (
-    <div className="flex-[1_0_0] min-h-px min-w-px relative w-full h-full" data-name="content">
+    <div className="flex-[1_0_0] min-h-px min-w-px relative w-full h-full pb-[16px]" data-name="content">
       <div className="flex flex-row justify-end size-full">
         <div className="content-stretch flex gap-[9px] items-start justify-end pl-0 pr-[6px] py-0 relative size-full">
           <Chart1AndPrice state={state} onPriceUpdate={onPriceUpdate} direction={direction} entryPrice={entryPrice} />
@@ -714,7 +731,7 @@ function Time() {
   return (
     <div className="relative shrink-0 w-full" data-name="time">
       <div className="flex flex-row items-end size-full">
-        <div className="content-stretch flex font-sans items-end justify-between leading-[0] not-italic pl-0 pr-[40px] py-0 relative text-[10px] text-[rgba(255,255,255,0.7)] w-full">
+        <div className="content-stretch flex font-sans items-end justify-between leading-[0] not-italic pl-0 pr-[6px] py-0 relative text-[10px] text-[rgba(255,255,255,0.7)] w-full">
           {times.map((time, index) => (
             <div key={index} className={`flex flex-col justify-center relative shrink-0 ${index >= 3 ? 'w-[54px]' : 'whitespace-nowrap'}`}>
               <p className={`leading-[20px] ${index >= 3 ? 'whitespace-pre-wrap' : 'whitespace-pre'}`}>{time}</p>
@@ -807,6 +824,16 @@ function Footer({
           from { opacity: 0; transform: translateX(-30px); }
           to { opacity: 1; transform: translateX(0); }
         }
+        @keyframes countdownFlash {
+          0%, 100% {
+            color: rgba(255, 255, 255, 0.72);
+            text-shadow: none;
+          }
+          50% {
+            color: #ff6b6b;
+            text-shadow: 0 0 8px rgba(255, 107, 107, 0.6);
+          }
+        }
       `}</style>
       <div aria-hidden="true" className="absolute border border-[rgba(130,207,255,0.1)] border-solid inset-0 pointer-events-none rounded-[10px]" />
       <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex isolate items-center px-[10px] py-[4px] relative w-full" style={{ justifyContent: state === 'idle' ? 'center' : 'space-between' }}>
@@ -816,7 +843,13 @@ function Footer({
             {state === 'opened' && (
               <Loader2 className="w-4 h-4 text-[rgba(255,255,255,0.72)] animate-spin" />
             )}
-            <div className="flex flex-col font-sans font-medium justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-[rgba(255,255,255,0.72)] text-center whitespace-nowrap">
+            <div 
+              className={`flex flex-col font-sans font-medium justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-center whitespace-nowrap`}
+              style={{
+                color: (state === 'live' && countdown !== undefined && countdown > 6) ? '#ffffff' : undefined,
+                animation: (state === 'live' && countdown !== undefined && countdown <= 6) ? 'countdownFlash 0.8s ease-in-out infinite' : 'none'
+              }}
+            >
               <p className="leading-[20px] whitespace-pre">
                 {getSettleText()}
               </p>
@@ -833,7 +866,7 @@ function Footer({
 
         {/* PnL - Middle (visible only in live state) */}
         {state === 'live' && (
-          <div className="content-stretch flex flex-col h-[21px] items-center justify-center relative shrink-0 z-[2]" data-name="pnl">
+          <div className="content-stretch flex flex-col h-[20px] items-center justify-center relative shrink-0 z-[2]" data-name="pnl">
             <div className="content-stretch flex gap-px items-center relative shrink-0">
               <div className="bg-[rgba(255,255,255,0.2)] content-stretch flex flex-col h-[20px] items-center justify-center px-[4px] py-0 relative rounded-bl-[4px] shrink-0">
                 <div aria-hidden="true" className="absolute border-[rgba(255,255,255,0.2)] border-b-2 border-dashed border-t-2 inset-[-2px_0] pointer-events-none rounded-bl-[4px]" />
@@ -842,9 +875,9 @@ function Footer({
                 </div>
               </div>
               <div 
-                className={`content-stretch flex items-center justify-center px-[4px] py-0 relative rounded-br-[4px] shrink-0 w-[54px] transition-colors duration-300 ${isPositive ? 'bg-[#188b3c]' : 'bg-[#ff3232]'}`}
+                className={`content-stretch flex items-center justify-center px-[4px] py-0 relative rounded-br-[4px] shrink-0 w-[54px] h-[20px] transition-colors duration-300 ${isPositive ? 'bg-[#188b3c]' : 'bg-[#ff3232]'}`}
               >
-                <div aria-hidden="true" className="absolute border border-white/20 border-dashed inset-[-1px] pointer-events-none rounded-br-[5px]" />
+                <div aria-hidden="true" className="absolute border-2 border-white/20 border-dashed inset-[-2px] pointer-events-none rounded-br-[5px]" />
                 <div className="flex flex-col font-sans font-medium justify-center leading-[0] not-italic relative shrink-0 text-[11px] text-white whitespace-nowrap">
                   <p className="leading-[20px] whitespace-pre">{isPositive ? '+' : ''}{pnl.toFixed(2)}</p>
                 </div>
@@ -897,7 +930,7 @@ function Inside({
   return (
     <div className="flex-[1_0_0] min-h-px min-w-px relative rounded-[8px] w-full z-[6] overflow-hidden" data-name="inside" style={{ background: "radial-gradient(131.72% 191.3% at 28.74% -94.84%, #323842 0%, #1F2026 52.33%, #1D1F27 72.1%, #080910 100%)" }}>
       <div className="flex flex-col items-center justify-between rounded-[inherit] size-full">
-        <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col isolate items-center justify-between pl-[8px] pr-[2px] py-[8px] relative size-full gap-[4px]">
+        <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center justify-between pl-[8px] pr-[2px] py-[8px] relative size-full gap-[4px]">
           <FloatingOverlay state={state} direction={direction} showElements={showElements} entryPrice={entryPrice} />
           <Chart state={state} onPriceUpdate={handleInternalPriceUpdate} direction={direction} entryPrice={entryPrice} />
           <div className="absolute bottom-[-100px] flex h-[148px] items-center justify-center left-[calc(50%-1px)] mix-blend-screen translate-x-[-50%] w-[384px] z-[1]">
@@ -1122,18 +1155,33 @@ export default function LiveChartWithStates({
       {/* Win Toast Overlay */}
       {showWinToast && (
         <div className="absolute inset-0 flex items-center justify-center z-[20] pointer-events-none rounded-[12px]">
-          <div 
-            className={`animate-[bounceIn_0.5s_ease-out] px-12 py-6 rounded-2xl shadow-lg border border-white/20 ${finalPnL >= 0 ? 'bg-gradient-to-b from-[#2ddb64] to-[#1fb74f]' : 'bg-gradient-to-b from-[#ff4d4d] to-[#cc0000]'}`}
-          >
-            <div className="text-white text-center">
-              <div className="text-5xl font-bold mb-2 drop-shadow-lg font-sans">
-                {finalPnL >= 0 ? 'WIN!' : 'LOSS'}
-              </div>
-              <div className="text-2xl font-semibold font-sans">
-                {finalPnL >= 0 ? `+${finalPnL.toFixed(2)}` : finalPnL.toFixed(2)}
+          {finalPnL >= 0 ? (
+            // WIN: Keep original large design
+            <div 
+              className="animate-[bounceIn_0.5s_ease-out] px-12 py-6 rounded-2xl shadow-lg border border-white/20 bg-gradient-to-b from-[#2ddb64] to-[#1fb74f]"
+            >
+              <div className="text-white text-center">
+                <div className="text-5xl font-bold mb-2 drop-shadow-lg font-sans">
+                  WIN!
+                </div>
+                <div className="text-2xl font-semibold font-sans">
+                  +{finalPnL.toFixed(2)}
+                </div>
               </div>
             </div>
-          </div>
+          ) : (
+            // LOSS: Compact single-row design (48px height, hug content width)
+            <div 
+              className="animate-[bounceIn_0.5s_ease-out] h-[48px] px-6 rounded-2xl shadow-lg border border-white/20 bg-gradient-to-b from-[#ff4d4d] to-[#cc0000] flex items-center gap-4"
+            >
+              <div className="text-white text-lg font-bold drop-shadow-lg font-sans whitespace-nowrap">
+                LOSS
+              </div>
+              <div className="text-white text-lg font-semibold font-sans whitespace-nowrap">
+                {finalPnL.toFixed(2)}
+              </div>
+            </div>
+          )}
         </div>
       )}
       

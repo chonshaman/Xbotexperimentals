@@ -87,6 +87,24 @@
   overflow: clip;
   border-radius: inherit;
   width: 100%;
+  /* Checkered pattern background */
+  background-image: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 20px,
+      rgba(255, 255, 255, 0.02) 20px,
+      rgba(255, 255, 255, 0.02) 40px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 20px,
+      rgba(255, 255, 255, 0.02) 20px,
+      rgba(255, 255, 255, 0.02) 40px
+    );
+  background-size: 20px 20px;
+  background-position: 0 0;
 }
 
 .history-grid-border {
@@ -131,6 +149,34 @@
   background: linear-gradient(to bottom, rgba(255, 66, 66, 0) 0%, rgba(255, 66, 66, 0.12) 100%);
 }
 
+/* Flash animation for new results */
+.history-dot-wrapper.flash {
+  animation: historyFlash 0.6s ease-in-out;
+}
+
+@keyframes historyFlash {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  25% {
+    transform: scale(1.3);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  75% {
+    transform: scale(1.2);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 /* Empty Dot */
 .history-dot-empty {
   position: relative;
@@ -138,6 +184,51 @@
   height: 20px;
   flex-shrink: 0;
   background: rgba(163, 163, 163, 0.1);
+  z-index: 1;
+}
+
+.history-dot-empty-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+
+.history-dot-empty-bg {
+  border-radius: 36px;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+}
+
+.history-dot-empty-border {
+  position: absolute;
+  inset: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  border-left: 1px solid rgba(255, 255, 255, 0.04);
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Flashing animation for next cell during live trading */
+.history-dot-empty.flashing {
+  animation: emptyFlashing 0.8s ease-in-out infinite;
+  z-index: 10;
+}
+
+@keyframes emptyFlashing {
+  0%, 100% {
+    background: rgba(163, 163, 163, 0.1);
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+  }
+  50% {
+    background: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.8), inset 0 0 8px rgba(255, 255, 255, 0.6);
+  }
 }
 
 /* Dot Inner Container */
@@ -270,6 +361,10 @@
   .history-panel {
     padding: 7px 5px 5px;
   }
+  
+  .history-grid {
+    background-size: 18px 18px;
+  }
 }
 
 @media (max-width: 340px) {
@@ -306,6 +401,10 @@
   .history-legend {
     gap: 5px;
   }
+  
+  .history-grid {
+    background-size: 16px 16px;
+  }
 }
 
 @media (max-width: 320px) {
@@ -329,5 +428,9 @@
   
   .history-header {
     font-size: 11px;
+  }
+  
+  .history-grid {
+    background-size: 14px 14px;
   }
 }
