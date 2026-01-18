@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, memo } from 'react';
 import './ButtonRedCSS.css';
 
 type ButtonRedState = 'default' | 'entry-locked' | 'disabled';
@@ -162,6 +162,7 @@ export default function ButtonRed({ state = 'default', onClick }: ButtonRedProps
       onTouchEnd={handlePressEnd}
       onTouchCancel={handlePressEnd}
       onClick={onClick}
+      style={{ transform: 'translateZ(0)', willChange: isPressed || state === 'entry-locked' ? 'transform' : 'auto' }}
     >
       <div className="red-metallic-border">
         <div className="red-dark-bg">

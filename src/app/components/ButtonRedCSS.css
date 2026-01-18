@@ -10,6 +10,90 @@
   }
 }
 
+/* Morphing bounce animation for entry-locked */
+@keyframes redMorphBounce {
+  0%, 100% {
+    transform: scale(1.1136) translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: scale(1.25) translateY(-4px) rotate(-3deg);
+  }
+  50% {
+    transform: scale(1.08) translateY(2px) rotate(2deg);
+  }
+  75% {
+    transform: scale(1.18) translateY(-2px) rotate(-1deg);
+  }
+}
+
+/* Bomb wiggle and pulse for entry-locked */
+@keyframes bombWigglePulse {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  10% {
+    transform: rotate(12deg) scale(1.08);
+    opacity: 0.9;
+  }
+  20% {
+    transform: rotate(-12deg) scale(0.92);
+    opacity: 1;
+  }
+  30% {
+    transform: rotate(10deg) scale(1.12);
+    opacity: 0.85;
+  }
+  40% {
+    transform: rotate(-10deg) scale(0.88);
+    opacity: 1;
+  }
+  50% {
+    transform: rotate(8deg) scale(1.15);
+    opacity: 0.9;
+  }
+  60% {
+    transform: rotate(-8deg) scale(0.85);
+    opacity: 1;
+  }
+  70% {
+    transform: rotate(5deg) scale(1.1);
+    opacity: 0.95;
+  }
+  80% {
+    transform: rotate(-5deg) scale(0.9);
+    opacity: 1;
+  }
+  90% {
+    transform: rotate(2deg) scale(1.05);
+    opacity: 0.98;
+  }
+}
+
+/* Sparkle morphing for entry-locked */
+@keyframes sparkleEntryMorph {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  20% {
+    transform: scale(1.5) rotate(45deg);
+    opacity: 0.7;
+  }
+  40% {
+    transform: scale(0.6) rotate(90deg);
+    opacity: 1;
+  }
+  60% {
+    transform: scale(1.6) rotate(135deg);
+    opacity: 0.6;
+  }
+  80% {
+    transform: scale(0.7) rotate(180deg);
+    opacity: 0.95;
+  }
+}
+
 /* Sweep effect for entry-locked state */
 @keyframes sweepGradientRed {
   0% {
@@ -641,7 +725,7 @@
 
 /* Icon scale on entry-locked */
 .button-red.state-entry-locked .red-icon {
-  transform: scale(1.1136); /* 0.928 * 1.2 */
+  animation: redMorphBounce 1.6s ease-in-out infinite;
 }
 
 /* Apply animations only in default state */
@@ -773,56 +857,56 @@
 
 /* Apply bomb animations in entry-locked state */
 .button-red.state-entry-locked .red-icon svg g[id^="redicon"] path:nth-child(1) {
-  animation: sparkle1 1.2s ease-in-out infinite;
+  animation: sparkleEntryMorph 0.6s ease-in-out infinite;
   transform-origin: center;
   transform-box: fill-box;
 }
 
 .button-red.state-entry-locked .red-icon svg g[id^="redicon"] path:nth-child(2) {
-  animation: sparkle2 1.5s ease-in-out infinite;
+  animation: sparkleEntryMorph 0.7s ease-in-out infinite reverse;
   transform-origin: center;
   transform-box: fill-box;
 }
 
 .button-red.state-entry-locked .red-icon svg g[id^="redicon"] path:nth-child(3) {
-  animation: sparkle3 1s ease-in-out infinite;
+  animation: sparkleEntryMorph 0.5s ease-in-out infinite;
   transform-origin: center;
   transform-box: fill-box;
 }
 
 .button-red.state-entry-locked .red-icon svg g[id^="redicon"] path:nth-child(4) {
-  animation: sparkle1 1.4s ease-in-out infinite reverse;
+  animation: sparkleEntryMorph 0.8s ease-in-out infinite reverse;
   transform-origin: center;
   transform-box: fill-box;
 }
 
 .button-red.state-entry-locked .red-icon svg g[id^="redicon"] path:nth-child(5) {
-  animation: sparkle2 1.7s ease-in-out infinite reverse;
+  animation: sparkleEntryMorph 0.55s ease-in-out infinite;
   transform-origin: center;
   transform-box: fill-box;
 }
 
 .button-red.state-entry-locked .red-icon svg g[id^="redicon"] path:nth-child(6) {
-  animation: wickSway 2s ease-in-out infinite;
+  animation: wickSway 1.5s ease-in-out infinite;
   transform-origin: bottom center;
   transform-box: fill-box;
 }
 
 .button-red.state-entry-locked .red-icon svg g[id^="redicon"] path:nth-child(7) {
-  animation: bombBodyBreathe 3s ease-in-out infinite;
+  animation: bombWigglePulse 1.4s ease-in-out infinite;
   transform-origin: center;
   transform-box: fill-box;
 }
 
 .button-red.state-entry-locked .red-icon svg g[id^="redicon"] ellipse:nth-child(8),
 .button-red.state-entry-locked .red-icon svg g[id^="redicon"] ellipse:nth-child(9) {
-  animation: eyeBlinkFluid 4s ease-in-out infinite;
+  animation: eyeBlinkFluid 2s ease-in-out infinite;
   transform-origin: center;
   transform-box: fill-box;
 }
 
 .button-red.state-entry-locked .red-icon svg g[id^="redicon"] path:nth-child(10) {
-  animation: mouthWiggleSmooth 2s ease-in-out infinite;
+  animation: mouthWiggleSmooth 1.5s ease-in-out infinite;
   transform-origin: center;
   transform-box: fill-box;
 }

@@ -127,7 +127,7 @@ function LiveIndicator({
   yMin: number;
   yMax: number;
 }) {
-  if (!entryPriceValue || !yMin || !yMax) return null;
+  if (!entryPriceValue || !yMin || !yMax || yMin === yMax) return null;
   
   // Clamp entry price to visible range
   const entryClamped = Math.max(yMin, Math.min(yMax, entryPriceValue));
@@ -154,11 +154,11 @@ function LiveIndicator({
   // Convert price ranges to Y coordinates (SVG: 0 = top, 180 = bottom)
   const profitYStart = ((yMax - profitRange[1]) / (yMax - yMin)) * 180;
   const profitYEnd = ((yMax - profitRange[0]) / (yMax - yMin)) * 180;
-  const profitHeight = profitYEnd - profitYStart;
+  const profitHeight = Math.max(0, profitYEnd - profitYStart);
   
   const lossYStart = ((yMax - lossRange[1]) / (yMax - yMin)) * 180;
   const lossYEnd = ((yMax - lossRange[0]) / (yMax - yMin)) * 180;
-  const lossHeight = lossYEnd - lossYStart;
+  const lossHeight = Math.max(0, lossYEnd - lossYStart);
   
   // Format price with comma separator and 2 decimals
   const formatPrice = (price: number) => {

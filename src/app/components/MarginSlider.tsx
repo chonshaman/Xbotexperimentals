@@ -1,11 +1,11 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback, memo } from 'react';
 
 interface MarginSliderProps {
   value: number;
   onChange: (value: number) => void;
 }
 
-export default function MarginSlider({ value, onChange }: MarginSliderProps) {
+function MarginSlider({ value, onChange }: MarginSliderProps) {
   const marginOptions = [10, 20, 50, 100, 500];
   const [selectedIndex, setSelectedIndex] = useState(3); // Default to 100
   const [animationKey, setAnimationKey] = useState(0); // Key to trigger re-animation
@@ -31,7 +31,7 @@ export default function MarginSlider({ value, onChange }: MarginSliderProps) {
     setAnimationKey(prev => prev + 1); // Trigger animation on value change
   }, [selectedIndex]); // Removed onChange from dependencies
 
-  const updateSliderFromPosition = (clientX: number) => {
+  const updateSliderFromPosition = useCallback((clientX: number) => {
     if (!sliderRef.current) return;
     
     const rect = sliderRef.current.getBoundingClientRect();
@@ -41,41 +41,41 @@ export default function MarginSlider({ value, onChange }: MarginSliderProps) {
     // Map percentage to index (0-100% -> 0-4 index)
     const newIndex = Math.round((percentage / 100) * (marginOptions.length - 1));
     setSelectedIndex(newIndex);
-  };
+  }, []);
 
-  const handleTapOnNumber = (index: number) => {
+  const handleTapOnNumber = useCallback((index: number) => {
     setSelectedIndex(index);
-  };
+  }, []);
 
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
     isDragging.current = true;
     updateSliderFromPosition(e.clientX);
-  };
+  }, [updateSliderFromPosition]);
 
-  const handleMouseMove = (e: MouseEvent) => {
+  const handleMouseMove = useCallback((e: MouseEvent) => {
     if (isDragging.current) {
       updateSliderFromPosition(e.clientX);
     }
-  };
+  }, [updateSliderFromPosition]);
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     isDragging.current = false;
-  };
+  }, []);
 
-  const handleTouchStart = (e: React.TouchEvent) => {
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
     isDragging.current = true;
     updateSliderFromPosition(e.touches[0].clientX);
-  };
+  }, [updateSliderFromPosition]);
 
-  const handleTouchMove = (e: TouchEvent) => {
+  const handleTouchMove = useCallback((e: TouchEvent) => {
     if (isDragging.current && e.touches[0]) {
       updateSliderFromPosition(e.touches[0].clientX);
     }
-  };
+  }, [updateSliderFromPosition]);
 
-  const handleTouchEnd = () => {
+  const handleTouchEnd = useCallback(() => {
     isDragging.current = false;
-  };
+  }, []);
 
   useEffect(() => {
     document.addEventListener('mousemove', handleMouseMove);
@@ -89,7 +89,7 @@ export default function MarginSlider({ value, onChange }: MarginSliderProps) {
       document.removeEventListener('touchmove', handleTouchMove);
       document.removeEventListener('touchend', handleTouchEnd);
     };
-  }, []);
+  }, [handleMouseMove, handleMouseUp, handleTouchMove, handleTouchEnd]);
 
   // Calculate progress width percentage (0-4 index -> 0-100%)
   const progressWidth = (selectedIndex / (marginOptions.length - 1)) * 100;
@@ -106,6 +106,8 @@ export default function MarginSlider({ value, onChange }: MarginSliderProps) {
           className="label-value"
           style={{
             animation: `slideUpDown${animationDirection} 0.3s ease-in-out`,
+            willChange: 'transform',
+            transform: 'translateZ(0)'
           }}
         >
           {marginOptions[selectedIndex]} USDT
@@ -218,3 +220,5 @@ export default function MarginSlider({ value, onChange }: MarginSliderProps) {
     </div>
   );
 }
+
+export default memo(MarginSlider);

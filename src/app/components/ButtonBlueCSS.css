@@ -10,6 +10,90 @@
   }
 }
 
+/* Morphing bounce animation for entry-locked */
+@keyframes blueMorphBounce {
+  0%, 100% {
+    transform: scale(0.9331) translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: scale(1.05) translateY(-4px) rotate(3deg);
+  }
+  50% {
+    transform: scale(0.95) translateY(2px) rotate(-2deg);
+  }
+  75% {
+    transform: scale(1.02) translateY(-2px) rotate(1deg);
+  }
+}
+
+/* Rocket wiggle and pulse for entry-locked */
+@keyframes rocketWigglePulse {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  10% {
+    transform: rotate(-8deg) scale(1.05);
+    opacity: 0.9;
+  }
+  20% {
+    transform: rotate(8deg) scale(0.95);
+    opacity: 1;
+  }
+  30% {
+    transform: rotate(-6deg) scale(1.08);
+    opacity: 0.85;
+  }
+  40% {
+    transform: rotate(6deg) scale(0.92);
+    opacity: 1;
+  }
+  50% {
+    transform: rotate(-4deg) scale(1.1);
+    opacity: 0.9;
+  }
+  60% {
+    transform: rotate(4deg) scale(0.9);
+    opacity: 1;
+  }
+  70% {
+    transform: rotate(-2deg) scale(1.05);
+    opacity: 0.95;
+  }
+  80% {
+    transform: rotate(2deg) scale(0.95);
+    opacity: 1;
+  }
+  90% {
+    transform: rotate(-1deg) scale(1.02);
+    opacity: 0.98;
+  }
+}
+
+/* Flame morphing for entry-locked */
+@keyframes flameEntryMorph {
+  0%, 100% {
+    transform: scaleY(1) scaleX(1);
+    opacity: 1;
+  }
+  20% {
+    transform: scaleY(1.3) scaleX(0.8);
+    opacity: 0.8;
+  }
+  40% {
+    transform: scaleY(0.7) scaleX(1.2);
+    opacity: 1;
+  }
+  60% {
+    transform: scaleY(1.4) scaleX(0.85);
+    opacity: 0.7;
+  }
+  80% {
+    transform: scaleY(0.8) scaleX(1.15);
+    opacity: 0.95;
+  }
+}
+
 /* Sweep effect for entry-locked state */
 @keyframes sweepGradient {
   0% {
@@ -610,7 +694,7 @@
 
 /* Icon scale on entry-locked */
 .button-blue.state-entry-locked .blue-icon {
-  transform: scale(0.9331); /* 0.7776 * 1.2 */
+  animation: blueMorphBounce 1.8s ease-in-out infinite;
 }
 
 /* Apply animations in default state */
@@ -692,31 +776,31 @@
 
 /* Apply rocket animations in entry-locked state */
 .button-blue.state-entry-locked .blue-icon svg g[id^="blueicon"] path:nth-child(1) {
-  animation: rocketFlameBottom 0.6s ease-in-out infinite;
+  animation: flameEntryMorph 0.4s ease-in-out infinite;
   transform-origin: center;
   transform-box: fill-box;
 }
 
 .button-blue.state-entry-locked .blue-icon svg g[id^="blueicon"] path:nth-child(2) {
-  animation: rocketFlameLeft 0.8s ease-in-out infinite;
+  animation: flameEntryMorph 0.5s ease-in-out infinite reverse;
   transform-origin: center;
   transform-box: fill-box;
 }
 
 .button-blue.state-entry-locked .blue-icon svg g[id^="blueicon"] path:nth-child(3) {
-  animation: rocketBodyFloat 4s ease-in-out infinite;
+  animation: rocketWigglePulse 1.2s ease-in-out infinite;
   transform-origin: center;
   transform-box: fill-box;
 }
 
 .button-blue.state-entry-locked .blue-icon svg g[id^="blueicon"] ellipse {
-  animation: rocketWindowGlow 2s ease-in-out infinite;
+  animation: rocketWindowGlow 0.8s ease-in-out infinite;
   transform-origin: center;
   transform-box: fill-box;
 }
 
 .button-blue.state-entry-locked .blue-icon svg g[id^="blueicon"] path:nth-child(5) {
-  animation: rocketFlameTail 0.7s ease-in-out infinite;
+  animation: flameEntryMorph 0.35s ease-in-out infinite;
   transform-origin: center;
   transform-box: fill-box;
 }

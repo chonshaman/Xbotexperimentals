@@ -1,7 +1,8 @@
+import { memo } from 'react';
 import './TradingPanelCSS.css';
 import MarginSlider from './MarginSlider';
 
-export default function TradingPanel({ value, onChange }: { value: number; onChange: (val: number) => void }) {
+function TradingPanel({ value, onChange }: { value: number; onChange: (val: number) => void }) {
   return (
     <div className="trading-panel">
       {/* Yellow Container */}
@@ -16,3 +17,5 @@ export default function TradingPanel({ value, onChange }: { value: number; onCha
     </div>
   );
 }
+
+export default memo(TradingPanel);

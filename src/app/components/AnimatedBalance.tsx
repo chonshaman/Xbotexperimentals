@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, memo } from 'react';
 
 interface AnimatedBalanceProps {
   balance: number;
@@ -6,7 +6,7 @@ interface AnimatedBalanceProps {
   showCurrency?: boolean;
 }
 
-export default function AnimatedBalance({ balance, className = '', showCurrency = true }: AnimatedBalanceProps) {
+function AnimatedBalance({ balance, className = '', showCurrency = true }: AnimatedBalanceProps) {
   const [displayBalance, setDisplayBalance] = useState(balance);
   const [animationKey, setAnimationKey] = useState(0);
   const [animationDirection, setAnimationDirection] = useState<'up' | 'down' | null>(null);
@@ -50,10 +50,13 @@ export default function AnimatedBalance({ balance, className = '', showCurrency 
         animation: animationDirection 
           ? `balanceSlide${animationDirection === 'up' ? 'Up' : 'Down'} 0.3s ease-in-out`
           : 'none',
-        // Always keep gold color, just flash with animation
+        willChange: animationDirection ? 'transform, opacity' : 'auto',
+        transform: 'translateZ(0)'
       }}
     >
       {formatBalance(displayBalance)}{showCurrency ? ' USDT' : ''}
     </span>
   );
 }
+
+export default memo(AnimatedBalance);

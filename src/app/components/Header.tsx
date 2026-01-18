@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import './HeaderCSS.css';
 import AnimatedBalance from './AnimatedBalance';
 
@@ -8,7 +8,7 @@ interface HeaderProps {
   balance: number;
 }
 
-export default function Header({ timeMode, onTimeModeChange, balance }: HeaderProps) {
+function Header({ timeMode, onTimeModeChange, balance }: HeaderProps) {
   const [martingaleEnabled, setMartingaleEnabled] = useState(true);
 
   return (
@@ -37,10 +37,11 @@ export default function Header({ timeMode, onTimeModeChange, balance }: HeaderPr
             <div 
               className="time-toggle-slider"
               style={{
-                transform: timeMode === '30s' ? 'translateX(0px)' : 
-                          timeMode === '60s' ? 'translateX(28px)' : 
-                          'translateX(55px)',
-                width: timeMode === 'price' ? '28px' : '28px'
+                transform: timeMode === '30s' ? 'translate3d(0px, 0, 0)' : 
+                          timeMode === '60s' ? 'translate3d(28px, 0, 0)' : 
+                          'translate3d(55px, 0, 0)',
+                width: timeMode === 'price' ? '28px' : '28px',
+                willChange: 'transform'
               }}
             />
             <button 
@@ -97,3 +98,5 @@ export default function Header({ timeMode, onTimeModeChange, balance }: HeaderPr
     </div>
   );
 }
+
+export default memo(Header);

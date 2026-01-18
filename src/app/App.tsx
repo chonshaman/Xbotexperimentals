@@ -197,7 +197,7 @@ export default function App() {
         <div 
           className="flex-1 flex flex-col px-[14px] pb-[14px] pt-[14px] min-h-0 transition-all duration-300 ease-in-out overflow-x-hidden"
           style={{ 
-            gap: chartState === 'idle' ? '14px' : '11px' 
+            gap: chartState === 'idle' ? '14px' : '6px' 
           }}
         >
           
@@ -206,7 +206,7 @@ export default function App() {
             className="w-full transition-all duration-300 ease-in-out"
             style={{
               minHeight: '256px',
-              flex: chartState === 'live' ? '1' : '0 0 256px'
+              flex: chartState === 'live' ? '1 1 auto' : '0 0 256px'
             }}
           >
             <LiveChartWithStates 
