@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import svgPaths from "./svg-8we49uz6px";
+import svgPaths from "@/imports/svg-8we49uz6px";
 import { Loader2 } from 'lucide-react';
 
 export type LiveChartState = 'idle' | 'opened' | 'live';
@@ -551,13 +551,13 @@ function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice }: { state
   };
 
   const getGlowStdDeviation = () => {
-    return state === 'live' ? '6' : '4';
+    return state === 'live' ? '24' : '16';
   };
 
   const getGlowColorMatrix = () => {
     return state === 'live'
-      ? "0 0 0 0 0.6863 0 0 0 0 0.8431 0 0 0 0 0.4824 0 0 0 1 0" // #AFD77B
-      : "0 0 0 0 0.282353 0 0 0 0 0.745098 0 0 0 0 0.898039 0 0 0 1 0"; // #48BEE5
+      ? "0 0 0 0 0.6863 0 0 0 0 0.8431 0 0 0 0 0.4824 0 0 0 0.8 0" // #AFD77B with 80% opacity
+      : "0 0 0 0 0.282353 0 0 0 0 0.745098 0 0 0 0 0.898039 0 0 0 0.8 0"; // #48BEE5 with 80% opacity
   };
 
   return (
@@ -809,11 +809,13 @@ function Footer({
   const pnl = calculatePnL();
   const isPositive = pnl >= 0;
 
+  const backgroundImageStyle = "url('data:image/svg+xml;utf8,<svg viewBox=\"0 0 376 28\" xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"none\"><rect x=\"0\" y=\"0\" height=\"100%\" width=\"100%\" fill=\"url(%23grad)\" opacity=\"0.6000000238418579\"/><defs><radialGradient id=\"grad\" gradientUnits=\"userSpaceOnUse\" cx=\"0\" cy=\"0\" r=\"10\" gradientTransform=\"matrix(16.035 4.6542e-15 8.0454e-12 0.039007 170.49 0.73684)\"><stop stop-color=\"rgba(160,230,246,1)\" offset=\"0\"/><stop stop-color=\"rgba(160,230,246,1)\" offset=\"0.22115\"/><stop stop-color=\"rgba(160,230,246,0)\" offset=\"1\"/></radialGradient></defs></svg>'), url('data:image/svg+xml;utf8,<svg viewBox=\"0 0 376 28\" xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"none\"><rect x=\"0\" y=\"0\" height=\"100%\" width=\"100%\" fill=\"url(%23grad)\" opacity=\"0.6000000238418579\"/><defs><radialGradient id=\"grad\" gradientUnits=\"userSpaceOnUse\" cx=\"0\" cy=\"0\" r=\"10\" gradientTransform=\"matrix(14.837 1.3021e-15 1.648e-12 0.02123 178.78 26.526)\"><stop stop-color=\"rgba(160,230,246,1)\" offset=\"0\"/><stop stop-color=\"rgba(160,230,246,1)\" offset=\"0.22115\"/><stop stop-color=\"rgba(160,230,246,0)\" offset=\"1\"/></radialGradient></defs></svg>'), linear-gradient(1.0372e-07deg, rgb(12, 8, 17) 37.778%, rgb(41, 45, 52) 100%)";
+
   return (
     <div 
       className={`relative rounded-[10px] shrink-0 w-full z-[0] transition-all duration-500 ease-out translate-y-0 opacity-100`}
       data-name="footer" 
-      style={{ backgroundImage: "url('data:image/svg+xml;utf8,<svg viewBox=\\'0 0 376 28\\' xmlns=\\'http://www.w3.org/2000/svg\\' preserveAspectRatio=\\'none\\'><rect x=\\'0\\' y=\\'0\\' height=\\'100%\\' width=\\'100%\\' fill=\\'url(%23grad)\\' opacity=\\'0.6000000238418579\\'/><defs><radialGradient id=\\'grad\\' gradientUnits=\\'userSpaceOnUse\\' cx=\\'0\\' cy=\\'0\\' r=\\'10\\' gradientTransform=\\'matrix(16.035 4.6542e-15 8.0454e-12 0.039007 170.49 0.73684)\\'><stop stop-color=\\'rgba(160,230,246,1)\\' offset=\\'0\\'/><stop stop-color=\\'rgba(160,230,246,1)\\' offset=\\'0.22115\\'/><stop stop-color=\\'rgba(160,230,246,0)\\' offset=\\'1\\'/></radialGradient></defs></svg>'), url('data:image/svg+xml;utf8,<svg viewBox=\\'0 0 376 28\\' xmlns=\\'http://www.w3.org/2000/svg\\' preserveAspectRatio=\\'none\\'><rect x=\\'0\\' y=\\'0\\' height=\\'100%\\' width=\\'100%\\' fill=\\'url(%23grad)\\' opacity=\\'0.6000000238418579\\'/><defs><radialGradient id=\\'grad\\' gradientUnits=\\'userSpaceOnUse\\' cx=\\'0\\' cy=\\'0\\' r=\\'10\\' gradientTransform=\\'matrix(14.837 1.3021e-15 1.648e-12 0.02123 178.78 26.526)\\'><stop stop-color=\\'rgba(160,230,246,1)\\' offset=\\'0\\'/><stop stop-color=\\'rgba(160,230,246,1)\\' offset=\\'0.22115\\'/><stop stop-color=\\'rgba(160,230,246,0)\\' offset=\\'1\\'/></radialGradient></defs></svg>'), linear-gradient(1.0372e-07deg, rgb(12, 8, 17) 37.778%, rgb(41, 45, 52) 100%)" }}
+      style={{ backgroundImage: backgroundImageStyle }}
     >
       <style>{`
         @keyframes footerSlideLeft {
@@ -1181,8 +1183,7 @@ export default function LiveChartWithStates({
                 {finalPnL.toFixed(2)}
               </div>
             </div>
-          )}
-        </div>
+          )}</div>
       )}
       
       <Title currentPrice={currentPrice} entryPrice={entryPrice} />

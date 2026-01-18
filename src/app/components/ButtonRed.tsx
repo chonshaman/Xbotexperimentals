@@ -115,7 +115,7 @@ function BombMainLayer() {
   );
 }
 
-export default function ButtonRed({ state = 'default', onClick }: ButtonRedProps) {
+export default memo(function ButtonRed({ state = 'default', onClick }: ButtonRedProps) {
   const [isPressed, setIsPressed] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const pressStartTimeRef = useRef<number>(0);
@@ -213,4 +213,4 @@ export default function ButtonRed({ state = 'default', onClick }: ButtonRedProps
       </div>
     </div>
   );
-}
+});

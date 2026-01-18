@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import ButtonBlue from './ButtonBlue';
 import ButtonRed from './ButtonRed';
-import LiveChartWithStates from '@/imports/LiveChartWithStates';
+import LiveChartWithStates from '@/app/components/LiveChartWithStates';
 import TradingPanel from './TradingPanel';
 
 type ButtonState = 'default' | 'entry-locked' | 'disabled';

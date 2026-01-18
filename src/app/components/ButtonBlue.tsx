@@ -90,7 +90,7 @@ function RocketMainLayer() {
   );
 }
 
-export default function ButtonBlue({ state = 'default', onClick, active }: ButtonBlueProps) {
+export default memo(function ButtonBlue({ state = 'default', onClick, active }: ButtonBlueProps) {
   const [isPressed, setIsPressed] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const pressStartTimeRef = useRef<number>(0);
@@ -188,4 +188,4 @@ export default function ButtonBlue({ state = 'default', onClick, active }: Butto
       </div>
     </div>
   );
-}
+});
