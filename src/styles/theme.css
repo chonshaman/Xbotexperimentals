@@ -127,10 +127,17 @@
   html,
   body {
     @apply overflow-x-hidden;
+    /* Mobile: Use dynamic viewport height */
+    height: 100%;
+    height: 100dvh; /* Dynamic viewport height for mobile browsers */
   }
 
   body {
     @apply bg-background text-foreground;
+  }
+
+  #root {
+    height: 100%;
   }
 
   /**
