@@ -795,20 +795,23 @@ function Footer({
   const calculatePnL = () => {
     if (!entryPrice || !currentPrice || !direction || countdown === undefined) return 0;
     
-    const sigma = 0.0001; 
+    // ✅ Use same logic as final settlement for consistency
+    const payoutMultiplier = 1.95;
     const stake = betAmount;
-    const payoutMultiplier = 1.95; 
     const netProfit = stake * (payoutMultiplier - 1);
-    const t = Math.max(1, countdown);
     
-    const priceDiff = currentPrice - entryPrice;
-    const z = priceDiff / (entryPrice * sigma * Math.sqrt(t));
+    // Determine if current price would result in win
+    const isUp = direction === 'up';
+    const wouldWin = isUp ? (currentPrice > entryPrice) : (currentPrice < entryPrice);
     
-    const k = direction === 'up' ? z : -z;
-    const pWin = 1 / (1 + Math.exp(-1.702 * k));
-    
-    const ev = (pWin * netProfit) - ((1 - pWin) * stake);
-    return ev;
+    // Calculate actual PnL based on current position
+    if (wouldWin) {
+      // Currently winning: show potential profit
+      return netProfit;
+    } else {
+      // Currently losing: show potential loss
+      return -stake;
+    }
   };
 
   const pnl = calculatePnL();

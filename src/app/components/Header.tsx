@@ -17,7 +17,7 @@ function Header({ timeMode, onTimeModeChange, balance, showBalanceConfetti = fal
       {/* Balance Section */}
       <div className="balance-section">
         <div className="balance-border-wrapper">
-          <div className="balance-content" style={{ position: 'relative' }}>
+          <div className="balance-content" style={{ position: 'relative', overflow: 'hidden' }}>
             <span className="balance-label">BALANCE</span>
             <AnimatedBalance balance={balance} className="balance-value" />
             

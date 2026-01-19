@@ -139,8 +139,6 @@ export default function App() {
         if (win) {
           // Win: Add bet amount back + profit (balance was already deducted)
           setBalance(prev => prev + betAmount + netProfit);
-          setShowBalanceConfetti(true);
-          setTimeout(() => setShowBalanceConfetti(false), 3000);
         }
         // Lose: Balance already deducted, no additional change needed
         
@@ -167,6 +165,12 @@ export default function App() {
           
           // ✅ Flash the settled result 5 times after toast disappears
           historyRef.current?.flashLastResult();
+          
+          // ✅ Show confetti AFTER win toast disappears (only for wins)
+          if (win) {
+            setShowBalanceConfetti(true);
+            setTimeout(() => setShowBalanceConfetti(false), 3000);
+          }
           
           setChartState('idle');
           setShowTradingPanel(true);
