@@ -230,7 +230,7 @@ export default function App() {
               opacity: showTradingPanel ? 1 : 0
             }}
           >
-            <TradingPanel value={betAmount} onChange={setBetAmount} />
+            <TradingPanel value={betAmount} onChange={setBetAmount} balance={balance} />
           </div>
 
           {/* Button Container - Two Buttons Side by Side */}

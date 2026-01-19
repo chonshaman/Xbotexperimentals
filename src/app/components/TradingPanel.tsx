@@ -2,7 +2,7 @@ import { memo } from 'react';
 import './TradingPanelCSS.css';
 import MarginSlider from './MarginSlider';
 
-function TradingPanel({ value, onChange }: { value: number; onChange: (val: number) => void }) {
+function TradingPanel({ value, onChange, balance }: { value: number; onChange: (val: number) => void; balance?: number }) {
   return (
     <div className="trading-panel">
       {/* Yellow Container */}
@@ -10,7 +10,7 @@ function TradingPanel({ value, onChange }: { value: number; onChange: (val: numb
         <div className="trading-panel-yellow-inner">
           
           {/* Slider Section */}
-          <MarginSlider value={value} onChange={onChange} />
+          <MarginSlider value={value} onChange={onChange} balance={balance} />
 
         </div>
       </div>

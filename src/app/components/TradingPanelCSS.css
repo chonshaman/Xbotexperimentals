@@ -62,7 +62,7 @@
   background: linear-gradient(180deg, #F9CA02 0%, #DDB300 100%);
   margin: 6px;
   border-radius: 8px;
-  padding: 16px 12px;
+  padding: 10px 12px;
   box-shadow: inset 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
   z-index: 1;
   display: flex;
@@ -78,7 +78,8 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
+  padding-bottom: 16px;
 }
 
 .trading-panel-slider-label {

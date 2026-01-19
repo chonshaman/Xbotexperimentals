@@ -3,10 +3,11 @@ import { useState, useRef, useEffect, useCallback, memo } from 'react';
 interface MarginSliderProps {
   value: number;
   onChange: (value: number) => void;
+  balance?: number; // Add balance prop
 }
 
-function MarginSlider({ value, onChange }: MarginSliderProps) {
-  const marginOptions = [10, 20, 50, 100, 500];
+function MarginSlider({ value, onChange, balance = 10000 }: MarginSliderProps) {
+  const marginOptions = [10, 20, 50, 100, 500, balance]; // Add balance as 6th option (Max)
   const [selectedIndex, setSelectedIndex] = useState(3); // Default to 100
   const [animationKey, setAnimationKey] = useState(0); // Key to trigger re-animation
   const [animationDirection, setAnimationDirection] = useState<'up' | 'down'>('up');
@@ -29,7 +30,7 @@ function MarginSlider({ value, onChange }: MarginSliderProps) {
     
     prevIndexRef.current = selectedIndex;
     setAnimationKey(prev => prev + 1); // Trigger animation on value change
-  }, [selectedIndex]); // Removed onChange from dependencies
+  }, [selectedIndex, balance]); // Add balance to dependencies
 
   const updateSliderFromPosition = useCallback((clientX: number) => {
     if (!sliderRef.current) return;
@@ -116,6 +117,29 @@ function MarginSlider({ value, onChange }: MarginSliderProps) {
       
       {/* Slider Container */}
       <div className="relative w-full">
+        {/* Number Labels Container - Now at the top for positioning reference */}
+        <div className="absolute bottom-[-24px] left-0 right-0 w-full max-[340px]:bottom-[-22px]">
+          <div className="flex items-start justify-between w-full">
+            {marginOptions.map((option, index) => {
+              // Show "Max" for the last option (balance)
+              const displayText = index === marginOptions.length - 1 ? 'Max' : option;
+              
+              return (
+                <div 
+                  key={`option-${index}`}
+                  className="flex flex-col items-center justify-start cursor-pointer"
+                  onClick={() => handleTapOnNumber(index)}
+                  style={{ flex: '0 0 auto' }}
+                >
+                  <p className="relative shrink-0 font-['IBM_Plex_Sans_Condensed:SemiBold',sans-serif] text-[16px] leading-normal text-black max-[375px]:text-[14px] max-[340px]:text-[13px] max-[320px]:text-[12px]">
+                    {displayText}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
         {/* Background Slider Track */}
         <div 
           className="relative h-[24px] w-full cursor-pointer max-[375px]:h-[22px] max-[340px]:h-[20px] max-[320px]:h-[18px]"
@@ -132,13 +156,23 @@ function MarginSlider({ value, onChange }: MarginSliderProps) {
               boxShadow: '0px 4px 4px 0px rgba(0,0,0,0.25), inset 0px 1px 8px 0px black',
             }}
           >
-            {/* Inner lines container - 3 white lines at 10% opacity */}
-            <div className="flex items-start justify-between h-full px-0 py-[2px] w-full max-[340px]:py-[1.5px]">
-              <div className="bg-[#0e0707] h-full opacity-0 w-[2px] max-[340px]:w-[1.5px]" />
-              <div className="bg-[rgba(255,255,255,0.1)] h-full w-[2px] max-[340px]:w-[1.5px]" />
-              <div className="bg-[rgba(255,255,255,0.1)] h-full w-[2px] max-[340px]:w-[1.5px]" />
-              <div className="bg-[rgba(255,255,255,0.1)] h-full w-[2px] max-[340px]:w-[1.5px]" />
-              <div className="bg-[#0e0707] h-full opacity-0 w-[2px] max-[340px]:w-[1.5px]" />
+            {/* Inner lines container - Aligned with numbers below */}
+            <div className="absolute inset-0 flex items-start justify-between px-[3px] py-[4px] max-[375px]:px-[2.5px] max-[375px]:py-[3.5px] max-[340px]:px-[2px] max-[340px]:py-[3px]">
+              {marginOptions.map((option, index) => (
+                <div 
+                  key={`line-${index}`}
+                  className="h-full flex items-start justify-center" 
+                  style={{ flex: '0 0 auto', width: index === 0 || index === marginOptions.length - 1 ? '2px' : '2px' }}
+                >
+                  <div 
+                    className={`h-full max-[340px]:w-[1.5px] ${
+                      index === 0 || index === marginOptions.length - 1 
+                        ? 'bg-[#0e0707] opacity-0 w-[2px]' 
+                        : 'bg-[rgba(255,255,255,0.1)] w-[2px]'
+                    }`}
+                  />
+                </div>
+              ))}
             </div>
           </div>
 
@@ -189,31 +223,6 @@ function MarginSlider({ value, onChange }: MarginSliderProps) {
                 }}
               />
             </div>
-          </div>
-        </div>
-
-        {/* Number Labels - Centered with white lines */}
-        <div className="relative w-full mt-[4px] max-[340px]:mt-[3px]">
-          <div className="flex items-center justify-between w-full px-[3px] max-[340px]:px-[2px]">
-            {marginOptions.map((option, index) => {
-              // Custom transform for specific numbers to align with white lines
-              let customTransform = 'translateX(0)';
-              if (option === 50) customTransform = 'translateX(4px)';
-              if (option === 100) customTransform = 'translateX(8px)';
-              
-              return (
-                <div 
-                  key={option}
-                  className="flex flex-col items-center justify-center cursor-pointer"
-                  onClick={() => handleTapOnNumber(index)}
-                  style={{ transform: customTransform }}
-                >
-                  <p className="relative shrink-0 font-['IBM_Plex_Sans_Condensed:SemiBold',sans-serif] text-[16px] leading-normal text-black max-[375px]:text-[14px] max-[340px]:text-[13px] max-[320px]:text-[12px]">
-                    {option}
-                  </p>
-                </div>
-              );
-            })}
           </div>
         </div>
       </div>

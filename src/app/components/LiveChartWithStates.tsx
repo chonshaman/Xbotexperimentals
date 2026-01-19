@@ -551,7 +551,7 @@ function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice }: { state
   };
 
   const getGlowStdDeviation = () => {
-    return state === 'live' ? '24' : '16';
+    return state === 'live' ? '12' : '8';
   };
 
   const getGlowColorMatrix = () => {
