@@ -781,13 +781,8 @@ function Footer({
   direction?: 'up' | 'down';
   betAmount?: number;
 }) {
-  const [internalPrice, setInternalPrice] = useState(externalCurrentPrice || 96500);
-
-  useEffect(() => {
-    if (externalCurrentPrice) {
-      setInternalPrice(externalCurrentPrice);
-    }
-  }, [externalCurrentPrice]);
+  // Use external price directly, no internal state needed
+  const currentPrice = externalCurrentPrice || 96500;
 
   const getSettleText = () => {
     if (state === 'opened') return 'Starting round…';
@@ -798,7 +793,7 @@ function Footer({
   };
 
   const calculatePnL = () => {
-    if (!entryPrice || !internalPrice || !direction || countdown === undefined) return 0;
+    if (!entryPrice || !currentPrice || !direction || countdown === undefined) return 0;
     
     const sigma = 0.0001; 
     const stake = betAmount;
@@ -806,7 +801,7 @@ function Footer({
     const netProfit = stake * (payoutMultiplier - 1);
     const t = Math.max(1, countdown);
     
-    const priceDiff = internalPrice - entryPrice;
+    const priceDiff = currentPrice - entryPrice;
     const z = priceDiff / (entryPrice * sigma * Math.sqrt(t));
     
     const k = direction === 'up' ? z : -z;
