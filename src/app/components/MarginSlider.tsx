@@ -124,6 +124,9 @@ function MarginSlider({ value, onChange, balance = 10000 }: MarginSliderProps) {
               // Show "Max" for the last option (balance)
               const displayText = index === marginOptions.length - 1 ? 'Max' : option;
               
+              // Add padding-left for indices 1, 2, 3, 4 (values 20, 50, 100, 500)
+              const shouldAddPadding = index >= 1 && index <= 4;
+              
               return (
                 <div 
                   key={`option-${index}`}
@@ -131,7 +134,14 @@ function MarginSlider({ value, onChange, balance = 10000 }: MarginSliderProps) {
                   onClick={() => handleTapOnNumber(index)}
                   style={{ flex: '0 0 auto' }}
                 >
-                  <p className="relative shrink-0 font-['IBM_Plex_Sans_Condensed:SemiBold',sans-serif] text-[16px] leading-normal text-black max-[375px]:text-[14px] max-[340px]:text-[13px] max-[320px]:text-[12px]">
+                  <p 
+                    className="relative shrink-0 text-[16px] leading-normal text-black max-[375px]:text-[14px] max-[340px]:text-[13px] max-[320px]:text-[12px]"
+                    style={{ 
+                      paddingLeft: shouldAddPadding ? '8px' : '0',
+                      fontFamily: "'IBM Plex Sans Condensed', sans-serif",
+                      fontWeight: 600
+                    }}
+                  >
                     {displayText}
                   </p>
                 </div>

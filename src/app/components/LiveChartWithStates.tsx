@@ -42,7 +42,7 @@ function PriceRight({ currentPrice, entryPrice }: { currentPrice?: number; entry
 function Title({ currentPrice, entryPrice }: { currentPrice?: number; entryPrice?: number }) {
   return (
     <div className="relative shrink-0 w-full" data-name="title">
-      <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex font-sans font-semibold items-start justify-between leading-[normal] not-italic relative text-[14px] w-full whitespace-pre">
+      <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex items-start justify-between leading-[normal] not-italic relative text-[14px] w-full whitespace-pre" style={{ fontFamily: "'IBM Plex Sans Condensed', sans-serif", fontWeight: 600 }}>
         <p className="relative shrink-0 text-white uppercase tracking-tight">BTC/USDT LIVE CHART</p>
         <PriceRight currentPrice={currentPrice} entryPrice={entryPrice} />
       </div>
