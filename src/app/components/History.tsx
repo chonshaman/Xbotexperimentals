@@ -322,6 +322,7 @@ function HistoryColumn({ data, newResultKey }: { data: Array<'WIN' | 'LOSE' | nu
 export interface HistoryRef {
   addSettledTrade: (trade: HistoryItem) => void;
   setNextFlashing: (isLive: boolean) => void; // Flash next cell during live trading
+  flashLastResult: () => void; // Flash the last settled result 5 times
 }
 
 const History = forwardRef<HistoryRef>((props, ref) => {
@@ -333,6 +334,7 @@ const History = forwardRef<HistoryRef>((props, ref) => {
   const [tradeHistory, setTradeHistory] = useState<HistoryItem[]>([]);
   const [lastPosition, setLastPosition] = useState<{ col: number; row: number } | null>(null);
   const [isNextFlashing, setIsNextFlashing] = useState(false);
+  const [flashingSettledPosition, setFlashingSettledPosition] = useState<{ col: number; row: number } | null>(null);
 
   // Function to add a settled trade
   const addSettledTrade = (trade: HistoryItem) => {
@@ -358,10 +360,32 @@ const History = forwardRef<HistoryRef>((props, ref) => {
     setIsNextFlashing(isLive);
   };
 
+  // Function to flash the last settled result 5 times
+  const flashLastResult = () => {
+    const lastPos = historyBoard.getLastPosition();
+    if (!lastPos) return;
+    
+    let flashCount = 0;
+    const maxFlashes = 5;
+    
+    const flashInterval = setInterval(() => {
+      if (flashCount >= maxFlashes * 2) {
+        clearInterval(flashInterval);
+        setFlashingSettledPosition(null);
+        return;
+      }
+      
+      // Toggle between showing and hiding the flash
+      setFlashingSettledPosition(flashCount % 2 === 0 ? lastPos : null);
+      flashCount++;
+    }, 300); // Flash every 300ms (on/off cycle)
+  };
+
   // Expose methods via ref
   useImperativeHandle(ref, () => ({
     addSettledTrade,
-    setNextFlashing
+    setNextFlashing,
+    flashLastResult
   }));
   
   // Get the next position for flashing
@@ -388,7 +412,8 @@ const History = forwardRef<HistoryRef>((props, ref) => {
                   {column.map((type, rowIndex) => {
                     const isNew = lastPosition && lastPosition.col === colIndex && lastPosition.row === rowIndex;
                     const isFlashing = nextPosition && nextPosition.col === colIndex && nextPosition.row === rowIndex;
-                    return <HistoryDot key={rowIndex} type={type} isNew={isNew} isFlashing={isFlashing} />;
+                    const isFlashingSettled = flashingSettledPosition && flashingSettledPosition.col === colIndex && flashingSettledPosition.row === rowIndex;
+                    return <HistoryDot key={rowIndex} type={type} isNew={isNew || isFlashingSettled} isFlashing={isFlashing} />;
                   })}
                 </div>
               ))}

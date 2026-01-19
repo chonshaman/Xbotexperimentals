@@ -6,9 +6,10 @@ interface HeaderProps {
   timeMode: '30s' | '60s' | 'price';
   onTimeModeChange: (mode: '30s' | '60s' | 'price') => void;
   balance: number;
+  showBalanceConfetti?: boolean;
 }
 
-function Header({ timeMode, onTimeModeChange, balance }: HeaderProps) {
+function Header({ timeMode, onTimeModeChange, balance, showBalanceConfetti = false }: HeaderProps) {
   const [martingaleEnabled, setMartingaleEnabled] = useState(true);
 
   return (
@@ -16,9 +17,72 @@ function Header({ timeMode, onTimeModeChange, balance }: HeaderProps) {
       {/* Balance Section */}
       <div className="balance-section">
         <div className="balance-border-wrapper">
-          <div className="balance-content">
+          <div className="balance-content" style={{ position: 'relative' }}>
             <span className="balance-label">BALANCE</span>
             <AnimatedBalance balance={balance} className="balance-value" />
+            
+            {/* CSS Confetti inside balance area */}
+            {showBalanceConfetti && (
+              <>
+                {Array.from({ length: 20 }).map((_, i) => {
+                  const colors = ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8'];
+                  const color = colors[i % colors.length];
+                  const size = 4 + Math.random() * 4; // 4-8px
+                  const angle = (i / 20) * 360; // Spread evenly
+                  const distance = 40 + Math.random() * 30; // 40-70px travel distance
+                  const duration = 1 + Math.random() * 0.5; // 1-1.5s
+                  const delay = Math.random() * 0.1; // 0-0.1s delay
+                  const rotation = Math.random() * 360;
+                  
+                  return (
+                    <div
+                      key={i}
+                      style={{
+                        position: 'absolute',
+                        width: `${size}px`,
+                        height: `${size}px`,
+                        backgroundColor: color,
+                        borderRadius: Math.random() > 0.5 ? '50%' : '1px',
+                        left: '50%',
+                        top: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        animation: `balanceConfetti${i} ${duration}s ease-out ${delay}s forwards`,
+                        opacity: 0,
+                        pointerEvents: 'none',
+                        zIndex: 100,
+                      }}
+                    />
+                  );
+                })}
+                
+                {/* Confetti keyframes */}
+                <style>{`
+                  ${Array.from({ length: 20 }).map((_, i) => {
+                    const angle = (i / 20) * 360;
+                    const distance = 40 + Math.random() * 30;
+                    const rotation = Math.random() * 360;
+                    const endX = Math.cos(angle * Math.PI / 180) * distance;
+                    const endY = Math.sin(angle * Math.PI / 180) * distance;
+                    
+                    return `
+                      @keyframes balanceConfetti${i} {
+                        0% {
+                          opacity: 1;
+                          transform: translate(-50%, -50%) translate(0, 0) rotate(0deg);
+                        }
+                        70% {
+                          opacity: 1;
+                        }
+                        100% {
+                          opacity: 0;
+                          transform: translate(-50%, -50%) translate(${endX}px, ${endY}px) rotate(${rotation}deg);
+                        }
+                      }
+                    `;
+                  }).join('\n')}
+                `}</style>
+              </>
+            )}
           </div>
         </div>
       </div>

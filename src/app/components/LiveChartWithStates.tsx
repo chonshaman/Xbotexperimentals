@@ -1168,32 +1168,92 @@ export default function LiveChartWithStates({
       {showWinToast && (
         <div className="absolute inset-0 flex items-center justify-center z-[20] pointer-events-none rounded-[12px]">
           {finalPnL >= 0 ? (
-            // WIN: Keep original large design
-            <div 
-              className="animate-[bounceIn_0.5s_ease-out] px-12 py-6 rounded-2xl shadow-lg border border-white/20 bg-gradient-to-b from-[#2ddb64] to-[#1fb74f]"
-            >
-              <div className="text-white text-center">
-                <div className="text-5xl font-bold mb-2 drop-shadow-lg font-sans">
-                  WIN!
-                </div>
-                <div className="text-2xl font-semibold font-sans">
-                  +{finalPnL.toFixed(2)}
+            // WIN: Keep original large design with CSS confetti
+            <>
+              {/* CSS Confetti Explosion - 30 particles */}
+              {Array.from({ length: 30 }).map((_, i) => {
+                const colors = ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B195'];
+                const color = colors[i % colors.length];
+                const size = 6 + Math.random() * 6; // 6-12px
+                const angle = (i / 30) * 360; // Spread evenly in circle
+                const distance = 120 + Math.random() * 80; // 120-200px travel distance
+                const duration = 1.2 + Math.random() * 0.8; // 1.2-2s
+                const delay = Math.random() * 0.2; // 0-0.2s delay
+                const rotation = Math.random() * 720; // 0-720deg rotation
+                
+                return (
+                  <div
+                    key={i}
+                    className="absolute"
+                    style={{
+                      width: `${size}px`,
+                      height: `${size}px`,
+                      backgroundColor: color,
+                      borderRadius: Math.random() > 0.5 ? '50%' : '2px',
+                      left: '50%',
+                      top: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      animation: `confettiExplosion${i} ${duration}s ease-out ${delay}s forwards`,
+                      opacity: 0,
+                    }}
+                  />
+                );
+              })}
+              
+              {/* Confetti keyframes */}
+              <style>{`
+                ${Array.from({ length: 30 }).map((_, i) => {
+                  const angle = (i / 30) * 360;
+                  const distance = 120 + Math.random() * 80;
+                  const rotation = Math.random() * 720;
+                  const endX = Math.cos(angle * Math.PI / 180) * distance;
+                  const endY = Math.sin(angle * Math.PI / 180) * distance;
+                  
+                  return `
+                    @keyframes confettiExplosion${i} {
+                      0% {
+                        opacity: 1;
+                        transform: translate(-50%, -50%) translate(0, 0) rotate(0deg);
+                      }
+                      70% {
+                        opacity: 1;
+                      }
+                      100% {
+                        opacity: 0;
+                        transform: translate(-50%, -50%) translate(${endX}px, ${endY}px) rotate(${rotation}deg);
+                      }
+                    }
+                  `;
+                }).join('\n')}
+              `}</style>
+              
+              <div 
+                className="animate-[bounceIn_0.5s_ease-out] px-12 py-6 rounded-2xl shadow-lg border border-white/20 bg-gradient-to-b from-[#2ddb64] to-[#1fb74f] relative z-[1]"
+              >
+                <div className="text-white text-center">
+                  <div className="text-5xl font-bold mb-2 drop-shadow-lg" style={{ fontFamily: "'IBM Plex Sans Condensed', sans-serif" }}>
+                    WIN!
+                  </div>
+                  <div className="text-2xl font-semibold" style={{ fontFamily: "'IBM Plex Sans Condensed', sans-serif" }}>
+                    +{finalPnL.toFixed(2)}
+                  </div>
                 </div>
               </div>
-            </div>
+            </>
           ) : (
             // LOSS: Compact single-row design (48px height, hug content width)
             <div 
               className="animate-[bounceIn_0.5s_ease-out] h-[48px] px-6 rounded-2xl shadow-lg border border-white/20 bg-gradient-to-b from-[#ff4d4d] to-[#cc0000] flex items-center gap-4"
             >
-              <div className="text-white text-lg font-bold drop-shadow-lg font-sans whitespace-nowrap">
+              <div className="text-white text-lg font-bold drop-shadow-lg whitespace-nowrap" style={{ fontFamily: "'IBM Plex Sans Condensed', sans-serif" }}>
                 LOSS
               </div>
-              <div className="text-white text-lg font-semibold font-sans whitespace-nowrap">
+              <div className="text-white text-lg font-semibold whitespace-nowrap" style={{ fontFamily: "'IBM Plex Sans Condensed', sans-serif" }}>
                 {finalPnL.toFixed(2)}
               </div>
             </div>
-          )}</div>
+          )}
+        </div>
       )}
       
       <Title currentPrice={currentPrice} entryPrice={entryPrice} />

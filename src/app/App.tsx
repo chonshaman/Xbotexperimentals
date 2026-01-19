@@ -8,13 +8,14 @@ import History from './components/History';
 import type { HistoryRef, HistoryItem } from './components/History';
 import Header from './components/Header';
 import ComponentsShowcase from './components/ComponentsShowcase';
-import WinToast from './components/WinToast';
 
 export default function App() {
   const [showComponents, setShowComponents] = useState(false);
   const [chartState, setChartState] = useState<LiveChartState>('idle');
   const [showTradingPanel, setShowTradingPanel] = useState(true);
   const [showWinToast, setShowWinToast] = useState(false);
+  const [showInsufficientBalanceToast, setShowInsufficientBalanceToast] = useState(false);
+  const [showBalanceConfetti, setShowBalanceConfetti] = useState(false);
   const [finalPnL, setFinalPnL] = useState<number>(0);
   const [activeButton, setActiveButton] = useState<'up' | 'down' | null>(null);
   const [timeMode, setTimeMode] = useState<'30s' | '60s' | 'price'>('30s');
@@ -38,6 +39,11 @@ export default function App() {
     if (chartState !== 'idle') return;
     
     // ✅ Deduct balance when position opens
+    if (balance < betAmount) {
+      setShowInsufficientBalanceToast(true);
+      setTimeout(() => setShowInsufficientBalanceToast(false), 2000);
+      return;
+    }
     setBalance(prev => prev - betAmount);
     
     setActiveButton('up');
@@ -71,6 +77,11 @@ export default function App() {
     if (chartState !== 'idle') return;
     
     // ✅ Deduct balance when position opens
+    if (balance < betAmount) {
+      setShowInsufficientBalanceToast(true);
+      setTimeout(() => setShowInsufficientBalanceToast(false), 2000);
+      return;
+    }
     setBalance(prev => prev - betAmount);
     
     setActiveButton('down');
@@ -128,6 +139,8 @@ export default function App() {
         if (win) {
           // Win: Add bet amount back + profit (balance was already deducted)
           setBalance(prev => prev + betAmount + netProfit);
+          setShowBalanceConfetti(true);
+          setTimeout(() => setShowBalanceConfetti(false), 3000);
         }
         // Lose: Balance already deducted, no additional change needed
         
@@ -151,6 +164,10 @@ export default function App() {
         // After 2s, hide toast and reset to idle
         setTimeout(() => {
           setShowWinToast(false);
+          
+          // ✅ Flash the settled result 5 times after toast disappears
+          historyRef.current?.flashLastResult();
+          
           setChartState('idle');
           setShowTradingPanel(true);
           setActiveButton(null);
@@ -190,7 +207,7 @@ export default function App() {
         
         {/* Header - Full Width, No Padding */}
         <div className="w-full flex-shrink-0">
-          <Header timeMode={timeMode} onTimeModeChange={setTimeMode} balance={balance} />
+          <Header timeMode={timeMode} onTimeModeChange={setTimeMode} balance={balance} showBalanceConfetti={showBalanceConfetti} />
         </div>
 
         {/* Content Area with Padding and Gaps */}
@@ -203,7 +220,7 @@ export default function App() {
           
           {/* Live Chart - Min height 256px, expands when live */}
           <div 
-            className="w-full transition-all duration-300 ease-in-out"
+            className="w-full transition-all duration-300 ease-in-out relative"
             style={{
               minHeight: '256px',
               flex: chartState === 'live' ? '1 1 auto' : '0 0 256px'
@@ -220,6 +237,39 @@ export default function App() {
               onPriceUpdate={setCurrentPrice}
               betAmount={betAmount}
             />
+            
+            {/* Insufficient Balance Toast - Overlays on top of chart */}
+            {showInsufficientBalanceToast && (
+              <div className="absolute inset-0 flex items-center justify-center z-[30] pointer-events-none rounded-[12px]">
+                <div 
+                  className="animate-[bounceIn_0.5s_ease-out] h-[48px] px-6 rounded-2xl shadow-lg border border-white/20 bg-gradient-to-b from-[#ff9500] to-[#ff6b00] flex items-center gap-4"
+                >
+                  <div className="text-white text-lg font-bold drop-shadow-lg whitespace-nowrap" style={{ fontFamily: "'IBM Plex Sans Condensed', sans-serif" }}>
+                    INSUFFICIENT BALANCE
+                  </div>
+                </div>
+                
+                {/* Add bounceIn animation */}
+                <style>{`
+                  @keyframes bounceIn {
+                    0% {
+                      opacity: 0;
+                      transform: scale(0.3);
+                    }
+                    50% {
+                      opacity: 1;
+                      transform: scale(1.05);
+                    }
+                    70% {
+                      transform: scale(0.9);
+                    }
+                    100% {
+                      transform: scale(1);
+                    }
+                  }
+                `}</style>
+              </div>
+            )}
           </div>
 
           {/* Trading Panel */}
