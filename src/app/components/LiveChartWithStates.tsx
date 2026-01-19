@@ -4,6 +4,14 @@ import { Loader2 } from 'lucide-react';
 
 export type LiveChartState = 'idle' | 'opened' | 'live';
 
+// ✅ Helper function to format numbers with commas and 2 decimals
+const formatNumber = (value: number) => {
+  return value.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+};
+
 interface LiveChartWithStatesProps {
   state?: LiveChartState;
   showWinToast?: boolean;
@@ -168,14 +176,6 @@ function LiveIndicator({
   const lossYEnd = ((yMax - lossRange[0]) / (yMax - yMin)) * 180;
   const lossHeight = Math.max(0, lossYEnd - lossYStart);
   
-  // Format price with comma separator and 2 decimals
-  const formatPrice = (price: number) => {
-    return price.toLocaleString('en-US', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    });
-  };
-  
   return (
     <div className="absolute inset-0 pointer-events-none" data-name="liveindicator">
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 324 180">
@@ -301,7 +301,7 @@ function LiveIndicator({
               backgroundColor: direction === 'up' ? '#1f61b7' : '#b7341f'
             }}
           >
-            <p className="text-[12px] text-white leading-none whitespace-nowrap" style={{ fontFamily: "'IBM Plex Sans Condensed', sans-serif", fontWeight: 500 }}>{formatPrice(entryPriceValue)}</p>
+            <p className="text-[12px] text-white leading-none whitespace-nowrap" style={{ fontFamily: "'IBM Plex Sans Condensed', sans-serif", fontWeight: 500 }}>{formatNumber(entryPriceValue)}</p>
           </div>
         </div>
       )}
@@ -885,11 +885,11 @@ function Footer({
                 </div>
               </div>
               <div 
-                className={`content-stretch flex items-center justify-center px-[4px] py-0 relative rounded-br-[4px] shrink-0 w-[54px] h-[20px] transition-colors duration-300 ${isPositive ? 'bg-[#188b3c]' : 'bg-[#ff3232]'}`}
+                className={`content-stretch flex items-center justify-center px-[4px] py-0 relative rounded-br-[4px] shrink-0 min-w-[72px] h-[20px] transition-colors duration-300 ${isPositive ? 'bg-[#188b3c]' : 'bg-[#ff3232]'}`}
               >
                 <div aria-hidden="true" className="absolute border-2 border-white/20 border-dashed inset-[-2px] pointer-events-none rounded-br-[5px]" />
                 <div className="flex flex-col font-sans font-medium justify-center leading-[0] not-italic relative shrink-0 text-[11px] text-white whitespace-nowrap">
-                  <p className="leading-[20px] whitespace-pre">{isPositive ? '+' : ''}{pnl.toFixed(2)}</p>
+                  <p className="leading-[20px] whitespace-pre">{isPositive ? '+' : ''}{formatNumber(pnl)}</p>
                 </div>
               </div>
             </div>
@@ -900,7 +900,7 @@ function Footer({
         {state !== 'idle' && (
           <div className="relative shrink-0 z-[1] animate-[footerSlideRight_0.5s_ease-out]">
             <div className="flex flex-col font-sans font-medium justify-center leading-[0] not-italic text-[12px] text-[rgba(255,255,255,0.72)] text-center whitespace-nowrap">
-              <p className="leading-[20px] whitespace-pre">Bet Amount: {betAmount}</p>
+              <p className="leading-[20px] whitespace-pre">Bet Amount: {formatNumber(betAmount)}</p>
             </div>
           </div>
         )}
@@ -1233,7 +1233,7 @@ export default function LiveChartWithStates({
                     WIN!
                   </div>
                   <div className="text-2xl font-semibold" style={{ fontFamily: "'IBM Plex Sans Condensed', sans-serif" }}>
-                    +{finalPnL.toFixed(2)}
+                    +{formatNumber(finalPnL)}
                   </div>
                 </div>
               </div>
@@ -1247,7 +1247,7 @@ export default function LiveChartWithStates({
                 LOSS
               </div>
               <div className="text-white text-lg font-semibold whitespace-nowrap" style={{ fontFamily: "'IBM Plex Sans Condensed', sans-serif" }}>
-                {finalPnL.toFixed(2)}
+                {formatNumber(finalPnL)}
               </div>
             </div>
           )}
