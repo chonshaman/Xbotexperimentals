@@ -36,8 +36,11 @@ function AnimatedBalance({ balance, className = '', showCurrency = true }: Anima
   }, [balance]);
 
   const formatBalance = (value: number) => {
+    // ✅ Check if value has decimals
+    const hasDecimals = value % 1 !== 0;
+    
     return value.toLocaleString('en-US', {
-      minimumFractionDigits: 2,
+      minimumFractionDigits: hasDecimals ? 2 : 0,
       maximumFractionDigits: 2
     });
   };

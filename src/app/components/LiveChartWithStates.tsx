@@ -4,10 +4,12 @@ import { Loader2 } from 'lucide-react';
 
 export type LiveChartState = 'idle' | 'opened' | 'live';
 
-// ✅ Helper function to format numbers with commas and 2 decimals
+// ✅ Helper function to format numbers with commas and conditional decimals (hide .00)
 const formatNumber = (value: number) => {
+  const hasDecimals = value % 1 !== 0;
+  
   return value.toLocaleString('en-US', {
-    minimumFractionDigits: 2,
+    minimumFractionDigits: hasDecimals ? 2 : 0,
     maximumFractionDigits: 2
   });
 };

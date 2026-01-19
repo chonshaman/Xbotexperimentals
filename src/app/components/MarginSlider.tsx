@@ -98,6 +98,16 @@ function MarginSlider({ value, onChange, balance = 10000 }: MarginSliderProps) {
   // Calculate rotation angle for the thumb (rotates as slider moves)
   const thumbRotation = selectedIndex * 72; // 72 degrees per step for smooth rotation
 
+  // ✅ Format number with commas and conditional decimals (hide .00)
+  const formatBetAmount = (value: number) => {
+    const hasDecimals = value % 1 !== 0;
+    
+    return value.toLocaleString('en-US', {
+      minimumFractionDigits: hasDecimals ? 2 : 0,
+      maximumFractionDigits: 2
+    });
+  };
+
   return (
     <div className="trading-panel-slider-section">
       <div className="trading-panel-slider-label" style={{ justifyContent: 'center', overflow: 'hidden', height: '24px' }}>
@@ -111,7 +121,7 @@ function MarginSlider({ value, onChange, balance = 10000 }: MarginSliderProps) {
             transform: 'translateZ(0)'
           }}
         >
-          {marginOptions[selectedIndex]} USDT
+          {formatBetAmount(marginOptions[selectedIndex])} USDT
         </span>
       </div>
       
