@@ -186,8 +186,31 @@ function MarginSlider({ value, onChange, balance = 10000 }: MarginSliderProps) {
               background: 'linear-gradient(180deg, #2F7AEC 0%, #245BB8 100%)',
               boxShadow: '0px 1px 6px 0px rgba(47,122,236,0.4), inset 0px 1px 1px 0px rgba(0,0,0,0.25)',
               zIndex: 1,
+              overflow: 'visible',
             }}
-          >
+          />
+
+          {/* Vertical lines overlay - Fixed positions matching gray background lines */}
+          <div className="absolute inset-0 flex items-start justify-between px-[8px] py-[8px] max-[375px]:px-[2.5px] max-[340px]:px-[2px] pointer-events-none" style={{ zIndex: 2 }}>
+            {marginOptions.map((option, index) => (
+              <div 
+                key={`overlay-line-${index}`}
+                className="h-full flex items-start justify-center" 
+                style={{ flex: '0 0 auto', width: index === 0 || index === marginOptions.length - 1 ? '2px' : '2px' }}
+              >
+                <div 
+                  className={`h-full max-[340px]:w-[1.5px] ${
+                    index === 0 || index === marginOptions.length - 1 
+                      ? 'bg-transparent w-[2px]' 
+                      : 'bg-[rgba(0,0,0,0.25)] w-[2px]'
+                  }`}
+                  style={{
+                    mixBlendMode: 'multiply',
+                  }}
+                />
+              </div>
+            ))}
+          </div>
 
           {/* Progress Bar Blur Layer - Duplicate with 16px blur */}
           <div 
@@ -199,13 +222,23 @@ function MarginSlider({ value, onChange, balance = 10000 }: MarginSliderProps) {
               background: 'linear-gradient(rgb(60 215 255) 0%, rgb(36, 91, 184) 100%)',
               filter: 'blur(16px)',
               mixBlendMode: 'plus-lighter',
-              zIndex: 2,
+              zIndex: 3,
             }}
           />
 
-            {/* Thumb/Knob */}
+          {/* Thumb/Knob */}
+          <div 
+            className="absolute left-[4px] top-1/2 -translate-y-1/2 h-[16px] rounded-[28px] transition-all duration-200 ease-out max-[375px]:h-[14px] max-[375px]:left-[3.5px] max-[340px]:h-[12px] max-[340px]:left-[3px] max-[320px]:h-[11px]"
+            style={{
+              width: `calc(${progressWidth}% - ${progressWidth * 0.04}px + 16px)`,
+              maxWidth: 'calc(100% - 4px)',
+              minWidth: '24px',
+              zIndex: 4,
+              pointerEvents: 'none',
+            }}
+          >
             <div 
-              className="absolute right-[-4px] top-1/2 -translate-y-1/2 w-[36px] h-[36px] z-[3] pointer-events-none transition-transform duration-500 ease-out max-[375px]:w-[32px] max-[375px]:h-[32px] max-[375px]:right-[-3.5px] max-[340px]:w-[28px] max-[340px]:h-[28px] max-[340px]:right-[-3px] max-[320px]:w-[26px] max-[320px]:h-[26px]"
+              className="absolute right-[-4px] top-1/2 -translate-y-1/2 w-[36px] h-[36px] pointer-events-none transition-transform duration-500 ease-out max-[375px]:w-[32px] max-[375px]:h-[32px] max-[375px]:right-[-3.5px] max-[340px]:w-[28px] max-[340px]:h-[28px] max-[340px]:right-[-3px] max-[320px]:w-[26px] max-[320px]:h-[26px]"
               style={{
                 background: 'conic-gradient(from 25deg at 50% 50%, #EBEBEB 8.526539951562881deg, #A6A6A6 31.273336708545685deg, #EBEBEB 60.399945974349976deg, #B8B8B8 74.53422725200653deg, #EDEDED 84.85412299633026deg, #ABABAB 93.26865792274475deg, #F0F0F0 130.0709366798401deg, #D1D1D1 156.95856928825378deg, #B0B0B0 175.30829071998596deg, #EBEBEB 184.46789503097534deg, #DEDEDE 190.88155031204224deg, #EBEBEB 208.86048316955566deg, #C7C7C7 227.78544187545776deg, #C4C4C4 256.4226794242859deg, #ADADAD 264.3653440475464deg, #BDBDBD 269.2746877670288deg, #E5E5E5 276.247980594635deg, #ABABAB 348.82035970687866deg, #C2C2C2 355.37188053131104deg, #CCC 360deg)',
                 border: '2.5px solid #E7E7E7',
