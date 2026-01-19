@@ -1249,7 +1249,7 @@ export default function LiveChartWithStates({
                 LOSS
               </div>
               <div className="text-white text-lg font-semibold whitespace-nowrap" style={{ fontFamily: "'IBM Plex Sans Condensed', sans-serif" }}>
-                {formatNumber(finalPnL)}
+                -{formatNumber(Math.abs(finalPnL))}
               </div>
             </div>
           )}
