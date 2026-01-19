@@ -30,7 +30,7 @@ function PriceRight({ currentPrice, entryPrice }: { currentPrice?: number; entry
   };
 
   return (
-    <div className="content-stretch flex gap-[4px] items-center relative shrink-0 text-[12px] opacity-90 font-sans" data-name="price right">
+    <div className="content-stretch flex gap-[4px] items-center relative shrink-0 text-[12px] opacity-90" data-name="price right" style={{ fontFamily: "'IBM Plex Sans Condensed', sans-serif" }}>
       <p className="relative shrink-0 text-white">{`Price: `}</p>
       <p className={`relative shrink-0 transition-colors duration-300 ${isUp ? 'text-[#2ddb64]' : 'text-[#ff3232]'}`}>
         ${formatPrice(price)} ({isUp ? '+' : ''}{percentage.toFixed(2)}%)
@@ -54,13 +54,17 @@ function Title({ currentPrice, entryPrice }: { currentPrice?: number; entryPrice
 function StatusOpened({ direction }: { direction?: 'up' | 'down' }) {
   return (
     <div className="backdrop-blur-[8px] bg-[rgba(0,0,0,0.32)] content-stretch flex items-center justify-center px-[4px] py-0 relative rounded-[4px] shrink-0 animate-[slideInFromRight_0.3s_ease-out]" data-name="bg">
-      <div className="flex flex-col font-sans justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-[rgba(255,255,255,0.72)] whitespace-nowrap">
+      <div className="flex flex-col justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-[rgba(255,255,255,0.72)] whitespace-nowrap" style={{ fontFamily: "'IBM Plex Sans Condensed', sans-serif" }}>
         <p className="leading-[20px] whitespace-pre">Position Opened -</p>
       </div>
       <div className="h-[20px] relative shrink-0 w-[24px]" data-name="up down">
         <div 
-          className="absolute flex flex-col font-sans font-semibold inset-0 justify-center leading-[0] not-italic text-[12px] text-center"
-          style={{ color: direction === 'down' ? '#ff3232' : '#48bee5' }}
+          className="absolute flex flex-col inset-0 justify-center leading-[0] not-italic text-[12px] text-center"
+          style={{ 
+            color: direction === 'down' ? '#ff3232' : '#48bee5',
+            fontFamily: "'IBM Plex Sans Condensed', sans-serif",
+            fontWeight: 600
+          }}
         >
           <p className="leading-[20px] whitespace-pre-wrap">{direction === 'down' ? 'DOWN' : 'UP'}</p>
         </div>
@@ -73,8 +77,12 @@ function UpDown({ direction }: { direction?: 'up' | 'down' }) {
   return (
     <div className="h-[20px] relative shrink-0 w-[24px]" data-name="up down">
       <div 
-        className="absolute flex flex-col font-sans font-semibold inset-0 justify-center leading-[0] not-italic text-[12px] text-center"
-        style={{ color: direction === 'down' ? '#ff3232' : '#48bee5' }}
+        className="absolute flex flex-col inset-0 justify-center leading-[0] not-italic text-[12px] text-center"
+        style={{ 
+          color: direction === 'down' ? '#ff3232' : '#48bee5',
+          fontFamily: "'IBM Plex Sans Condensed', sans-serif",
+          fontWeight: 600
+        }}
       >
         <p className="leading-[20px] whitespace-pre-wrap">{direction === 'down' ? 'DOWN' : 'UP'}</p>
       </div>
@@ -85,7 +93,7 @@ function UpDown({ direction }: { direction?: 'up' | 'down' }) {
 function Bg({ direction }: { direction?: 'up' | 'down' }) {
   return (
     <div className="backdrop-blur-[8px] bg-[rgba(0,0,0,0.16)] content-stretch flex items-center justify-center px-[4px] py-0 relative rounded-tl-[4px] rounded-tr-[4px] shrink-0" data-name="bg">
-      <div className="flex flex-col font-sans font-medium justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-[rgba(255,255,255,0.72)]">
+      <div className="flex flex-col justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-[rgba(255,255,255,0.72)]" style={{ fontFamily: "'IBM Plex Sans Condensed', sans-serif", fontWeight: 500 }}>
         <p className="leading-[20px] whitespace-pre">{`Live Round - `}</p>
       </div>
       <UpDown direction={direction} />
@@ -283,7 +291,7 @@ function LiveIndicator({
         >
           {/* Row 1: Entry Price Label */}
           <div className="backdrop-blur-[4px] bg-[rgba(0,0,0,0.16)] flex items-center justify-center px-[8px] py-[3px] rounded-tl-[4px] rounded-tr-[4px] shrink-0 h-[22px]">
-            <p className="text-[12px] font-sans font-medium text-white leading-none whitespace-nowrap">Entry Price</p>
+            <p className="text-[12px] text-white leading-none whitespace-nowrap" style={{ fontFamily: "'IBM Plex Sans Condensed', sans-serif", fontWeight: 500 }}>Entry Price</p>
           </div>
           
           {/* Row 2: Entry Price Value */}
@@ -293,7 +301,7 @@ function LiveIndicator({
               backgroundColor: direction === 'up' ? '#1f61b7' : '#b7341f'
             }}
           >
-            <p className="text-[12px] font-sans font-medium text-white leading-none whitespace-nowrap">{formatPrice(entryPriceValue)}</p>
+            <p className="text-[12px] text-white leading-none whitespace-nowrap" style={{ fontFamily: "'IBM Plex Sans Condensed', sans-serif", fontWeight: 500 }}>{formatPrice(entryPriceValue)}</p>
           </div>
         </div>
       )}
@@ -660,9 +668,11 @@ function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice }: { state
             }}
           >
             <div 
-              className="font-sans font-semibold text-[11px] text-white px-[6px] py-[2px] rounded-[4px] shadow-lg transition-colors duration-300"
+              className="text-[11px] text-white px-[6px] py-[2px] rounded-[4px] shadow-lg transition-colors duration-300"
               style={{
                 backgroundColor: isPriceUp ? '#2ddb64' : '#ff3232',
+                fontFamily: "'IBM Plex Sans Condensed', sans-serif",
+                fontWeight: 600
               }}
             >
               {formatPrice(currentPrice)}
@@ -685,7 +695,7 @@ function Price({ prices }: { prices: string[] }) {
   };
 
   return (
-    <div className="content-stretch flex flex-col font-sans h-full items-start justify-between leading-[20px] not-italic relative shrink-0 text-[10px] text-[rgba(255,255,255,0.7)] whitespace-pre" data-name="price">
+    <div className="content-stretch flex flex-col h-full items-start justify-between leading-[20px] not-italic relative shrink-0 text-[10px] text-[rgba(255,255,255,0.7)] whitespace-pre" data-name="price" style={{ fontFamily: "'IBM Plex Sans Condensed', sans-serif" }}>
       {prices.map((price, index) => (
         <p key={index} className="relative shrink-0">{formatPrice(price)}</p>
       ))}
