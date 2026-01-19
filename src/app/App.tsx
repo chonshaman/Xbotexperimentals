@@ -24,6 +24,7 @@ export default function App() {
   const [currentPrice, setCurrentPrice] = useState<number>(96500);
   const [betAmount, setBetAmount] = useState(400);
   const [balance, setBalance] = useState(10000); // Initial balance
+  const [lockedBetAmount, setLockedBetAmount] = useState(400); // ✅ Store the actual bet amount used for the trade
   
   const countdownRef = useRef<NodeJS.Timeout | null>(null);
   const historyRef = useRef<HistoryRef>(null);
@@ -38,12 +39,22 @@ export default function App() {
   const handleUpClick = () => {
     if (chartState !== 'idle') return;
     
+    // ✅ Check if betAmount is valid (greater than 0)
+    if (betAmount <= 0) {
+      setShowInsufficientBalanceToast(true);
+      setTimeout(() => setShowInsufficientBalanceToast(false), 2000);
+      return;
+    }
+    
     // ✅ Deduct balance when position opens
     if (balance < betAmount) {
       setShowInsufficientBalanceToast(true);
       setTimeout(() => setShowInsufficientBalanceToast(false), 2000);
       return;
     }
+    
+    // ✅ Lock the bet amount for this trade
+    setLockedBetAmount(betAmount);
     setBalance(prev => prev - betAmount);
     
     setActiveButton('up');
@@ -76,12 +87,22 @@ export default function App() {
   const handleDownClick = () => {
     if (chartState !== 'idle') return;
     
+    // ✅ Check if betAmount is valid (greater than 0)
+    if (betAmount <= 0) {
+      setShowInsufficientBalanceToast(true);
+      setTimeout(() => setShowInsufficientBalanceToast(false), 2000);
+      return;
+    }
+    
     // ✅ Deduct balance when position opens
     if (balance < betAmount) {
       setShowInsufficientBalanceToast(true);
       setTimeout(() => setShowInsufficientBalanceToast(false), 2000);
       return;
     }
+    
+    // ✅ Lock the bet amount for this trade
+    setLockedBetAmount(betAmount);
     setBalance(prev => prev - betAmount);
     
     setActiveButton('down');
@@ -129,16 +150,17 @@ export default function App() {
         const win = isUp ? (currentMark > (entry || 0)) : (currentMark < (entry || 0));
         
         const payoutMultiplier = 1.95;
-        const netProfit = betAmount * (payoutMultiplier - 1);
+        // ✅ Use lockedBetAmount for settlement calculations
+        const netProfit = lockedBetAmount * (payoutMultiplier - 1);
         
-        const finalPnLValue = win ? netProfit : -betAmount;
+        const finalPnLValue = win ? netProfit : -lockedBetAmount;
         setFinalPnL(finalPnLValue);
         setShowWinToast(true);
         
         // ✅ Update balance based on win/lose
         if (win) {
           // Win: Add bet amount back + profit (balance was already deducted)
-          setBalance(prev => prev + betAmount + netProfit);
+          setBalance(prev => prev + lockedBetAmount + netProfit);
         }
         // Lose: Balance already deducted, no additional change needed
         
@@ -150,7 +172,7 @@ export default function App() {
           result: win ? 'WIN' : 'LOSE',      // settlement outcome
           entryPrice: entry || 0,
           exitPrice: currentMark,
-          betAmount: betAmount,
+          betAmount: lockedBetAmount,  // ✅ Use locked amount
           pnl: finalPnLValue,
           settledAt: Date.now()
         };
@@ -239,7 +261,7 @@ export default function App() {
               direction={activeButton || undefined}
               entryPrice={entryPrice}
               onPriceUpdate={setCurrentPrice}
-              betAmount={betAmount}
+              betAmount={lockedBetAmount}
             />
             
             {/* Insufficient Balance Toast - Overlays on top of chart */}
