@@ -28,6 +28,12 @@ export default function App() {
   
   const countdownRef = useRef<NodeJS.Timeout | null>(null);
   const historyRef = useRef<HistoryRef>(null);
+  const currentPriceRef = useRef(currentPrice);
+
+  // Keep currentPriceRef in sync with currentPrice
+  useEffect(() => {
+    currentPriceRef.current = currentPrice;
+  }, [currentPrice]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -57,6 +63,10 @@ export default function App() {
     setLockedBetAmount(betAmount);
     setBalance(prev => prev - betAmount);
     
+    // Capture values for the closure
+    const tradeBetAmount = betAmount;
+    const tradeEntryPrice = currentPrice;
+
     setActiveButton('up');
     setChartState('opened');
     setEntryPrice(currentPrice);
@@ -72,14 +82,14 @@ export default function App() {
       // Set up countdown based on mode
       if (timeMode === '30s') {
         setCountdown(30);
-        startCountdown(30);
+        startCountdown(30, tradeEntryPrice, 'up', tradeBetAmount);
       } else if (timeMode === '60s') {
         setCountdown(60);
-        startCountdown(60);
+        startCountdown(60, tradeEntryPrice, 'up', tradeBetAmount);
       } else {
         // Price mode - mock 60s duration
         setCountdown(60);
-        startCountdown(60);
+        startCountdown(60, tradeEntryPrice, 'up', tradeBetAmount);
       }
     }, 700);
   };
@@ -105,6 +115,10 @@ export default function App() {
     setLockedBetAmount(betAmount);
     setBalance(prev => prev - betAmount);
     
+    // Capture values for the closure
+    const tradeBetAmount = betAmount;
+    const tradeEntryPrice = currentPrice;
+    
     setActiveButton('down');
     setChartState('opened');
     setEntryPrice(currentPrice);
@@ -120,19 +134,19 @@ export default function App() {
       // Set up countdown based on mode
       if (timeMode === '30s') {
         setCountdown(30);
-        startCountdown(30);
+        startCountdown(30, tradeEntryPrice, 'down', tradeBetAmount);
       } else if (timeMode === '60s') {
         setCountdown(60);
-        startCountdown(60);
+        startCountdown(60, tradeEntryPrice, 'down', tradeBetAmount);
       } else {
         // Price mode - mock 60s duration
         setCountdown(60);
-        startCountdown(60);
+        startCountdown(60, tradeEntryPrice, 'down', tradeBetAmount);
       }
     }, 700);
   };
 
-  const startCountdown = (initialSeconds: number) => {
+  const startCountdown = (initialSeconds: number, tradeEntryPrice: number, tradeDirection: 'up' | 'down', tradeBetAmount: number) => {
     let remaining = initialSeconds;
     
     countdownRef.current = setInterval(() => {
@@ -144,23 +158,23 @@ export default function App() {
         
         // Calculate final result based on current price and entry price
         // This simulates the actual settlement logic
-        const currentMark = currentPrice;
-        const entry = entryPrice;
-        const isUp = activeButton === 'up';
-        const win = isUp ? (currentMark > (entry || 0)) : (currentMark < (entry || 0));
+        const currentMark = currentPriceRef.current;
+        const entry = tradeEntryPrice;
+        const isUp = tradeDirection === 'up';
+        const win = isUp ? (currentMark > entry) : (currentMark < entry);
         
         const payoutMultiplier = 1.95;
         // ✅ Use lockedBetAmount for settlement calculations
-        const netProfit = lockedBetAmount * (payoutMultiplier - 1);
+        const netProfit = tradeBetAmount * (payoutMultiplier - 1);
         
-        const finalPnLValue = win ? netProfit : -lockedBetAmount;
+        const finalPnLValue = win ? netProfit : -tradeBetAmount;
         setFinalPnL(finalPnLValue);
         setShowWinToast(true);
         
         // ✅ Update balance based on win/lose
         if (win) {
           // Win: Add bet amount back + profit (balance was already deducted)
-          setBalance(prev => prev + lockedBetAmount + netProfit);
+          setBalance(prev => prev + tradeBetAmount + netProfit);
         }
         // Lose: Balance already deducted, no additional change needed
         
@@ -170,9 +184,9 @@ export default function App() {
           symbol: 'BTC/USDT',
           direction: isUp ? 'UP' : 'DOWN',  // what user tapped
           result: win ? 'WIN' : 'LOSE',      // settlement outcome
-          entryPrice: entry || 0,
+          entryPrice: entry,
           exitPrice: currentMark,
-          betAmount: lockedBetAmount,  // ✅ Use locked amount
+          betAmount: tradeBetAmount,  // ✅ Use locked amount
           pnl: finalPnLValue,
           settledAt: Date.now()
         };

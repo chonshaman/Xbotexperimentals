@@ -17,8 +17,11 @@ function MarginSlider({ value, onChange, balance = 10000 }: MarginSliderProps) {
 
   // Update value when selectedIndex changes
   useEffect(() => {
+    // Recalculate marginOptions inside useEffect to get fresh balance value
+    const currentMarginOptions = [10, 20, 50, 100, 500, balance];
+    
     if (onChange && typeof onChange === 'function') {
-      onChange(marginOptions[selectedIndex]);
+      onChange(currentMarginOptions[selectedIndex]);
     }
     
     // Determine animation direction based on index change
@@ -30,7 +33,7 @@ function MarginSlider({ value, onChange, balance = 10000 }: MarginSliderProps) {
     
     prevIndexRef.current = selectedIndex;
     setAnimationKey(prev => prev + 1); // Trigger animation on value change
-  }, [selectedIndex, balance]); // Add balance to dependencies
+  }, [selectedIndex, balance, onChange]);
 
   const updateSliderFromPosition = useCallback((clientX: number) => {
     if (!sliderRef.current) return;
@@ -40,7 +43,7 @@ function MarginSlider({ value, onChange, balance = 10000 }: MarginSliderProps) {
     const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
     
     // Map percentage to index (0-100% -> 0-4 index)
-    const newIndex = Math.round((percentage / 100) * (marginOptions.length - 1));
+    const newIndex = Math.round((percentage / 100) * 5); // 6 options (0-5)
     setSelectedIndex(newIndex);
   }, []);
 
