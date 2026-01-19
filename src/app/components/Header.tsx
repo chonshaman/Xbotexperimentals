@@ -9,6 +9,17 @@ interface HeaderProps {
   showBalanceConfetti?: boolean;
 }
 
+// ✅ Dynamic string constants
+const HEADER_TEXT = {
+  BALANCE_LABEL: 'BALANCE',
+  PRICE_MODE: 'Price Mode',
+  TIME_MODE: 'Time Mode',
+  TIME_30S: '30s',
+  TIME_60S: '60s',
+  PRICE_SYMBOL: '$',
+  MARTINGALE_LABEL: 'Martingale',
+} as const;
+
 function Header({ timeMode, onTimeModeChange, balance, showBalanceConfetti = false }: HeaderProps) {
   const [martingaleEnabled, setMartingaleEnabled] = useState(true);
 
@@ -18,7 +29,7 @@ function Header({ timeMode, onTimeModeChange, balance, showBalanceConfetti = fal
       <div className="balance-section">
         <div className="balance-border-wrapper">
           <div className="balance-content" style={{ position: 'relative', overflow: 'hidden' }}>
-            <span className="balance-label">BALANCE</span>
+            <span className="balance-label">{HEADER_TEXT.BALANCE_LABEL}</span>
             <AnimatedBalance balance={balance} className="balance-value" />
             
             {/* CSS Confetti inside balance area */}
@@ -92,8 +103,8 @@ function Header({ timeMode, onTimeModeChange, balance, showBalanceConfetti = fal
         {/* Mode Section */}
         <div className="mode-section">
           <div className="mode-label">
-            <p className={timeMode === 'price' ? 'visible' : 'hidden'}>Price Mode</p>
-            <p className={timeMode !== 'price' ? 'visible' : 'hidden'}>Time Mode</p>
+            <p className={timeMode === 'price' ? 'visible' : 'hidden'}>{HEADER_TEXT.PRICE_MODE}</p>
+            <p className={timeMode !== 'price' ? 'visible' : 'hidden'}>{HEADER_TEXT.TIME_MODE}</p>
           </div>
           
           <div className="time-toggle">
@@ -112,26 +123,26 @@ function Header({ timeMode, onTimeModeChange, balance, showBalanceConfetti = fal
               className={`time-button ${timeMode === '30s' ? 'active' : ''}`}
               onClick={() => onTimeModeChange('30s')}
             >
-              30s
+              {HEADER_TEXT.TIME_30S}
             </button>
             <button 
               className={`time-button ${timeMode === '60s' ? 'active' : ''}`}
               onClick={() => onTimeModeChange('60s')}
             >
-              60s
+              {HEADER_TEXT.TIME_60S}
             </button>
             <button 
               className={`time-button price ${timeMode === 'price' ? 'active' : ''}`}
               onClick={() => onTimeModeChange('price')}
             >
-              $
+              {HEADER_TEXT.PRICE_SYMBOL}
             </button>
           </div>
         </div>
 
         {/* Martingale Section */}
         <div className="martingale-section">
-          <p className="martingale-label">Martingale</p>
+          <p className="martingale-label">{HEADER_TEXT.MARTINGALE_LABEL}</p>
           <div className="martingale-toggle-container">
             <button 
               className={`martingale-button ${martingaleEnabled ? 'active' : ''}`}

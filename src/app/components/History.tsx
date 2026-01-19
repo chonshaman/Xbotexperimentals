@@ -37,6 +37,17 @@ import './HistoryCSS.css';
 
 const ROWS = 6;
 
+// ✅ Dynamic string constants
+const HISTORY_TEXT = {
+  TITLE: 'HISTORY',
+  LEGEND_DOWN: 'D=DOWN',
+  LEGEND_UP: 'U=UP',
+  CELL_UP: 'U',
+  CELL_DOWN: 'D',
+  RESULT_WIN: 'WIN',
+  RESULT_LOSE: 'LOSE',
+} as const;
+
 type CellType = 'WIN' | 'LOSE' | null;
 type Result = 'WIN' | 'LOSE';
 
@@ -292,7 +303,7 @@ function HistoryDot({ type, isNew, isFlashing }: { type: 'WIN' | 'LOSE' | null; 
   }
   
   // Filled cell with WIN or LOSE - display as U or D
-  const displayText = type === 'WIN' ? 'U' : 'D';
+  const displayText = type === 'WIN' ? HISTORY_TEXT.CELL_UP : HISTORY_TEXT.CELL_DOWN;
   
   return (
     <div className={`history-dot-wrapper ${type === 'WIN' ? 'up' : 'down'} ${isNew ? 'flash' : ''}`}>
@@ -395,10 +406,10 @@ const History = forwardRef<HistoryRef>((props, ref) => {
     <div className="history-panel">
       {/* Header */}
       <div className="history-header">
-        <p className="history-title">HISTORY</p>
+        <p className="history-title">{HISTORY_TEXT.TITLE}</p>
         <div className="history-legend">
-          <p className="legend-down">D=DOWN</p>
-          <p className="legend-up">U=UP</p>
+          <p className="legend-down">{HISTORY_TEXT.LEGEND_DOWN}</p>
+          <p className="legend-up">{HISTORY_TEXT.LEGEND_UP}</p>
         </div>
       </div>
 

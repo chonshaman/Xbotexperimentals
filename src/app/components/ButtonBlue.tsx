@@ -9,6 +9,12 @@ interface ButtonBlueProps {
   active?: boolean;
 }
 
+// ✅ Dynamic string constants
+const BUTTON_TEXT = {
+  DIRECTION: 'UP',
+  ENTRY_LOCKED: 'Entry Locked',
+} as const;
+
 function RocketBlurredLayer() {
   return (
     <div className="[grid-area:1_/_1] h-[48px] ml-0 mt-0 relative w-[48px]" style={{ transform: 'translateZ(0)' }}>
@@ -160,14 +166,14 @@ export default memo(function ButtonBlue({ state = 'default', onClick, active }: 
                               textShadow: '0px 4px 24px #009cef',
                               lineHeight: 'normal',
                               fontStyle: 'normal'
-                            }}>UP</p>
+                            }}>{BUTTON_TEXT.DIRECTION}</p>
                             {state === 'entry-locked' && (
                               <p className="blue-text-subtitle" style={{ 
                                 color: '#a0e6f6', 
                                 textShadow: '0px 4px 24px #009cef',
                                 lineHeight: 'normal',
                                 fontStyle: 'normal'
-                              }}>Entry Locked</p>
+                              }}>{BUTTON_TEXT.ENTRY_LOCKED}</p>
                             )}
                           </div>
                         </div>

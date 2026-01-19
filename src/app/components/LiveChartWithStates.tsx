@@ -4,6 +4,19 @@ import { Loader2 } from 'lucide-react';
 
 export type LiveChartState = 'idle' | 'opened' | 'live';
 
+// ✅ Dynamic string constants
+const CHART_TEXT = {
+  PRICE_LABEL: 'Price: ',
+  CHART_TITLE: 'BTC/USDT LIVE CHART',
+  POSITION_OPENED: 'Position Opened -',
+  LIVE_ROUND: 'Live Round - ',
+  ENTRY_PRICE_LABEL: 'Entry Price',
+  DIRECTION_UP: 'UP',
+  DIRECTION_DOWN: 'DOWN',
+  WIN_TEXT: 'WIN!',
+  LOSS_TEXT: 'LOSS',
+} as const;
+
 // ✅ Helper function to format numbers with commas and conditional decimals (hide .00)
 const formatNumber = (value: number) => {
   const hasDecimals = value % 1 !== 0;
@@ -53,7 +66,7 @@ function Title({ currentPrice, entryPrice }: { currentPrice?: number; entryPrice
   return (
     <div className="relative shrink-0 w-full" data-name="title">
       <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex items-start justify-between leading-[normal] not-italic relative text-[14px] w-full whitespace-pre" style={{ fontFamily: "'IBM Plex Sans Condensed', sans-serif", fontWeight: 600 }}>
-        <p className="relative shrink-0 text-white uppercase tracking-tight">BTC/USDT LIVE CHART</p>
+        <p className="relative shrink-0 text-white uppercase tracking-tight">{CHART_TEXT.CHART_TITLE}</p>
         <PriceRight currentPrice={currentPrice} entryPrice={entryPrice} />
       </div>
     </div>
@@ -65,7 +78,7 @@ function StatusOpened({ direction }: { direction?: 'up' | 'down' }) {
   return (
     <div className="backdrop-blur-[8px] bg-[rgba(0,0,0,0.32)] content-stretch flex items-center justify-center px-[4px] py-0 relative rounded-[4px] shrink-0 animate-[slideInFromRight_0.3s_ease-out]" data-name="bg">
       <div className="flex flex-col justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-[rgba(255,255,255,0.72)] whitespace-nowrap" style={{ fontFamily: "'IBM Plex Sans Condensed', sans-serif" }}>
-        <p className="leading-[20px] whitespace-pre">Position Opened -</p>
+        <p className="leading-[20px] whitespace-pre">{CHART_TEXT.POSITION_OPENED}</p>
       </div>
       <div className="h-[20px] relative shrink-0 w-[24px]" data-name="up down">
         <div 
@@ -76,7 +89,7 @@ function StatusOpened({ direction }: { direction?: 'up' | 'down' }) {
             fontWeight: 600
           }}
         >
-          <p className="leading-[20px] whitespace-pre-wrap">{direction === 'down' ? 'DOWN' : 'UP'}</p>
+          <p className="leading-[20px] whitespace-pre-wrap">{direction === 'down' ? CHART_TEXT.DIRECTION_DOWN : CHART_TEXT.DIRECTION_UP}</p>
         </div>
       </div>
     </div>
@@ -94,7 +107,7 @@ function UpDown({ direction }: { direction?: 'up' | 'down' }) {
           fontWeight: 600
         }}
       >
-        <p className="leading-[20px] whitespace-pre-wrap">{direction === 'down' ? 'DOWN' : 'UP'}</p>
+        <p className="leading-[20px] whitespace-pre-wrap">{direction === 'down' ? CHART_TEXT.DIRECTION_DOWN : CHART_TEXT.DIRECTION_UP}</p>
       </div>
     </div>
   );
@@ -104,7 +117,7 @@ function Bg({ direction }: { direction?: 'up' | 'down' }) {
   return (
     <div className="backdrop-blur-[8px] bg-[rgba(0,0,0,0.16)] content-stretch flex items-center justify-center px-[4px] py-0 relative rounded-tl-[4px] rounded-tr-[4px] shrink-0" data-name="bg">
       <div className="flex flex-col justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-[rgba(255,255,255,0.72)]" style={{ fontFamily: "'IBM Plex Sans Condensed', sans-serif", fontWeight: 500 }}>
-        <p className="leading-[20px] whitespace-pre">{`Live Round - `}</p>
+        <p className="leading-[20px] whitespace-pre">{CHART_TEXT.LIVE_ROUND}</p>
       </div>
       <UpDown direction={direction} />
     </div>
@@ -293,7 +306,7 @@ function LiveIndicator({
         >
           {/* Row 1: Entry Price Label */}
           <div className="backdrop-blur-[4px] bg-[rgba(0,0,0,0.16)] flex items-center justify-center px-[8px] py-[3px] rounded-tl-[4px] rounded-tr-[4px] shrink-0 h-[22px]">
-            <p className="text-[12px] text-white leading-none whitespace-nowrap" style={{ fontFamily: "'IBM Plex Sans Condensed', sans-serif", fontWeight: 500 }}>Entry Price</p>
+            <p className="text-[12px] text-white leading-none whitespace-nowrap" style={{ fontFamily: "'IBM Plex Sans Condensed', sans-serif", fontWeight: 500 }}>{CHART_TEXT.ENTRY_PRICE_LABEL}</p>
           </div>
           
           {/* Row 2: Entry Price Value */}
@@ -1232,7 +1245,7 @@ export default function LiveChartWithStates({
               >
                 <div className="text-white text-center">
                   <div className="text-5xl font-bold mb-2 drop-shadow-lg" style={{ fontFamily: "'IBM Plex Sans Condensed', sans-serif" }}>
-                    WIN!
+                    {CHART_TEXT.WIN_TEXT}
                   </div>
                   <div className="text-2xl font-semibold" style={{ fontFamily: "'IBM Plex Sans Condensed', sans-serif" }}>
                     +{formatNumber(finalPnL)}
@@ -1246,7 +1259,7 @@ export default function LiveChartWithStates({
               className="animate-[bounceIn_0.5s_ease-out] h-[48px] px-6 rounded-2xl shadow-lg border border-white/20 bg-gradient-to-b from-[#ff4d4d] to-[#cc0000] flex items-center gap-4"
             >
               <div className="text-white text-lg font-bold drop-shadow-lg whitespace-nowrap" style={{ fontFamily: "'IBM Plex Sans Condensed', sans-serif" }}>
-                LOSS
+                {CHART_TEXT.LOSS_TEXT}
               </div>
               <div className="text-white text-lg font-semibold whitespace-nowrap" style={{ fontFamily: "'IBM Plex Sans Condensed', sans-serif" }}>
                 -{formatNumber(Math.abs(finalPnL))}

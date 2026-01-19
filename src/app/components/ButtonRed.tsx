@@ -8,6 +8,12 @@ interface ButtonRedProps {
   onClick?: () => void;
 }
 
+// ✅ Dynamic string constants
+const BUTTON_TEXT = {
+  DIRECTION: 'DOWN',
+  ENTRY_LOCKED: 'Entry Locked',
+} as const;
+
 function BombBlurredLayer() {
   return (
     <div className="[grid-area:1_/_1] h-[48px] ml-0 mt-0 relative w-[48px]">
@@ -185,14 +191,14 @@ export default memo(function ButtonRed({ state = 'default', onClick }: ButtonRed
                               textShadow: '0px 4px 24px #ef0000',
                               lineHeight: 'normal',
                               fontStyle: 'normal'
-                            }}>DOWN</p>
+                            }}>{BUTTON_TEXT.DIRECTION}</p>
                             {state === 'entry-locked' && (
                               <p className="red-text-subtitle" style={{ 
                                 color: '#ffb473', 
                                 textShadow: '0px 4px 24px #ef0000',
                                 lineHeight: 'normal',
                                 fontStyle: 'normal'
-                              }}>Entry Locked</p>
+                              }}>{BUTTON_TEXT.ENTRY_LOCKED}</p>
                             )}
                           </div>
                         </div>

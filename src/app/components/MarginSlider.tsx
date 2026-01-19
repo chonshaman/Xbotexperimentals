@@ -6,8 +6,31 @@ interface MarginSliderProps {
   balance?: number; // Add balance prop
 }
 
+// ✅ Dynamic string constants and configuration
+const SLIDER_TEXT = {
+  BET_AMOUNT_LABEL: 'Bet Amount',
+  CURRENCY_SUFFIX: 'USDT',
+  MAX_LABEL: 'Max',
+} as const;
+
+// ✅ Bet amount options (dynamic configuration)
+const BET_AMOUNTS = {
+  OPTION_1: 10,
+  OPTION_2: 20,
+  OPTION_3: 50,
+  OPTION_4: 100,
+  OPTION_5: 500,
+} as const;
+
 function MarginSlider({ value, onChange, balance = 10000 }: MarginSliderProps) {
-  const marginOptions = [10, 20, 50, 100, 500, balance]; // Add balance as 6th option (Max)
+  const marginOptions = [
+    BET_AMOUNTS.OPTION_1,
+    BET_AMOUNTS.OPTION_2,
+    BET_AMOUNTS.OPTION_3,
+    BET_AMOUNTS.OPTION_4,
+    BET_AMOUNTS.OPTION_5,
+    balance
+  ]; // Add balance as 6th option (Max)
   const [selectedIndex, setSelectedIndex] = useState(3); // Default to 100
   const [animationKey, setAnimationKey] = useState(0); // Key to trigger re-animation
   const [animationDirection, setAnimationDirection] = useState<'up' | 'down'>('up');
@@ -18,7 +41,14 @@ function MarginSlider({ value, onChange, balance = 10000 }: MarginSliderProps) {
   // Update value when selectedIndex changes
   useEffect(() => {
     // Recalculate marginOptions inside useEffect to get fresh balance value
-    const currentMarginOptions = [10, 20, 50, 100, 500, balance];
+    const currentMarginOptions = [
+      BET_AMOUNTS.OPTION_1,
+      BET_AMOUNTS.OPTION_2,
+      BET_AMOUNTS.OPTION_3,
+      BET_AMOUNTS.OPTION_4,
+      BET_AMOUNTS.OPTION_5,
+      balance
+    ];
     
     if (onChange && typeof onChange === 'function') {
       onChange(currentMarginOptions[selectedIndex]);
@@ -114,7 +144,7 @@ function MarginSlider({ value, onChange, balance = 10000 }: MarginSliderProps) {
   return (
     <div className="trading-panel-slider-section">
       <div className="trading-panel-slider-label" style={{ justifyContent: 'center', overflow: 'hidden', height: '24px' }}>
-        <span className="label-text" style={{ opacity: 0.72 }}>Bet Amount</span>
+        <span className="label-text" style={{ opacity: 0.72 }}>{SLIDER_TEXT.BET_AMOUNT_LABEL}</span>
         <span 
           key={animationKey} 
           className="label-value"
@@ -124,7 +154,7 @@ function MarginSlider({ value, onChange, balance = 10000 }: MarginSliderProps) {
             transform: 'translateZ(0)'
           }}
         >
-          {formatBetAmount(marginOptions[selectedIndex])} USDT
+          {formatBetAmount(marginOptions[selectedIndex])} {SLIDER_TEXT.CURRENCY_SUFFIX}
         </span>
       </div>
       
@@ -135,7 +165,7 @@ function MarginSlider({ value, onChange, balance = 10000 }: MarginSliderProps) {
           <div className="flex items-start justify-between w-full">
             {marginOptions.map((option, index) => {
               // Show "Max" for the last option (balance)
-              const displayText = index === marginOptions.length - 1 ? 'Max' : option;
+              const displayText = index === marginOptions.length - 1 ? SLIDER_TEXT.MAX_LABEL : option;
               
               // Add padding-left for indices 1, 2, 3, 4 (values 20, 50, 100, 500)
               const shouldAddPadding = index >= 1 && index <= 4;
