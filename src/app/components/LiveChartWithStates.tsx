@@ -92,7 +92,7 @@ interface LiveChartWithStatesProps {
   onPairChange?: (pair: TradingPair) => void;
 }
 
-function PriceRight({ currentPrice, entryPrice }: { currentPrice?: number; entryPrice?: number }) {
+function PriceRight({ currentPrice, entryPrice, priceDirection }: { currentPrice?: number; entryPrice?: number; priceDirection?: 'up' | 'down' | 'neutral' }) {
   const price = currentPrice || 96500;
   const basePrice = entryPrice || 96500;
   const percentage = ((price - basePrice) / basePrice * 100);
@@ -105,10 +105,15 @@ function PriceRight({ currentPrice, entryPrice }: { currentPrice?: number; entry
     });
   };
 
+  // Use priceDirection for text color if available, otherwise fall back to percentage
+  const textColor = priceDirection 
+    ? (priceDirection === 'up' ? 'text-[#2ddb64]' : priceDirection === 'down' ? 'text-[#ff3232]' : 'text-[#808080]')
+    : (isUp ? 'text-[#2ddb64]' : 'text-[#ff3232]');
+
   return (
     <div className="content-stretch flex gap-[4px] items-center relative shrink-0 text-[12px] opacity-90" data-name="price right" style={{ fontFamily: "'IBM Plex Sans Condensed', sans-serif" }}>
       <p className="relative shrink-0 text-white">{`Price: `}</p>
-      <p className={`relative shrink-0 transition-colors duration-300 ${isUp ? 'text-[#2ddb64]' : 'text-[#ff3232]'}`}>
+      <p className={`relative shrink-0 ${textColor}`}>
         ${formatPrice(price)} ({isUp ? '+' : ''}{percentage.toFixed(2)}%)
       </p>
     </div>
@@ -210,12 +215,14 @@ function PairSelector({
 function Title({ 
   currentPrice, 
   entryPrice,
+  priceDirection,
   selectedPair,
   onSelectPair,
   state
 }: { 
   currentPrice?: number; 
   entryPrice?: number;
+  priceDirection?: 'up' | 'down' | 'neutral';
   selectedPair: TradingPair;
   onSelectPair: (pair: TradingPair) => void;
   state?: LiveChartState;
@@ -227,7 +234,7 @@ function Title({
           <p className="relative shrink-0 text-white uppercase tracking-tight">{CHART_TEXT.LIVE_CHART}</p>
           <PairSelector selectedPair={selectedPair} onSelectPair={onSelectPair} disabled={state !== 'idle'} />
         </div>
-        <PriceRight currentPrice={currentPrice} entryPrice={entryPrice} />
+        <PriceRight currentPrice={currentPrice} entryPrice={entryPrice} priceDirection={priceDirection} />
       </div>
     </div>
   );
@@ -498,7 +505,7 @@ const getBasePriceForPair = (pair: TradingPair): number => {
   }
 };
 
-function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice, selectedPair }: { state: LiveChartState; onPriceUpdate?: (price: number) => void; direction?: 'up' | 'down'; entryPrice?: number; selectedPair: TradingPair }) {
+function Chart1AndPrice({ state, onPriceUpdate, onPriceDirectionUpdate, direction, entryPrice, selectedPair }: { state: LiveChartState; onPriceUpdate?: (price: number) => void; onPriceDirectionUpdate?: (direction: 'up' | 'down' | 'neutral') => void; direction?: 'up' | 'down'; entryPrice?: number; selectedPair: TradingPair }) {
   // ✅ Initialize with base price for selected pair
   const getInitialBasePrice = () => getBasePriceForPair(selectedPair);
   const initialBasePrice = getInitialBasePrice();
@@ -513,9 +520,17 @@ function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice, selectedP
   });
   const [currentPrice, setCurrentPrice] = useState(initialBasePrice);
   const [prevPrice, setPrevPrice] = useState(initialBasePrice);
+  const [priceDirection, setPriceDirection] = useState<'up' | 'down' | 'neutral'>('neutral');
   const [minPrice, setMinPrice] = useState(initialBasePrice - 5);
   const [maxPrice, setMaxPrice] = useState(initialBasePrice + 5);
   const [priceHistory, setPriceHistory] = useState<number[]>([]);
+
+  // ✅ Notify parent of direction changes via useEffect to avoid render-phase updates
+  useEffect(() => {
+    if (onPriceDirectionUpdate) {
+      onPriceDirectionUpdate(priceDirection);
+    }
+  }, [priceDirection, onPriceDirectionUpdate]);
 
   // Mock price simulation only
   useEffect(() => {
@@ -591,7 +606,10 @@ function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice, selectedP
                 return value.toFixed(2);
               });
               setPrices(newPrices);
-              setPrevPrice(currentPrice);
+              // Determine direction based on actual price change
+              const newDirection = newPrice > lastPrice ? 'up' : newPrice < lastPrice ? 'down' : 'neutral';
+              setPriceDirection(newDirection);
+              setPrevPrice(lastPrice);
               setCurrentPrice(newPrice);
               return newHistory;
             }
@@ -611,7 +629,10 @@ function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice, selectedP
         });
         setPrices(newPrices);
         
-        setPrevPrice(currentPrice);
+        // Determine direction based on actual price change
+        const newDirection = newPrice > lastPrice ? 'up' : newPrice < lastPrice ? 'down' : 'neutral';
+        setPriceDirection(newDirection);
+        setPrevPrice(lastPrice);
         setCurrentPrice(newPrice);
         
         return newHistory;
@@ -738,8 +759,8 @@ function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice, selectedP
   
   const entryPriceY = calculateEntryPriceY();
   
-  // Determine price direction
-  const isPriceUp = currentPrice >= prevPrice;
+  // Use priceDirection state for accurate color tracking
+  const isPriceUp = priceDirection === 'up';
   
   // Format price with comma separator and 2 decimals
   const formatPrice = (price: number) => {
@@ -868,9 +889,9 @@ function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice, selectedP
             }}
           >
             <div 
-              className="text-[11px] text-white px-[6px] py-[2px] rounded-[4px] shadow-lg transition-colors duration-300"
+              className="text-[11px] text-white px-[6px] py-[2px] rounded-[4px] shadow-lg"
               style={{
-                backgroundColor: isPriceUp ? '#2ddb64' : '#ff3232',
+                backgroundColor: priceDirection === 'up' ? '#2ddb64' : priceDirection === 'down' ? '#ff3232' : '#808080',
                 fontFamily: "'IBM Plex Sans Condensed', sans-serif",
                 fontWeight: 600
               }}
@@ -903,12 +924,12 @@ function Price({ prices }: { prices: string[] }) {
   );
 }
 
-function Content({ state, onPriceUpdate, direction, entryPrice, selectedPair }: { state: LiveChartState; onPriceUpdate?: (price: number) => void; direction?: 'up' | 'down'; entryPrice?: number; selectedPair: TradingPair }) {
+function Content({ state, onPriceUpdate, onPriceDirectionUpdate, direction, entryPrice, selectedPair }: { state: LiveChartState; onPriceUpdate?: (price: number) => void; onPriceDirectionUpdate?: (direction: 'up' | 'down' | 'neutral') => void; direction?: 'up' | 'down'; entryPrice?: number; selectedPair: TradingPair }) {
   return (
     <div className="flex-[1_0_0] min-h-px min-w-px relative w-full h-full pb-[16px]" data-name="content">
       <div className="flex flex-row justify-end size-full">
         <div className="content-stretch flex gap-[9px] items-start justify-end pl-0 pr-[6px] py-0 relative size-full">
-          <Chart1AndPrice state={state} onPriceUpdate={onPriceUpdate} direction={direction} entryPrice={entryPrice} selectedPair={selectedPair} />
+          <Chart1AndPrice state={state} onPriceUpdate={onPriceUpdate} onPriceDirectionUpdate={onPriceDirectionUpdate} direction={direction} entryPrice={entryPrice} selectedPair={selectedPair} />
         </div>
       </div>
     </div>
@@ -953,11 +974,11 @@ function Time() {
   );
 }
 
-function Chart({ state, onPriceUpdate, direction, entryPrice, selectedPair }: { state: LiveChartState; onPriceUpdate?: (price: number) => void; direction?: 'up' | 'down'; entryPrice?: number; selectedPair: TradingPair }) {
+function Chart({ state, onPriceUpdate, onPriceDirectionUpdate, direction, entryPrice, selectedPair }: { state: LiveChartState; onPriceUpdate?: (price: number) => void; onPriceDirectionUpdate?: (direction: 'up' | 'down' | 'neutral') => void; direction?: 'up' | 'down'; entryPrice?: number; selectedPair: TradingPair }) {
   return (
     <div className="flex-[1_0_0] min-h-px min-w-px relative w-full z-[2]" data-name="chart">
       <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start justify-between relative size-full">
-        <Content state={state} onPriceUpdate={onPriceUpdate} direction={direction} entryPrice={entryPrice} selectedPair={selectedPair} />
+        <Content state={state} onPriceUpdate={onPriceUpdate} onPriceDirectionUpdate={onPriceDirectionUpdate} direction={direction} entryPrice={entryPrice} selectedPair={selectedPair} />
         <Time />
       </div>
     </div>
@@ -1117,6 +1138,7 @@ function Inside({
   showElements, 
   entryPrice, 
   onPriceUpdate,
+  onPriceDirectionUpdate,
   betAmount,
   selectedPair
 }: { 
@@ -1127,6 +1149,7 @@ function Inside({
   showElements: boolean; 
   entryPrice?: number; 
   onPriceUpdate?: (price: number) => void;
+  onPriceDirectionUpdate?: (direction: 'up' | 'down' | 'neutral') => void;
   betAmount?: number;
   selectedPair: TradingPair;
 }) {
@@ -1150,7 +1173,7 @@ function Inside({
         <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center justify-between pl-[8px] pr-[2px] py-[8px] relative size-full gap-[4px]">
           <FloatingOverlay state={state} direction={direction} showElements={showElements} entryPrice={entryPrice} />
           {/* ✅ Add key to force complete remount when pair changes */}
-          <Chart key={selectedPair} state={state} onPriceUpdate={handleInternalPriceUpdate} direction={direction} entryPrice={entryPrice} selectedPair={selectedPair} />
+          <Chart key={selectedPair} state={state} onPriceUpdate={handleInternalPriceUpdate} onPriceDirectionUpdate={onPriceDirectionUpdate} direction={direction} entryPrice={entryPrice} selectedPair={selectedPair} />
           <div className="absolute bottom-[-100px] flex h-[148px] items-center justify-center left-[calc(50%-1px)] mix-blend-screen translate-x-[-50%] w-[384px] z-[1]">
             <div className="flex-none rotate-[180deg]">
               <div className="h-[148px] relative w-[384px]" data-name="glowing">
@@ -1214,6 +1237,7 @@ export default function LiveChartWithStates({
   const selectedPair = externalSelectedPair || internalSelectedPair;
   
   const [currentPrice, setCurrentPrice] = useState<number>(() => getBasePriceForPair(selectedPair));
+  const [priceDirection, setPriceDirection] = useState<'up' | 'down' | 'neutral'>('neutral');
 
   const handlePairChange = (pair: TradingPair) => {
     setInternalSelectedPair(pair);
@@ -1484,12 +1508,13 @@ export default function LiveChartWithStates({
       <Title 
         currentPrice={currentPrice} 
         entryPrice={entryPrice}
+        priceDirection={priceDirection}
         selectedPair={selectedPair}
         onSelectPair={handlePairChange}
         state={state}
       />
       {/* ✅ Add key to force complete remount when pair changes */}
-      <Inside key={selectedPair} state={state} countdown={countdown} mode={mode} direction={direction} showElements={showElements} entryPrice={entryPrice} onPriceUpdate={handlePriceUpdate} betAmount={betAmount} selectedPair={selectedPair} />
+      <Inside key={selectedPair} state={state} countdown={countdown} mode={mode} direction={direction} showElements={showElements} entryPrice={entryPrice} onPriceUpdate={handlePriceUpdate} onPriceDirectionUpdate={setPriceDirection} betAmount={betAmount} selectedPair={selectedPair} />
       <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0.5px_1px_0px_0px_rgba(88,102,123,0.33),inset_0px_0.2px_1px_0.5px_rgba(133,140,150,0.55)]" />
     </div>
     </div>
