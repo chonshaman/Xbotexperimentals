@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import svgPaths from "@/imports/svg-8we49uz6px";
-import { Loader2 } from 'lucide-react';
+import { Loader2, ChevronDown } from 'lucide-react';
 
 export type LiveChartState = 'idle' | 'opened' | 'live';
+export type TradingPair = 'BTC/USDT' | 'ETH/USDT' | 'SOL/USDT';
 
 // ✅ Dynamic string constants
 const CHART_TEXT = {
   PRICE_LABEL: 'Price: ',
-  CHART_TITLE: 'BTC/USDT LIVE CHART',
+  LIVE_CHART: 'LIVE CHART',
   POSITION_OPENED: 'Position Opened -',
   LIVE_ROUND: 'Live Round - ',
   ENTRY_PRICE_LABEL: 'Entry Price',
@@ -16,6 +17,8 @@ const CHART_TEXT = {
   WIN_TEXT: 'WIN!',
   LOSS_TEXT: 'LOSS',
 } as const;
+
+const TRADING_PAIRS: TradingPair[] = ['BTC/USDT', 'ETH/USDT', 'SOL/USDT'];
 
 // ✅ Helper function to format numbers with commas and conditional decimals (hide .00)
 const formatNumber = (value: number) => {
@@ -27,6 +30,54 @@ const formatNumber = (value: number) => {
   });
 };
 
+// Crypto Icons
+function BTCIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="8" cy="8" r="8" fill="#F7931A"/>
+      <path d="M11.1 7.95c.15-1-.6-1.55-1.65-1.9l.35-1.4-0.85-0.2-0.35 1.35c-0.2-0.05-0.45-0.1-0.65-0.15l0.35-1.4-0.85-0.2-0.35 1.4c-0.2-0.05-0.35-0.1-0.5-0.15L6.6 3.95 5.7 3.75l0.2 0.8s0.6 0.15 0.6 0.15c0.35 0.1 0.4 0.35 0.4 0.55l-0.4 1.6c0.05 0 0.1 0.05 0.15 0.05-0.05 0-0.1-0.05-0.15-0.05l-0.55 2.2c-0.05 0.1-0.15 0.25-0.4 0.2 0 0-0.6-0.15-0.6-0.15L4.7 10.9l0.85 0.2c0.15 0.05 0.3 0.1 0.45 0.1l-0.35 1.45 0.85 0.2 0.35-1.4c0.2 0.05 0.45 0.1 0.65 0.15l-0.35 1.4 0.85 0.2 0.35-1.45c1.45 0.3 2.55 0.15 3-1.1 0.35-1 0-1.6-0.75-1.95 0.55-0.1 0.95-0.45 1.05-1.15zm-1.9 2.65c-0.25 1.05-2 0.5-2.55 0.35l0.45-1.85c0.55 0.15 2.35 0.4 2.1 1.5zm0.25-2.65c-0.25 0.95-1.75 0.45-2.25 0.35l0.4-1.65c0.5 0.1 2.05 0.35 1.85 1.3z" fill="white"/>
+    </svg>
+  );
+}
+
+function ETHIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="8" cy="8" r="8" fill="#627EEA"/>
+      <path d="M8 3L7.95 3.15v6.7l0.05 0.05 3.5-2.05L8 3z" fill="white" fillOpacity="0.6"/>
+      <path d="M8 3L4.5 7.85 8 9.9V3z" fill="white"/>
+      <path d="M8 10.55l-0.05 0.05v2.7l0.05 0.15 3.5-4.95L8 10.55z" fill="white" fillOpacity="0.6"/>
+      <path d="M8 13.45V10.55L4.5 8.5 8 13.45z" fill="white"/>
+      <path d="M8 9.9l3.5-2.05L8 6.4v3.5z" fill="white" fillOpacity="0.2"/>
+      <path d="M4.5 7.85L8 9.9V6.4L4.5 7.85z" fill="white" fillOpacity="0.6"/>
+    </svg>
+  );
+}
+
+function SOLIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="8" cy="8" r="8" fill="url(#solGradient)"/>
+      <defs>
+        <linearGradient id="solGradient" x1="0" y1="0" x2="16" y2="16">
+          <stop offset="0%" stopColor="#00FFA3"/>
+          <stop offset="100%" stopColor="#DC1FFF"/>
+        </linearGradient>
+      </defs>
+      <path d="M4.5 10.5L5 10l6.5 0 0.5 0.5-0.5 0.5-6.5 0L4.5 10.5z" fill="white"/>
+      <path d="M4.5 5.5L5 5l6.5 0 0.5 0.5-0.5 0.5-6.5 0L4.5 5.5z" fill="white"/>
+      <path d="M4.5 8L5 7.5l6.5 0 0.5 0.5-0.5 0.5-6.5 0L4.5 8z" fill="white"/>
+    </svg>
+  );
+}
+
+function getCryptoIcon(pair: TradingPair) {
+  if (pair.startsWith('BTC')) return <BTCIcon />;
+  if (pair.startsWith('ETH')) return <ETHIcon />;
+  if (pair.startsWith('SOL')) return <SOLIcon />;
+  return null;
+}
+
 interface LiveChartWithStatesProps {
   state?: LiveChartState;
   showWinToast?: boolean;
@@ -37,6 +88,8 @@ interface LiveChartWithStatesProps {
   entryPrice?: number;
   onPriceUpdate?: (price: number) => void;
   betAmount?: number;
+  selectedPair?: TradingPair;
+  onPairChange?: (pair: TradingPair) => void;
 }
 
 function PriceRight({ currentPrice, entryPrice }: { currentPrice?: number; entryPrice?: number }) {
@@ -62,11 +115,106 @@ function PriceRight({ currentPrice, entryPrice }: { currentPrice?: number; entry
   );
 }
 
-function Title({ currentPrice, entryPrice }: { currentPrice?: number; entryPrice?: number }) {
+function PairSelector({ 
+  selectedPair, 
+  onSelectPair 
+}: { 
+  selectedPair: TradingPair; 
+  onSelectPair: (pair: TradingPair) => void;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="relative">
+      {/* Selector Button */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-[6px] hover:opacity-80 transition-opacity cursor-pointer group"
+      >
+        <div className="flex items-center gap-[4px]">
+          {getCryptoIcon(selectedPair)}
+          <span className="text-white text-[14px] tracking-tight" style={{ fontFamily: "'IBM Plex Sans Condensed', sans-serif", fontWeight: 600 }}>
+            {selectedPair}
+          </span>
+        </div>
+        <ChevronDown 
+          className={`w-3 h-3 text-white/70 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} 
+        />
+      </button>
+
+      {/* Dropdown Popup */}
+      {isOpen && (
+        <>
+          {/* Backdrop to close dropdown */}
+          <div 
+            className="fixed inset-0 z-[100]" 
+            onClick={() => setIsOpen(false)}
+          />
+          
+          {/* Dropdown Menu */}
+          <div 
+            className="absolute top-[calc(100%+4px)] left-[-12px] z-[101] backdrop-blur-[16px] bg-[rgba(0,0,0,0.24)] border border-[rgba(255,255,255,0.1)] rounded-[6px] shadow-lg min-w-[140px] p-[4px] animate-[dropdownFadeIn_0.2s_ease-out]"
+            style={{
+              animation: 'dropdownFadeIn 0.2s ease-out'
+            }}
+          >
+            <style>{`
+              @keyframes dropdownFadeIn {
+                from {
+                  opacity: 0;
+                  transform: translateY(-8px);
+                }
+                to {
+                  opacity: 1;
+                  transform: translateY(0);
+                }
+              }
+            `}</style>
+            {TRADING_PAIRS.map((pair) => (
+              <button
+                key={pair}
+                onClick={() => {
+                  onSelectPair(pair);
+                  setIsOpen(false);
+                }}
+                className={`w-full flex items-center gap-[4px] px-[12px] py-[8px] text-left transition-colors hover:bg-[rgba(255,255,255,0.1)] rounded-[4px] ${
+                  pair === selectedPair ? 'bg-[rgba(72,190,229,0.15)]' : ''
+                }`}
+              >
+                {getCryptoIcon(pair)}
+                <span 
+                  className="text-white text-[13px]" 
+                  style={{ fontFamily: "'IBM Plex Sans Condensed', sans-serif", fontWeight: 500 }}
+                >
+                  {pair}
+                </span>
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+function Title({ 
+  currentPrice, 
+  entryPrice,
+  selectedPair,
+  onSelectPair
+}: { 
+  currentPrice?: number; 
+  entryPrice?: number;
+  selectedPair: TradingPair;
+  onSelectPair: (pair: TradingPair) => void;
+}) {
   return (
     <div className="relative shrink-0 w-full" data-name="title">
       <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex items-start justify-between leading-[normal] not-italic relative text-[14px] w-full whitespace-pre" style={{ fontFamily: "'IBM Plex Sans Condensed', sans-serif", fontWeight: 600 }}>
-        <p className="relative shrink-0 text-white uppercase tracking-tight">{CHART_TEXT.CHART_TITLE}</p>
+        <div className="flex items-center gap-[8px]">
+          <p className="relative shrink-0 text-white uppercase tracking-tight">{CHART_TEXT.LIVE_CHART}</p>
+          <PairSelector selectedPair={selectedPair} onSelectPair={onSelectPair} />
+        </div>
         <PriceRight currentPrice={currentPrice} entryPrice={entryPrice} />
       </div>
     </div>
@@ -1010,10 +1158,23 @@ export default function LiveChartWithStates({
   direction, 
   entryPrice, 
   onPriceUpdate,
-  betAmount
+  betAmount,
+  selectedPair: externalSelectedPair,
+  onPairChange
 }: LiveChartWithStatesProps) {
   const [showElements, setShowElements] = useState(false);
   const [currentPrice, setCurrentPrice] = useState<number>(96500);
+  const [internalSelectedPair, setInternalSelectedPair] = useState<TradingPair>('BTC/USDT');
+
+  // Use external selected pair if provided, otherwise use internal state
+  const selectedPair = externalSelectedPair || internalSelectedPair;
+
+  const handlePairChange = (pair: TradingPair) => {
+    setInternalSelectedPair(pair);
+    if (onPairChange) {
+      onPairChange(pair);
+    }
+  };
 
   useEffect(() => {
     if (state === 'opened') {
@@ -1269,7 +1430,12 @@ export default function LiveChartWithStates({
         </div>
       )}
       
-      <Title currentPrice={currentPrice} entryPrice={entryPrice} />
+      <Title 
+        currentPrice={currentPrice} 
+        entryPrice={entryPrice}
+        selectedPair={selectedPair}
+        onSelectPair={handlePairChange}
+      />
       <Inside state={state} countdown={countdown} mode={mode} direction={direction} showElements={showElements} entryPrice={entryPrice} onPriceUpdate={handlePriceUpdate} betAmount={betAmount} />
       <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0.5px_1px_0px_0px_rgba(88,102,123,0.33),inset_0px_0.2px_1px_0.5px_rgba(133,140,150,0.55)]" />
     </div>
