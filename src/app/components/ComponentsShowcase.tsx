@@ -451,6 +451,116 @@ export default function ComponentsShowcase() {
             {/* English Content */}
             {language === 'en' && (
               <div>
+                {/* Big Road Visual Diagram */}
+                <div className="bg-gray-800 rounded-xl p-6 mb-6">
+                  <h3 className="text-2xl font-semibold text-blue-400 mb-6 text-center">📊 Baccarat Big Road History Board Rules (No-Tie Logic)</h3>
+                  
+                  {/* Diagram Image */}
+                  <div className="bg-gray-900 rounded-lg p-4 mb-6 flex justify-center">
+                    <img 
+                      src="https://raw.githubusercontent.com/chonshaman/riv_store/759c8d5d06fdf73d381c114593a0c1f085e8a043/haluuimg/public/unnamedv.webp" 
+                      alt="Big Road Baccarat Rules Diagram" 
+                      className="max-w-full h-auto rounded-lg"
+                      style={{ maxHeight: '500px' }}
+                    />
+                  </div>
+
+                  {/* Explanation Text */}
+                  <div className="divide-y divide-white/5 text-gray-300">
+                    <div className="pb-3">
+                      <h4 className="text-lg font-medium text-white mb-1">Case 1: Same-Side Wins (Vertical Move)</h4>
+                      <p className="text-sm">
+                        As shown in the first column, when the same side wins consecutively (e.g., Banker), the subsequent circle is placed directly below the previous one.
+                      </p>
+                    </div>
+
+                    <div className="py-3">
+                      <h4 className="text-lg font-medium text-white mb-1">Case 2: Side Change (New Column Jump)</h4>
+                      <p className="text-sm">
+                        When the result shifts from Banker to Player (or vice versa), move to the next column to the right and start recording from Row 1.
+                      </p>
+                    </div>
+
+                    <div className="py-3">
+                      <h4 className="text-lg font-medium text-white mb-1">Case 3: L-shape / Dragon Tail (Horizontal Bend)</h4>
+                      <p className="text-sm">
+                        When a side wins for the 7th consecutive time—exceeding the standard 6 rows of the board—the streak begins to bend horizontally to the right along Row 6.
+                      </p>
+                    </div>
+
+                    <div className="py-3">
+                      <h4 className="text-lg font-medium text-white mb-1">Case 4: Side Change After a Dragon Tail</h4>
+                      <p className="text-sm">
+                        If the winner changes while a "dragon" is active (for example, after B8), the next result (P) must jump to Row 1 of the next available empty column. 
+                        It is never recorded in the empty rows directly above the horizontal tail segments (e.g., the empty spaces above B7 or B8).
+                      </p>
+                    </div>
+
+                    <div className="pt-3">
+                      <h4 className="text-lg font-medium text-white mb-1">Case 5: Double Dragon (Overlapping Tails)</h4>
+                      <p className="text-sm">
+                        This is an advanced scenario. When a new win streak (Player) also grows long enough to hit the bottom of the board, but Row 6 is already occupied by the previous Banker's tail, 
+                        the Player's streak must bend horizontally earlier at Row 5.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Trade Settlement Flow */}
+                <div className="bg-gray-800 rounded-xl p-6 mb-6">
+                  <h3 className="text-xl font-semibold text-blue-400 mb-4">🔄 Complete Trade Settlement Flow</h3>
+                  
+                  <div className="divide-y divide-white/5">
+                    <div className="pb-3">
+                      <div className="flex items-center gap-2 mb-1">
+                        <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">1</div>
+                        <h4 className="text-white font-semibold">Trade Start (30s/60s Mode)</h4>
+                      </div>
+                      <pre className="text-green-400 text-xs ml-8">historyRef.current?.setNextFlashing(true);</pre>
+                    </div>
+
+                    <div className="py-3">
+                      <div className="flex items-center gap-2 mb-1">
+                        <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">2</div>
+                        <h4 className="text-white font-semibold">During Trade</h4>
+                      </div>
+                      <p className="text-gray-300 text-sm ml-8">Next cell is flashing, chart shows entry price line and countdown</p>
+                    </div>
+
+                    <div className="py-3">
+                      <div className="flex items-center gap-2 mb-1">
+                        <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">3</div>
+                        <h4 className="text-white font-semibold">Trade Settlement</h4>
+                      </div>
+                      <p className="text-gray-300 text-sm ml-8">Determine win/loss, calculate PnL, update balance</p>
+                    </div>
+
+                    <div className="py-3">
+                      <div className="flex items-center gap-2 mb-1">
+                        <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">4</div>
+                        <h4 className="text-white font-semibold">Add to History</h4>
+                      </div>
+                      <pre className="text-green-400 text-xs ml-8">historyRef.current?.addSettledTrade(historyItem);</pre>
+                    </div>
+
+                    <div className="py-3">
+                      <div className="flex items-center gap-2 mb-1">
+                        <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">5</div>
+                        <h4 className="text-white font-semibold">Stop Flashing & Show Toast</h4>
+                      </div>
+                      <pre className="text-green-400 text-xs ml-8">historyRef.current?.setNextFlashing(false);</pre>
+                    </div>
+
+                    <div className="pt-3">
+                      <div className="flex items-center gap-2 mb-1">
+                        <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">6</div>
+                        <h4 className="text-white font-semibold">After 2 Seconds - Flash Celebration</h4>
+                      </div>
+                      <pre className="text-green-400 text-xs ml-8">historyRef.current?.flashLastResult();</pre>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Overview */}
                 <div className="bg-gray-800 rounded-xl p-6 mb-6">
                   <h3 className="text-xl font-semibold text-blue-400 mb-3">Overview</h3>
@@ -696,61 +806,6 @@ export default function ComponentsShowcase() {
                   </div>
                 </div>
 
-                {/* Trade Settlement Flow */}
-                <div className="bg-gray-800 rounded-xl p-6 mb-6">
-                  <h3 className="text-xl font-semibold text-blue-400 mb-4">🔄 Complete Trade Settlement Flow</h3>
-                  
-                  <div className="space-y-3">
-                    <div className="bg-gray-900 rounded-lg p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">1</div>
-                        <h4 className="text-white font-semibold">Trade Start (30s/60s Mode)</h4>
-                      </div>
-                      <pre className="text-green-400 text-xs">historyRef.current?.setNextFlashing(true);</pre>
-                    </div>
-
-                    <div className="bg-gray-900 rounded-lg p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">2</div>
-                        <h4 className="text-white font-semibold">During Trade</h4>
-                      </div>
-                      <p className="text-gray-300 text-sm">Next cell is flashing, chart shows entry price line and countdown</p>
-                    </div>
-
-                    <div className="bg-gray-900 rounded-lg p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">3</div>
-                        <h4 className="text-white font-semibold">Trade Settlement</h4>
-                      </div>
-                      <p className="text-gray-300 text-sm mb-2">Determine win/loss, calculate PnL, update balance</p>
-                    </div>
-
-                    <div className="bg-gray-900 rounded-lg p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">4</div>
-                        <h4 className="text-white font-semibold">Add to History</h4>
-                      </div>
-                      <pre className="text-green-400 text-xs">historyRef.current?.addSettledTrade(historyItem);</pre>
-                    </div>
-
-                    <div className="bg-gray-900 rounded-lg p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">5</div>
-                        <h4 className="text-white font-semibold">Stop Flashing & Show Toast</h4>
-                      </div>
-                      <pre className="text-green-400 text-xs">historyRef.current?.setNextFlashing(false);</pre>
-                    </div>
-
-                    <div className="bg-gray-900 rounded-lg p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">6</div>
-                        <h4 className="text-white font-semibold">After 2 Seconds - Flash Celebration</h4>
-                      </div>
-                      <pre className="text-green-400 text-xs">historyRef.current?.flashLastResult();</pre>
-                    </div>
-                  </div>
-                </div>
-
                 {/* Key Design Decisions */}
                 <div className="bg-gray-800 rounded-xl p-6">
                   <h3 className="text-xl font-semibold text-blue-400 mb-4">🎯 Key Design Decisions</h3>
@@ -798,6 +853,114 @@ export default function ComponentsShowcase() {
             {/* Vietnamese Content */}
             {language === 'vi' && (
               <div>
+                {/* Big Road Visual Diagram - Vietnamese */}
+                <div className="bg-gray-800 rounded-xl p-6 mb-6">
+                  <h3 className="text-2xl font-semibold text-blue-400 mb-6 text-center">📊 Quy Tắc Bảng Lịch Sử Big Road Baccarat (Không Có Tie)</h3>
+                  
+                  {/* Diagram Image */}
+                  <div className="bg-gray-900 rounded-lg p-4 mb-6 flex justify-center">
+                    <img 
+                      src="https://raw.githubusercontent.com/chonshaman/riv_store/759c8d5d06fdf73d381c114593a0c1f085e8a043/haluuimg/public/unnamedv.webp" 
+                      alt="Sơ Đồ Quy Tắc Big Road Baccarat" 
+                      className="max-w-full h-auto rounded-lg"
+                      style={{ maxHeight: '500px' }}
+                    />
+                  </div>
+
+                  {/* Explanation Text - Vietnamese */}
+                  <div className="divide-y divide-white/5 text-gray-300">
+                    <div className="pb-3">
+                      <h4 className="text-lg font-medium text-white mb-1">Trường hợp 1: Cùng Bên Thắng (Di Chuyển Dọc)</h4>
+                      <p className="text-sm">
+                        Thể hiện ở cột đầu tiên. Khi cùng một bên thắng (Banker), ô sau nằm ngay dưới ô trước.
+                      </p>
+                    </div>
+
+                    <div className="py-3">
+                      <h4 className="text-lg font-medium text-white mb-1">Trường hợp 2: Đổi Bên (Nhảy Cột Mới)</h4>
+                      <p className="text-sm">
+                        Khi kết quả chuyển từ Banker sang Player (hoặc ngược lại), di chuyển sang cột tiếp theo bên phải và bắt đầu ghi lại từ Hàng 1.
+                      </p>
+                    </div>
+
+                    <div className="py-3">
+                      <h4 className="text-lg font-medium text-white mb-1">Trường hợp 3: Hình chữ L / Đuôi Rồng (Uốn Ngang)</h4>
+                      <p className="text-sm">
+                        Khi Banker thắng đến ván thứ 7 (vượt quá 6 hàng của bảng), nó bắt đầu bẻ ngang sang phải tại Hàng 6.
+                      </p>
+                    </div>
+
+                    <div className="py-3">
+                      <h4 className="text-lg font-medium text-white mb-1">Trường hợp 4: Đổi Bên Sau Đuôi Rồng</h4>
+                      <p className="text-sm">
+                        Khi đang có đuôi rồng (B8) mà đổi bên, ô tiếp theo (P) phải nhảy lên Hàng 1 của cột trống tiếp theo (không được ghi vào các hàng trống phía trên B7, B8).
+                      </p>
+                    </div>
+
+                    <div className="pt-3">
+                      <h4 className="text-lg font-medium text-white mb-1">Trường hợp 5: Rồng Kép (Đuôi Chồng Lấn)</h4>
+                      <p className="text-sm">
+                        Đây là trường hợp nâng cao. Khi một chuỗi thắng mới (Player) cũng dài và chạm đáy, nhưng Hàng 6 đã bị cái đuôi của Banker chiếm mất, thì chuỗi Player này sẽ phải bẻ ngang sớm hơn ở Hàng 5.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Luồng thanh toán giao dịch */}
+                <div className="bg-gray-800 rounded-xl p-6 mb-6">
+                  <h3 className="text-xl font-semibold text-blue-400 mb-4">🔄 Luồng Thanh Toán Giao Dịch Hoàn Chỉnh</h3>
+                  
+                  <div className="divide-y divide-white/5">
+                    <div className="pb-3">
+                      <div className="flex items-center gap-2 mb-1">
+                        <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">1</div>
+                        <h4 className="text-white font-semibold">Bắt Đầu Giao Dịch (Chế độ 30s/60s)</h4>
+                      </div>
+                      <pre className="text-green-400 text-xs ml-8">historyRef.current?.setNextFlashing(true);</pre>
+                    </div>
+
+                    <div className="py-3">
+                      <div className="flex items-center gap-2 mb-1">
+                        <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">2</div>
+                        <h4 className="text-white font-semibold">Trong Giao Dịch</h4>
+                      </div>
+                      <p className="text-gray-300 text-sm ml-8">Ô tiếp theo đang nhấp nháy, biểu đồ hiển thị đường giá vào và đếm ngược</p>
+                    </div>
+
+                    <div className="py-3">
+                      <div className="flex items-center gap-2 mb-1">
+                        <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">3</div>
+                        <h4 className="text-white font-semibold">Thanh Toán Giao Dịch</h4>
+                      </div>
+                      <p className="text-gray-300 text-sm ml-8">Xác định thắng/thua, tính toán PnL, cập nhật số dư</p>
+                    </div>
+
+                    <div className="py-3">
+                      <div className="flex items-center gap-2 mb-1">
+                        <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">4</div>
+                        <h4 className="text-white font-semibold">Thêm Vào Lịch Sử</h4>
+                      </div>
+                      <pre className="text-green-400 text-xs ml-8">historyRef.current?.addSettledTrade(historyItem);</pre>
+                    </div>
+
+                    <div className="py-3">
+                      <div className="flex items-center gap-2 mb-1">
+                        <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">5</div>
+                        <h4 className="text-white font-semibold">Dừng Nhấp Nháy & Hiển Thị Toast</h4>
+                      </div>
+                      <pre className="text-green-400 text-xs ml-8">historyRef.current?.setNextFlashing(false);</pre>
+                    </div>
+
+                    <div className="pt-3">
+                      <div className="flex items-center gap-2 mb-1">
+                        <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">6</div>
+                        <h4 className="text-white font-semibold">Sau 2 Giây - Nhấp Nháy Ăn Mừng</h4>
+                      </div>
+                      <pre className="text-green-400 text-xs ml-8">historyRef.current?.flashLastResult();</pre>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Tổng quan */}
                 <div className="bg-gray-800 rounded-xl p-6 mb-6">
                   <h3 className="text-xl font-semibold text-blue-400 mb-3">Tổng Quan</h3>
@@ -1039,61 +1202,6 @@ export default function ComponentsShowcase() {
                         <li>• <span className="text-blue-400">Nhấp Nháy Ô Tiếp Theo:</span> Xung liên tục trong giao dịch trực tiếp (vòng lặp vô hạn)</li>
                         <li>• <span className="text-green-400">Nhấp Nháy Đã Thanh Toán (5×):</span> Hiệu ứng ăn mừng sau toast (bật/tắt 300ms × 5)</li>
                       </ul>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Luồng thanh toán giao dịch */}
-                <div className="bg-gray-800 rounded-xl p-6 mb-6">
-                  <h3 className="text-xl font-semibold text-blue-400 mb-4">🔄 Luồng Thanh Toán Giao Dịch Hoàn Chỉnh</h3>
-                  
-                  <div className="space-y-3">
-                    <div className="bg-gray-900 rounded-lg p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">1</div>
-                        <h4 className="text-white font-semibold">Bắt Đầu Giao Dịch (Chế độ 30s/60s)</h4>
-                      </div>
-                      <pre className="text-green-400 text-xs">historyRef.current?.setNextFlashing(true);</pre>
-                    </div>
-
-                    <div className="bg-gray-900 rounded-lg p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">2</div>
-                        <h4 className="text-white font-semibold">Trong Giao Dịch</h4>
-                      </div>
-                      <p className="text-gray-300 text-sm">Ô tiếp theo đang nhấp nháy, biểu đồ hiển thị đường giá vào và đếm ngược</p>
-                    </div>
-
-                    <div className="bg-gray-900 rounded-lg p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">3</div>
-                        <h4 className="text-white font-semibold">Thanh Toán Giao Dịch</h4>
-                      </div>
-                      <p className="text-gray-300 text-sm mb-2">Xác định thắng/thua, tính toán PnL, cập nhật số dư</p>
-                    </div>
-
-                    <div className="bg-gray-900 rounded-lg p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">4</div>
-                        <h4 className="text-white font-semibold">Thêm Vào Lịch Sử</h4>
-                      </div>
-                      <pre className="text-green-400 text-xs">historyRef.current?.addSettledTrade(historyItem);</pre>
-                    </div>
-
-                    <div className="bg-gray-900 rounded-lg p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">5</div>
-                        <h4 className="text-white font-semibold">Dừng Nhấp Nháy & Hiển Thị Toast</h4>
-                      </div>
-                      <pre className="text-green-400 text-xs">historyRef.current?.setNextFlashing(false);</pre>
-                    </div>
-
-                    <div className="bg-gray-900 rounded-lg p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">6</div>
-                        <h4 className="text-white font-semibold">Sau 2 Giây - Nhấp Nháy Ăn Mừng</h4>
-                      </div>
-                      <pre className="text-green-400 text-xs">historyRef.current?.flashLastResult();</pre>
                     </div>
                   </div>
                 </div>
