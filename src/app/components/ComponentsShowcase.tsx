@@ -516,7 +516,7 @@ export default function ComponentsShowcase() {
                         <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">1</div>
                         <h4 className="text-white font-semibold">Trade Start (30s/60s Mode)</h4>
                       </div>
-                      <pre className="text-green-400 text-xs ml-8">historyRef.current?.setNextFlashing(true);</pre>
+                      <pre className="text-green-400 text-xs ml-8">// If user bets UP, predict 'WIN' (market UP){'\n'}historyRef.current?.setNextFlashing(true, 'WIN');{'\n'}// If user bets DOWN, predict 'LOSE' (market DOWN){'\n'}historyRef.current?.setNextFlashing(true, 'LOSE');</pre>
                     </div>
 
                     <div className="py-3">
@@ -727,13 +727,15 @@ export default function ComponentsShowcase() {
 
                     {/* setNextFlashing */}
                     <div className="bg-gray-900 rounded-lg p-4">
-                      <h4 className="text-lg font-semibold text-green-400 mb-2">2. setNextFlashing(isLive: boolean)</h4>
-                      <p className="text-gray-400 text-sm mb-3">Control flashing animation on predicted next cell</p>
+                      <h4 className="text-lg font-semibold text-green-400 mb-2">2. setNextFlashing(isLive: boolean, predictedResult?: 'WIN' | 'LOSE')</h4>
+                      <p className="text-gray-400 text-sm mb-3">Control flashing animation on predicted next cell based on user's bet</p>
                       
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                      <div className="space-y-2 text-sm">
                         <div className="bg-gray-950 rounded p-3">
-                          <p className="text-white mb-1">When true:</p>
-                          <p className="text-gray-300">Next predicted cell flashes with pulsing animation</p>
+                          <p className="text-white mb-1">When true + predictedResult:</p>
+                          <p className="text-gray-300">Flashes the position where the result would appear if user wins their bet</p>
+                          <p className="text-gray-400 text-xs mt-1">• User bets UP → predict 'WIN' (market UP)</p>
+                          <p className="text-gray-400 text-xs">• User bets DOWN → predict 'LOSE' (market DOWN)</p>
                         </div>
                         <div className="bg-gray-950 rounded p-3">
                           <p className="text-white mb-1">When false:</p>
@@ -916,7 +918,7 @@ export default function ComponentsShowcase() {
                         <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">1</div>
                         <h4 className="text-white font-semibold">Bắt Đầu Giao Dịch (Chế độ 30s/60s)</h4>
                       </div>
-                      <pre className="text-green-400 text-xs ml-8">historyRef.current?.setNextFlashing(true);</pre>
+                      <pre className="text-green-400 text-xs ml-8">// Nếu chọn UP, dự đoán 'WIN' (thị trường tăng){'\n'}historyRef.current?.setNextFlashing(true, 'WIN');{'\n'}// Nếu chọn DOWN, dự đoán 'LOSE' (thị trường giảm){'\n'}historyRef.current?.setNextFlashing(true, 'LOSE');</pre>
                     </div>
 
                     <div className="py-3">
@@ -1127,13 +1129,15 @@ export default function ComponentsShowcase() {
 
                     {/* setNextFlashing */}
                     <div className="bg-gray-900 rounded-lg p-4">
-                      <h4 className="text-lg font-semibold text-green-400 mb-2">2. setNextFlashing(isLive: boolean)</h4>
-                      <p className="text-gray-400 text-sm mb-3">Điều khiển hoạt ảnh nhấp nháy trên ô tiếp theo được dự đoán</p>
+                      <h4 className="text-lg font-semibold text-green-400 mb-2">2. setNextFlashing(isLive: boolean, predictedResult?: 'WIN' | 'LOSE')</h4>
+                      <p className="text-gray-400 text-sm mb-3">Điều khiển hoạt ảnh nhấp nháy trên ô tiếp theo dựa trên lựa chọn của người dùng</p>
                       
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                      <div className="space-y-2 text-sm">
                         <div className="bg-gray-950 rounded p-3">
-                          <p className="text-white mb-1">Khi true:</p>
-                          <p className="text-gray-300">Ô tiếp theo được dự đoán nhấp nháy với hoạt ảnh xung</p>
+                          <p className="text-white mb-1">Khi true + predictedResult:</p>
+                          <p className="text-gray-300">Nhấp nháy vị trí mà kết quả sẽ xuất hiện nếu người dùng thắng cược</p>
+                          <p className="text-gray-400 text-xs mt-1">• Chọn UP → dự đoán 'WIN' (thị trường tăng)</p>
+                          <p className="text-gray-400 text-xs">• Chọn DOWN → dự đoán 'LOSE' (thị trường giảm)</p>
                         </div>
                         <div className="bg-gray-950 rounded p-3">
                           <p className="text-white mb-1">Khi false:</p>

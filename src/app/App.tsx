@@ -78,7 +78,8 @@ export default function App() {
       setShowTradingPanel(false);
       
       // ✅ Start flashing next history cell
-      historyRef.current?.setNextFlashing(true);
+      // User bet UP, so if they WIN, market goes UP → 'WIN'
+      historyRef.current?.setNextFlashing(true, 'WIN');
       
       // Set up countdown based on mode
       if (timeMode === '30s') {
@@ -130,7 +131,8 @@ export default function App() {
       setShowTradingPanel(false);
       
       // ✅ Start flashing next history cell
-      historyRef.current?.setNextFlashing(true);
+      // User bet DOWN, so if they WIN, market goes DOWN → 'LOSE'
+      historyRef.current?.setNextFlashing(true, 'LOSE');
       
       // Set up countdown based on mode
       if (timeMode === '30s') {
@@ -180,11 +182,17 @@ export default function App() {
         // Lose: Balance already deducted, no additional change needed
         
         // ✅ Add to history when trade SETTLES (OPEN → SETTLED)
+        // CRITICAL: result should reflect MARKET DIRECTION, not user's win/loss
+        // If user bet UP and WON → market went UP → result: 'WIN'
+        // If user bet UP and LOST → market went DOWN → result: 'LOSE'
+        // If user bet DOWN and WON → market went DOWN → result: 'LOSE'
+        // If user bet DOWN and LOST → market went UP → result: 'WIN'
+        const marketWentUp = currentMark > entry;
         const historyItem: HistoryItem = {
           id: `trade-${Date.now()}`,
           symbol: selectedPair,  // ✅ Use current selected pair
           direction: isUp ? 'UP' : 'DOWN',  // what user tapped
-          result: win ? 'WIN' : 'LOSE',      // settlement outcome
+          result: marketWentUp ? 'WIN' : 'LOSE',  // ✅ MARKET direction (WIN=UP, LOSE=DOWN)
           entryPrice: entry,
           exitPrice: currentMark,
           betAmount: tradeBetAmount,  // ✅ Use locked amount

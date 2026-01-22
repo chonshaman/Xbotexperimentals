@@ -237,25 +237,40 @@ class BigRoadBoard {
     return { col: this.currCol, row: this.currRow };
   }
 
-  getNextPosition(): { col: number; row: number } {
-    // Predict next position assuming SAME result (most common scenario)
+  getNextPosition(predictedResult?: Result): { col: number; row: number } {
+    // If no prediction provided, assume SAME result as previous
     if (this.prevResult === null) {
       return { col: 0, row: 0 };
     }
     
+    const resultToPredict = predictedResult || this.prevResult;
     let nextCol = this.currCol;
     let nextRow = this.currRow;
     
-    // If not at bottom and cell below is empty, next goes down
-    if (this.currRow + 1 < ROWS && this.isCellEmpty(this.currRow + 1, this.currCol)) {
-      nextRow = this.currRow + 1;
-    } 
-    // Dragon Tail: move right
+    // SAME result as previous (streak continues)
+    if (resultToPredict === this.prevResult) {
+      // If not at bottom and cell below is empty, next goes down
+      if (this.currRow + 1 < ROWS && this.isCellEmpty(this.currRow + 1, this.currCol)) {
+        nextRow = this.currRow + 1;
+      } 
+      // Dragon Tail: move right
+      else {
+        nextCol = this.currCol + 1;
+        nextRow = this.currRow;
+        
+        // Handle potential collisions
+        while (!this.isCellEmpty(nextRow, nextCol)) {
+          nextCol++;
+        }
+      }
+    }
+    // DIFFERENT result (trend change - new column)
     else {
+      // Find next available column (first column where row 0 is empty)
       nextCol = this.currCol + 1;
-      nextRow = this.currRow;
+      nextRow = 0;
       
-      // Handle potential collisions
+      // Handle collisions - keep moving right
       while (!this.isCellEmpty(nextRow, nextCol)) {
         nextCol++;
       }
@@ -332,7 +347,7 @@ function HistoryColumn({ data, newResultKey }: { data: Array<'WIN' | 'LOSE' | nu
 // Export ref methods interface
 export interface HistoryRef {
   addSettledTrade: (trade: HistoryItem) => void;
-  setNextFlashing: (isLive: boolean) => void; // Flash next cell during live trading
+  setNextFlashing: (isLive: boolean, predictedResult?: Result) => void; // Flash next cell during live trading
   flashLastResult: () => void; // Flash the last settled result 5 times
 }
 
@@ -345,6 +360,7 @@ const History = forwardRef<HistoryRef>((props, ref) => {
   const [tradeHistory, setTradeHistory] = useState<HistoryItem[]>([]);
   const [lastPosition, setLastPosition] = useState<{ col: number; row: number } | null>(null);
   const [isNextFlashing, setIsNextFlashing] = useState(false);
+  const [predictedResult, setPredictedResult] = useState<Result | undefined>(undefined);
   const [flashingSettledPosition, setFlashingSettledPosition] = useState<{ col: number; row: number } | null>(null);
 
   // Function to add a settled trade
@@ -367,8 +383,9 @@ const History = forwardRef<HistoryRef>((props, ref) => {
   };
   
   // Function to control next cell flashing during live trading
-  const setNextFlashing = (isLive: boolean) => {
+  const setNextFlashing = (isLive: boolean, predictedResult?: Result) => {
     setIsNextFlashing(isLive);
+    setPredictedResult(predictedResult);
   };
 
   // Function to flash the last settled result 5 times
@@ -399,8 +416,8 @@ const History = forwardRef<HistoryRef>((props, ref) => {
     flashLastResult
   }));
   
-  // Get the next position for flashing
-  const nextPosition = isNextFlashing ? historyBoard.getNextPosition() : null;
+  // Get the next position for flashing (using predicted result if provided)
+  const nextPosition = isNextFlashing ? historyBoard.getNextPosition(predictedResult) : null;
 
   return (
     <div className="history-panel">
