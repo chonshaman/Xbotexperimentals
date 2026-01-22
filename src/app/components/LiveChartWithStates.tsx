@@ -153,7 +153,7 @@ function PairSelector({
           
           {/* Dropdown Menu */}
           <div 
-            className="absolute top-[calc(100%+4px)] left-[-12px] z-[101] backdrop-blur-[16px] bg-[rgba(0,0,0,0.24)] border border-[rgba(255,255,255,0.1)] rounded-[6px] shadow-lg min-w-[140px] p-[4px] animate-[dropdownFadeIn_0.2s_ease-out]"
+            className="absolute top-[calc(100%+4px)] left-[-12px] z-[101] backdrop-blur-[16px] bg-[rgba(0,0,0,0.24)] border border-[rgba(255,255,255,0.1)] rounded-[6px] shadow-lg min-w-[140px] p-[4px] flex flex-col gap-[4px] animate-[dropdownFadeIn_0.2s_ease-out]"
             style={{
               animation: 'dropdownFadeIn 0.2s ease-out'
             }}
