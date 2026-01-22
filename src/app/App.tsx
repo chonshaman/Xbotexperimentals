@@ -3,7 +3,7 @@ import ButtonBlue from './components/ButtonBlue';
 import ButtonRed from './components/ButtonRed';
 import TradingPanel from './components/TradingPanel';
 import LiveChartWithStates from '@/app/components/LiveChartWithStates';
-import type { LiveChartState } from '@/app/components/LiveChartWithStates';
+import type { LiveChartState, TradingPair } from '@/app/components/LiveChartWithStates';
 import History from './components/History';
 import type { HistoryRef, HistoryItem } from './components/History';
 import Header from './components/Header';
@@ -25,6 +25,7 @@ export default function App() {
   const [betAmount, setBetAmount] = useState(400);
   const [balance, setBalance] = useState(10000); // Initial balance
   const [lockedBetAmount, setLockedBetAmount] = useState(400); // ✅ Store the actual bet amount used for the trade
+  const [selectedPair, setSelectedPair] = useState<TradingPair>('BTC/USDT');
   
   const countdownRef = useRef<NodeJS.Timeout | null>(null);
   const historyRef = useRef<HistoryRef>(null);
@@ -181,7 +182,7 @@ export default function App() {
         // ✅ Add to history when trade SETTLES (OPEN → SETTLED)
         const historyItem: HistoryItem = {
           id: `trade-${Date.now()}`,
-          symbol: 'BTC/USDT',
+          symbol: selectedPair,  // ✅ Use current selected pair
           direction: isUp ? 'UP' : 'DOWN',  // what user tapped
           result: win ? 'WIN' : 'LOSE',      // settlement outcome
           entryPrice: entry,
@@ -276,6 +277,8 @@ export default function App() {
               entryPrice={entryPrice}
               onPriceUpdate={setCurrentPrice}
               betAmount={lockedBetAmount}
+              selectedPair={selectedPair}
+              onPairChange={setSelectedPair}
             />
             
             {/* Insufficient Balance Toast - Overlays on top of chart */}

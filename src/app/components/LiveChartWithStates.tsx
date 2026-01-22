@@ -117,19 +117,29 @@ function PriceRight({ currentPrice, entryPrice }: { currentPrice?: number; entry
 
 function PairSelector({ 
   selectedPair, 
-  onSelectPair 
+  onSelectPair,
+  disabled = false
 }: { 
   selectedPair: TradingPair; 
   onSelectPair: (pair: TradingPair) => void;
+  disabled?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false);
+
+  // Close dropdown when disabled
+  useEffect(() => {
+    if (disabled && isOpen) {
+      setIsOpen(false);
+    }
+  }, [disabled, isOpen]);
 
   return (
     <div className="relative">
       {/* Selector Button */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-[6px] hover:opacity-80 transition-opacity cursor-pointer group"
+        onClick={() => !disabled && setIsOpen(!isOpen)}
+        className={`flex items-center gap-[6px] transition-opacity ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-80 cursor-pointer'} group`}
+        disabled={disabled}
       >
         <div className="flex items-center gap-[4px]">
           {getCryptoIcon(selectedPair)}
@@ -138,12 +148,12 @@ function PairSelector({
           </span>
         </div>
         <ChevronDown 
-          className={`w-3 h-3 text-white/70 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} 
+          className={`w-3 h-3 text-white/70 transition-transform duration-200 ${isOpen && !disabled ? 'rotate-180' : ''}`} 
         />
       </button>
 
       {/* Dropdown Popup */}
-      {isOpen && (
+      {isOpen && !disabled && (
         <>
           {/* Backdrop to close dropdown */}
           <div 
@@ -201,19 +211,21 @@ function Title({
   currentPrice, 
   entryPrice,
   selectedPair,
-  onSelectPair
+  onSelectPair,
+  state
 }: { 
   currentPrice?: number; 
   entryPrice?: number;
   selectedPair: TradingPair;
   onSelectPair: (pair: TradingPair) => void;
+  state?: LiveChartState;
 }) {
   return (
     <div className="relative shrink-0 w-full" data-name="title">
       <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex items-start justify-between leading-[normal] not-italic relative text-[14px] w-full whitespace-pre" style={{ fontFamily: "'IBM Plex Sans Condensed', sans-serif", fontWeight: 600 }}>
         <div className="flex items-center gap-[8px]">
           <p className="relative shrink-0 text-white uppercase tracking-tight">{CHART_TEXT.LIVE_CHART}</p>
-          <PairSelector selectedPair={selectedPair} onSelectPair={onSelectPair} />
+          <PairSelector selectedPair={selectedPair} onSelectPair={onSelectPair} disabled={state !== 'idle'} />
         </div>
         <PriceRight currentPrice={currentPrice} entryPrice={entryPrice} />
       </div>
@@ -472,12 +484,37 @@ function LiveIndicator({
   );
 }
 
-function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice }: { state: LiveChartState; onPriceUpdate?: (price: number) => void; direction?: 'up' | 'down'; entryPrice?: number }) {
-  const [prices, setPrices] = useState<string[]>(['96500.00', '96490.00', '96480.00', '96470.00', '96460.00', '96450.00', '96440.00']);
-  const [currentPrice, setCurrentPrice] = useState(96500);
-  const [prevPrice, setPrevPrice] = useState(96500);
-  const [minPrice, setMinPrice] = useState(96500);
-  const [maxPrice, setMaxPrice] = useState(96500);
+// ✅ Get base price for each trading pair
+const getBasePriceForPair = (pair: TradingPair): number => {
+  switch (pair) {
+    case 'BTC/USDT':
+      return 96500;
+    case 'ETH/USDT':
+      return 3500;
+    case 'SOL/USDT':
+      return 200;
+    default:
+      return 96500;
+  }
+};
+
+function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice, selectedPair }: { state: LiveChartState; onPriceUpdate?: (price: number) => void; direction?: 'up' | 'down'; entryPrice?: number; selectedPair: TradingPair }) {
+  // ✅ Initialize with base price for selected pair
+  const getInitialBasePrice = () => getBasePriceForPair(selectedPair);
+  const initialBasePrice = getInitialBasePrice();
+  
+  const [prices, setPrices] = useState<string[]>(() => {
+    const base = initialBasePrice;
+    const step = 10 / 6;
+    return Array.from({ length: 7 }, (_, i) => {
+      const value = (base + 5) - (i * step);
+      return value.toFixed(2);
+    });
+  });
+  const [currentPrice, setCurrentPrice] = useState(initialBasePrice);
+  const [prevPrice, setPrevPrice] = useState(initialBasePrice);
+  const [minPrice, setMinPrice] = useState(initialBasePrice - 5);
+  const [maxPrice, setMaxPrice] = useState(initialBasePrice + 5);
   const [priceHistory, setPriceHistory] = useState<number[]>([]);
 
   // Mock price simulation only
@@ -485,8 +522,8 @@ function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice }: { state
     let updateInterval: NodeJS.Timeout;
     let isComponentMounted = true;
 
-    // Initialize with mock price
-    const basePrice = 96500; // Mock BTC price
+    // Initialize with mock price based on selected pair
+    const basePrice = getBasePriceForPair(selectedPair);
     
     setCurrentPrice(basePrice);
     setPrevPrice(basePrice);
@@ -588,7 +625,7 @@ function Chart1AndPrice({ state, onPriceUpdate, direction, entryPrice }: { state
         clearInterval(updateInterval);
       }
     };
-  }, [entryPrice, state]);
+  }, [entryPrice, state, selectedPair]); // ✅ Reset when pair changes
   
   // Separate useEffect to call onPriceUpdate after currentPrice changes
   useEffect(() => {
@@ -866,12 +903,12 @@ function Price({ prices }: { prices: string[] }) {
   );
 }
 
-function Content({ state, onPriceUpdate, direction, entryPrice }: { state: LiveChartState; onPriceUpdate?: (price: number) => void; direction?: 'up' | 'down'; entryPrice?: number }) {
+function Content({ state, onPriceUpdate, direction, entryPrice, selectedPair }: { state: LiveChartState; onPriceUpdate?: (price: number) => void; direction?: 'up' | 'down'; entryPrice?: number; selectedPair: TradingPair }) {
   return (
     <div className="flex-[1_0_0] min-h-px min-w-px relative w-full h-full pb-[16px]" data-name="content">
       <div className="flex flex-row justify-end size-full">
         <div className="content-stretch flex gap-[9px] items-start justify-end pl-0 pr-[6px] py-0 relative size-full">
-          <Chart1AndPrice state={state} onPriceUpdate={onPriceUpdate} direction={direction} entryPrice={entryPrice} />
+          <Chart1AndPrice state={state} onPriceUpdate={onPriceUpdate} direction={direction} entryPrice={entryPrice} selectedPair={selectedPair} />
         </div>
       </div>
     </div>
@@ -916,11 +953,11 @@ function Time() {
   );
 }
 
-function Chart({ state, onPriceUpdate, direction, entryPrice }: { state: LiveChartState; onPriceUpdate?: (price: number) => void; direction?: 'up' | 'down'; entryPrice?: number }) {
+function Chart({ state, onPriceUpdate, direction, entryPrice, selectedPair }: { state: LiveChartState; onPriceUpdate?: (price: number) => void; direction?: 'up' | 'down'; entryPrice?: number; selectedPair: TradingPair }) {
   return (
     <div className="flex-[1_0_0] min-h-px min-w-px relative w-full z-[2]" data-name="chart">
       <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start justify-between relative size-full">
-        <Content state={state} onPriceUpdate={onPriceUpdate} direction={direction} entryPrice={entryPrice} />
+        <Content state={state} onPriceUpdate={onPriceUpdate} direction={direction} entryPrice={entryPrice} selectedPair={selectedPair} />
         <Time />
       </div>
     </div>
@@ -1080,7 +1117,8 @@ function Inside({
   showElements, 
   entryPrice, 
   onPriceUpdate,
-  betAmount
+  betAmount,
+  selectedPair
 }: { 
   state: LiveChartState; 
   countdown?: number; 
@@ -1090,8 +1128,14 @@ function Inside({
   entryPrice?: number; 
   onPriceUpdate?: (price: number) => void;
   betAmount?: number;
+  selectedPair: TradingPair;
 }) {
-  const [currentPrice, setCurrentPrice] = useState<number>(96500);
+  const [currentPrice, setCurrentPrice] = useState<number>(() => getBasePriceForPair(selectedPair));
+
+  // ✅ Reset currentPrice when pair changes
+  useEffect(() => {
+    setCurrentPrice(getBasePriceForPair(selectedPair));
+  }, [selectedPair]);
 
   const handleInternalPriceUpdate = (price: number) => {
     setCurrentPrice(price);
@@ -1105,7 +1149,8 @@ function Inside({
       <div className="flex flex-col items-center justify-between rounded-[inherit] size-full">
         <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center justify-between pl-[8px] pr-[2px] py-[8px] relative size-full gap-[4px]">
           <FloatingOverlay state={state} direction={direction} showElements={showElements} entryPrice={entryPrice} />
-          <Chart state={state} onPriceUpdate={handleInternalPriceUpdate} direction={direction} entryPrice={entryPrice} />
+          {/* ✅ Add key to force complete remount when pair changes */}
+          <Chart key={selectedPair} state={state} onPriceUpdate={handleInternalPriceUpdate} direction={direction} entryPrice={entryPrice} selectedPair={selectedPair} />
           <div className="absolute bottom-[-100px] flex h-[148px] items-center justify-center left-[calc(50%-1px)] mix-blend-screen translate-x-[-50%] w-[384px] z-[1]">
             <div className="flex-none rotate-[180deg]">
               <div className="h-[148px] relative w-[384px]" data-name="glowing">
@@ -1163,11 +1208,12 @@ export default function LiveChartWithStates({
   onPairChange
 }: LiveChartWithStatesProps) {
   const [showElements, setShowElements] = useState(false);
-  const [currentPrice, setCurrentPrice] = useState<number>(96500);
   const [internalSelectedPair, setInternalSelectedPair] = useState<TradingPair>('BTC/USDT');
 
   // Use external selected pair if provided, otherwise use internal state
   const selectedPair = externalSelectedPair || internalSelectedPair;
+  
+  const [currentPrice, setCurrentPrice] = useState<number>(() => getBasePriceForPair(selectedPair));
 
   const handlePairChange = (pair: TradingPair) => {
     setInternalSelectedPair(pair);
@@ -1175,6 +1221,11 @@ export default function LiveChartWithStates({
       onPairChange(pair);
     }
   };
+
+  // ✅ Reset currentPrice when pair changes
+  useEffect(() => {
+    setCurrentPrice(getBasePriceForPair(selectedPair));
+  }, [selectedPair]);
 
   useEffect(() => {
     if (state === 'opened') {
@@ -1435,8 +1486,10 @@ export default function LiveChartWithStates({
         entryPrice={entryPrice}
         selectedPair={selectedPair}
         onSelectPair={handlePairChange}
+        state={state}
       />
-      <Inside state={state} countdown={countdown} mode={mode} direction={direction} showElements={showElements} entryPrice={entryPrice} onPriceUpdate={handlePriceUpdate} betAmount={betAmount} />
+      {/* ✅ Add key to force complete remount when pair changes */}
+      <Inside key={selectedPair} state={state} countdown={countdown} mode={mode} direction={direction} showElements={showElements} entryPrice={entryPrice} onPriceUpdate={handlePriceUpdate} betAmount={betAmount} selectedPair={selectedPair} />
       <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0.5px_1px_0px_0px_rgba(88,102,123,0.33),inset_0px_0.2px_1px_0.5px_rgba(133,140,150,0.55)]" />
     </div>
     </div>
