@@ -304,13 +304,25 @@ const USE_BIG_ROAD = true; // Set to false for Bead Plate mode
 // Create singleton instance based on config
 const historyBoard = USE_BIG_ROAD ? new BigRoadBoard() : new BeadPlateBoard();
 
-function HistoryDot({ type, isNew, isFlashing }: { type: 'WIN' | 'LOSE' | null; isNew?: boolean; isFlashing?: boolean }) {
+function HistoryDot({ type, isNew, isFlashing, countdown }: { type: 'WIN' | 'LOSE' | null; isNew?: boolean; isFlashing?: boolean; countdown?: number }) {
   // Empty cell - match Figma design exactly
   if (!type) {
     return (
       <div className={`history-dot-empty ${isFlashing ? 'flashing' : ''}`}>
         <div className="history-dot-empty-inner">
           <div className="history-dot-empty-bg" />
+          {/* Show countdown when flashing - always show, but flash animation only for last 6s */}
+          {isFlashing && countdown !== undefined && (
+            <div 
+              className="history-dot-countdown"
+              style={{
+                animation: countdown <= 6 ? 'countdownFlash 0.8s ease-in-out infinite' : 'none',
+                color: countdown <= 6 ? undefined : 'rgba(255, 255, 255, 0.72)'
+              }}
+            >
+              {countdown}s
+            </div>
+          )}
         </div>
         <div className="history-dot-empty-border" />
       </div>
@@ -351,7 +363,11 @@ export interface HistoryRef {
   flashLastResult: () => void; // Flash the last settled result 5 times
 }
 
-const History = forwardRef<HistoryRef>((props, ref) => {
+interface HistoryProps {
+  countdown?: number; // Countdown value from parent (for flashing cell display)
+}
+
+const History = forwardRef<HistoryRef, HistoryProps>(({ countdown }, ref) => {
   const [historyData, setHistoryData] = useState<CellType[][]>(() => {
     historyBoard.initializeMockData();
     return historyBoard.getBoard();
@@ -441,7 +457,7 @@ const History = forwardRef<HistoryRef>((props, ref) => {
                     const isNew = lastPosition && lastPosition.col === colIndex && lastPosition.row === rowIndex;
                     const isFlashing = nextPosition && nextPosition.col === colIndex && nextPosition.row === rowIndex;
                     const isFlashingSettled = flashingSettledPosition && flashingSettledPosition.col === colIndex && flashingSettledPosition.row === rowIndex;
-                    return <HistoryDot key={rowIndex} type={type} isNew={isNew || isFlashingSettled} isFlashing={isFlashing} />;
+                    return <HistoryDot key={rowIndex} type={type} isNew={isNew || isFlashingSettled} isFlashing={isFlashing} countdown={countdown} />;
                   })}
                 </div>
               ))}

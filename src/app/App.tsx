@@ -39,9 +39,9 @@ export default function App() {
     currentPriceRef.current = currentPrice;
   }, [currentPrice]);
 
-  // ✅ Calculate 1:1 aspect ratio for chart when in live state
+  // ✅ Calculate 1:1 aspect ratio for chart when in opened/live state
   useEffect(() => {
-    if (chartState !== 'live') {
+    if (chartState !== 'opened' && chartState !== 'live') {
       setChartMaxHeight(undefined);
       return;
     }
@@ -53,7 +53,7 @@ export default function App() {
       }
     };
 
-    // Update on mount and when state changes to live
+    // Update on mount and when state changes to opened/live
     updateMaxHeight();
 
     // Update on window resize
@@ -292,14 +292,14 @@ export default function App() {
           }}
         >
           
-          {/* Live Chart - Min height 256px, expands when live */}
+          {/* Live Chart - Min height 256px, expands when opened/live */}
           <div 
             ref={chartContainerRef}
-            className="w-full transition-all duration-300 ease-in-out relative"
+            className="w-full transition-all duration-500 ease-in-out relative"
             style={{
               minHeight: '256px',
-              flex: chartState === 'live' ? '1 1 auto' : '0 0 256px',
-              maxHeight: chartState === 'live' && chartMaxHeight ? `${chartMaxHeight}px` : undefined
+              flex: (chartState === 'opened' || chartState === 'live') ? '1 1 auto' : '0 0 256px',
+              maxHeight: (chartState === 'opened' || chartState === 'live') && chartMaxHeight ? `${chartMaxHeight}px` : undefined
             }}
           >
             <LiveChartWithStates 
@@ -387,7 +387,7 @@ export default function App() {
 
           {/* History Panel */}
           <div className="w-full flex-shrink-0">
-            <History ref={historyRef} />
+            <History ref={historyRef} countdown={countdown} />
           </div>
         </div>
       </div>
