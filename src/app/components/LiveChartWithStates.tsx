@@ -834,11 +834,12 @@ function Chart1AndPrice({ state, onPriceUpdate, onPriceDirectionUpdate, directio
               d={linePath} 
               shapeRendering="geometricPrecision" 
               stroke={getStrokeColor()} 
-              strokeWidth="4" 
+              strokeWidth="3" 
               strokeLinecap="round" 
               strokeLinejoin="round"
               fill="none"
               filter={`url(#glow_filter_${state})`}
+              vectorEffect="non-scaling-stroke"
               className="transition-all duration-400 ease-out"
             />
           </svg>
@@ -1282,11 +1283,14 @@ export default function LiveChartWithStates({
     >
       {/* Animated Running Shadow Container - wraps outside to prevent clipping */}
       <div 
-        className="absolute pointer-events-none z-[-1]"
+        className="absolute inset-0 pointer-events-none z-[-1] rounded-[12px]"
         style={{
           animation: (state === 'opened' || state === 'live') ? 'runningShadow 3s ease-in-out infinite' : 'none',
           opacity: (state === 'opened' || state === 'live') ? 1 : 0,
-          transition: 'opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1)'
+          boxShadow: (state === 'opened' || state === 'live') 
+            ? '2px 4px 48px 0 rgba(17, 247, 255, 0.36), 0 0 20px 4px rgba(17, 247, 255, 0.7)'
+            : '0 0 0 0 rgba(17, 247, 255, 0), 0 0 0 0 rgba(17, 247, 255, 0)',
+          transition: 'opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 1.2s cubic-bezier(0.4, 0, 0.2, 1)'
         }}
       />
 
@@ -1303,14 +1307,25 @@ export default function LiveChartWithStates({
           maskImage: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
           maskComposite: 'exclude',
           padding: '3px',
-          filter: 'blur(4px)',
-          boxShadow: '2px 4px 48px 0 rgba(17, 247, 255, 0.36), 2px 4px 8px 0 rgba(17, 247, 255, 0.36)',
+          filter: state === 'live' ? 'blur(4px)' : 'blur(0px)',
+          boxShadow: state === 'live' 
+            ? '2px 4px 48px 0 rgba(17, 247, 255, 0.36), 2px 4px 8px 0 rgba(17, 247, 255, 0.36)'
+            : '0 0 0 0 rgba(17, 247, 255, 0), 0 0 0 0 rgba(17, 247, 255, 0)',
           opacity: state === 'live' ? 1 : 0,
-          transition: 'opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1)'
+          transition: 'opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1), filter 1.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 1.2s cubic-bezier(0.4, 0, 0.2, 1)'
         }}
       />
       
-      <div className="bg-gradient-to-b content-stretch flex flex-col from-[#0e4b60] gap-[4px] items-start pb-[8px] pt-[10px] px-[8px] relative rounded-[12px] shadow-[0px_4px_0px_0px_#191e27,0px_8px_12px_-2px_rgba(14,17,22,0.69)] size-full to-[#272d38] overflow-hidden" data-name="live chart">
+      <div 
+        className="bg-gradient-to-b content-stretch flex flex-col from-[#0e4b60] gap-[4px] items-start pb-[8px] pt-[10px] px-[8px] relative rounded-[12px] size-full to-[#272d38] overflow-hidden" 
+        data-name="live chart"
+        style={{
+          boxShadow: (state === 'opened' || state === 'live') 
+            ? '0px 4px 0px 0px #191e27, 0px 8px 12px -2px rgba(14, 17, 22, 0.69)' 
+            : '0px 0px 0px 0px rgba(25, 30, 39, 0), 0px 0px 0px 0px rgba(14, 17, 22, 0)',
+          transition: 'box-shadow 0.8s cubic-bezier(0.4, 0, 0.2, 1)'
+        }}
+      >
       {/* Keyframe animation */}
       <style>{`
         @keyframes slideInFromRight {
@@ -1401,17 +1416,17 @@ export default function LiveChartWithStates({
       `}</style>
 
       {/* Animated sweep effect on outer container - only visible during live state */}
-      {state === 'live' && (
-        <div 
-          className="absolute inset-0 pointer-events-none z-[5]"
-          style={{
-            background: 'linear-gradient(90deg, transparent 0%, rgba(72, 190, 229, 0.15) 20%, rgba(160, 230, 255, 0.25) 40%, rgba(175, 215, 123, 0.3) 50%, rgba(160, 230, 246, 0.25) 60%, rgba(72, 190, 229, 0.15) 80%, transparent 100%)',
-            width: '70%',
-            animation: 'sweepGradientOuter 5s ease-in-out infinite',
-            mixBlendMode: 'screen',
-          }}
-        />
-      )}
+      <div 
+        className="absolute inset-0 pointer-events-none z-[5]"
+        style={{
+          background: 'linear-gradient(90deg, transparent 0%, rgba(72, 190, 229, 0.15) 20%, rgba(160, 230, 255, 0.25) 40%, rgba(175, 215, 123, 0.3) 50%, rgba(160, 230, 246, 0.25) 60%, rgba(72, 190, 229, 0.15) 80%, transparent 100%)',
+          width: '70%',
+          animation: state === 'live' ? 'sweepGradientOuter 5s ease-in-out infinite' : 'none',
+          mixBlendMode: 'screen',
+          opacity: state === 'live' ? 1 : 0,
+          transition: 'opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1)'
+        }}
+      />
       
       {/* Win Toast Overlay */}
       {showWinToast && (
