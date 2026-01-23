@@ -75,14 +75,18 @@
 
 /* Reduce padding for iPhone SE and smaller devices - ULTRA COMPACT */
 @media (max-height: 670px) {
-  .trading-panel-yellow-inner {
-    padding: 2px 10px; /* Ultra compact: 2px top/bottom, 10px left/right */
-    gap: 8px; /* Minimal gap between elements */
-    margin: 3px; /* Minimal margin */
+  .trading-panel-yellow-outer {
+    border-radius: 10px;
+    box-shadow: 0px 3px 0px 0px #5d4400;
+    height: 80%;
   }
 
-  .trading-panel-yellow-outer {
-    box-shadow: 0px 1px 0px 0px #5d4400; /* Minimal shadow */
+  .trading-panel-yellow-inner {
+    padding: 0px 10px;
+    gap: 12px;
+    border-radius: 6px;
+    margin: 8px;
+    scale: 102%;
   }
 
   .trading-panel-slider-section {
