@@ -286,20 +286,23 @@ export default function App() {
 
         {/* Content Area with Padding and Gaps */}
         <div 
-          className="flex-1 flex flex-col px-[14px] pb-[14px] pt-[14px] min-h-0 transition-all duration-300 ease-in-out overflow-x-hidden"
+          className="flex-1 flex flex-col px-[14px] pt-[14px] pb-[14px] min-h-0 overflow-x-hidden"
           style={{ 
-            gap: chartState === 'idle' ? '14px' : '6px' 
+            gap: '14px'
           }}
         >
           
-          {/* Live Chart - Min height 256px, expands when opened/live */}
+          {/* Live Chart - Expands to include trading panel space to keep buttons at same position */}
           <div 
             ref={chartContainerRef}
             className="w-full transition-all duration-500 ease-in-out relative"
             style={{
               minHeight: '256px',
-              flex: (chartState === 'opened' || chartState === 'live') ? '1 1 auto' : '0 0 256px',
-              maxHeight: (chartState === 'opened' || chartState === 'live') && chartMaxHeight ? `${chartMaxHeight}px` : undefined
+              // When expanded: Need to absorb trading panel space (108px) to keep buttons at same position
+              // Idle: Chart(256) + gap(14) + Panel(108) + gap(14) = 392px to buttons
+              // Live: Chart(364) + gap(14) + Panel(0) + gap(14) = 392px to buttons
+              height: (chartState === 'opened' || chartState === 'live') ? '364px' : '256px',
+              flex: '0 0 auto'
             }}
           >
             <LiveChartWithStates 
