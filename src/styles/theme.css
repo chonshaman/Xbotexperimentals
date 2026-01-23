@@ -287,16 +287,18 @@
 
     /* Adjust chart calculations with reduced button height */
     .live-chart-expanded {
+      /* Increased by 48px more (380px - 48px = 332px) */
       /* Buttons reduced from 108px to 88px = 20px saved per button, 40px total */
       /* New calculation: Header(~100px) + Buttons(176px) + History(~135px) + Gaps(4×8px=32px) */
-      /* Total reserved: ~443px */
-      max-height: calc(100vh - 380px);
+      max-height: calc(100vh - 332px);
+      min-height: 300px; /* Increased to prevent overlap */
     }
   }
 
   @media (max-height: 600px) {
     .live-chart-expanded {
-      max-height: calc(100vh - 360px);
+      max-height: calc(100vh - 312px); /* Increased by 48px (360px - 48px = 312px) */
+      min-height: 280px; /* Increased to prevent overlap */
     }
   }
 
