@@ -96,11 +96,11 @@ export default function App() {
     setActiveButton('up');
     setChartState('opened');
     setEntryPrice(currentPrice);
+    setShowTradingPanel(false); // ✅ Hide trading panel immediately for smooth transition
     
     // After 700ms, transition to live state
     setTimeout(() => {
       setChartState('live');
-      setShowTradingPanel(false);
       
       // ✅ Start flashing next history cell
       // User bet UP, so if they WIN, market goes UP → 'WIN'
@@ -149,11 +149,11 @@ export default function App() {
     setActiveButton('down');
     setChartState('opened');
     setEntryPrice(currentPrice);
+    setShowTradingPanel(false); // ✅ Hide trading panel immediately for smooth transition
     
     // After 700ms, transition to live state
     setTimeout(() => {
       setChartState('live');
-      setShowTradingPanel(false);
       
       // ✅ Start flashing next history cell
       // User bet DOWN, so if they WIN, market goes DOWN → 'LOSE'
