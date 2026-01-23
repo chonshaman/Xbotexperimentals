@@ -434,7 +434,7 @@
 
 /* Dark Background */
 .blue-dark-bg {
-  height: 91px;
+  height: 100%;
   position: relative;
   border-radius: 14px 14px 12px 12px;
   flex-shrink: 0;
@@ -579,7 +579,7 @@
   position: relative;
   flex-shrink: 0;
   width: 100%;
-  height: auto;
+  height: 100%;
   border-radius: 14px 14px 12px 12px;
   background: radial-gradient(80.06% 68.91% at 50% 50.42%, #00161A 0%, #0B626D 100%);
   transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
@@ -587,7 +587,6 @@
 }
 
 .button-blue.pressed .blue-glow-bg {
-  height: auto;
   border-radius: 12px;
   background: radial-gradient(104.47% 89.92% at 50% -7.56%, #00161A 0%, #0B626D 100%);
 }
@@ -910,4 +909,34 @@
   flex-shrink: 0;
   font-size: 12px;
   width: 100%;
+}
+
+/* ============================================ */
+/* iPhone SE and Small Screen Optimizations    */
+/* ============================================ */
+
+@media (max-height: 670px) {
+  /* Reduce font sizes for better fit */
+  .blue-text-title {
+    font-size: 18px;
+  }
+
+  .blue-text-subtitle {
+    font-size: 11px;
+  }
+
+  /* Reduce icon size */
+  .blue-icon {
+    transform: scale(0.8);
+  }
+
+  /* Reduce icon scale on hover */
+  .button-blue:not(.state-disabled):not(.state-entry-locked):hover .blue-icon {
+    transform: scale(0.88); /* 0.8 * 1.1 */
+  }
+
+  /* Reduce locked state icon significantly (was spilling out) */
+  .button-blue.state-entry-locked .blue-icon {
+    transform: scale(0.35);
+  }
 }

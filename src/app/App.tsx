@@ -288,22 +288,16 @@ export default function App() {
         <div 
           className="flex-1 flex flex-col px-[14px] pt-[14px] pb-[14px] min-h-0 overflow-x-hidden"
           style={{ 
-            gap: '14px'
+            gap: '8px'
           }}
         >
           
           {/* Live Chart - Expands to include trading panel space to keep buttons at same position */}
           <div 
             ref={chartContainerRef}
-            className="w-full transition-all duration-500 ease-in-out relative"
-            style={{
-              minHeight: '256px',
-              // When expanded: Need to absorb trading panel space (108px) to keep buttons at same position
-              // Idle: Chart(256) + gap(14) + Panel(108) + gap(14) = 392px to buttons
-              // Live: Chart(364) + gap(14) + Panel(0) + gap(14) = 392px to buttons
-              height: (chartState === 'opened' || chartState === 'live') ? '364px' : '256px',
-              flex: '0 0 auto'
-            }}
+            className={`w-full transition-all duration-500 ease-in-out relative ${
+              (chartState === 'opened' || chartState === 'live') ? 'live-chart-expanded' : 'live-chart-idle'
+            }`}
           >
             <LiveChartWithStates 
               state={chartState} 
@@ -365,8 +359,8 @@ export default function App() {
           </div>
 
           {/* Button Container - Two Buttons Side by Side */}
-          <div className="flex gap-4 items-center justify-center flex-shrink-0 max-[375px]:gap-3 max-[340px]:gap-2.5 max-[320px]:gap-2">
-            <div className="flex-1 max-w-[calc(50%-8px)] max-[375px]:max-w-[calc(50%-6px)] max-[340px]:max-w-[calc(50%-5px)] max-[320px]:max-w-[calc(50%-4px)]">
+          <div className="button-group-container flex gap-4 items-center justify-center flex-shrink-0 max-[375px]:gap-3 max-[340px]:gap-2.5 max-[320px]:gap-2">
+            <div className="button-wrapper flex-1 max-w-[calc(50%-8px)] max-[375px]:max-w-[calc(50%-6px)] max-[340px]:max-w-[calc(50%-5px)] max-[320px]:max-w-[calc(50%-4px)]">
               <ButtonRed 
                 onClick={handleDownClick} 
                 state={
@@ -376,7 +370,7 @@ export default function App() {
                 } 
               />
             </div>
-            <div className="flex-1 max-w-[calc(50%-8px)] max-[375px]:max-w-[calc(50%-6px)] max-[340px]:max-w-[calc(50%-5px)] max-[320px]:max-w-[calc(50%-4px)]">
+            <div className="button-wrapper flex-1 max-w-[calc(50%-8px)] max-[375px]:max-w-[calc(50%-6px)] max-[340px]:max-w-[calc(50%-5px)] max-[320px]:max-w-[calc(50%-4px)]">
               <ButtonBlue 
                 onClick={handleUpClick} 
                 state={

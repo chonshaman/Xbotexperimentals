@@ -17,7 +17,7 @@ const BUTTON_TEXT = {
 
 function RocketBlurredLayer() {
   return (
-    <div className="[grid-area:1_/_1] h-[48px] ml-0 mt-0 relative w-[48px]" style={{ transform: 'translateZ(0)' }}>
+    <div className="[grid-area:1_/_1] h-full ml-0 mt-0 relative w-full" style={{ transform: 'translateZ(0)' }}>
       <svg width="48" height="48" fill="none" xmlns="http://www.w3.org/2000/svg" className="block size-full" preserveAspectRatio="none" viewBox="0 0 51 52">
         <g id="blueiconblur" filter="url(#blue_rocket_filter_blur)" strokeWidth="2">
           <path d="M23.875 41.051v-5.928a1 1 0 01.488-.858l5.969-3.564a.988.988 0 011.498.804c.075 1.881.112 4.132-.078 4.86-.207.791-3.673 3.527-6.304 5.485-.654.486-1.573.015-1.573-.799z" stroke="url(#blue_rocket_grad_b)"/>
@@ -60,7 +60,7 @@ function RocketBlurredLayer() {
 
 function RocketMainLayer() {
   return (
-    <div className="[grid-area:1_/_1] h-[48px] ml-0 mt-0 relative w-[48px]">
+    <div className="[grid-area:1_/_1] h-full ml-0 mt-0 relative w-full">
       <svg width="48" height="48" fill="none" xmlns="http://www.w3.org/2000/svg" className="block size-full" preserveAspectRatio="none" viewBox="0 0 51 52">
         <g id="blueicondefault" strokeWidth="2">
           <path d="M23.875 34.555v6.496c0 .814.919 1.285 1.573.799 2.631-1.958 6.097-4.694 6.304-5.485.252-.965.105-4.602 0-6.513" stroke="url(#blue_rocket_main_g)"/>

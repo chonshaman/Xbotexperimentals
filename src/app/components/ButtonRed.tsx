@@ -16,7 +16,7 @@ const BUTTON_TEXT = {
 
 function BombBlurredLayer() {
   return (
-    <div className="[grid-area:1_/_1] h-[48px] ml-0 mt-0 relative w-[48px]">
+    <div className="[grid-area:1_/_1] h-full ml-0 mt-0 relative w-full">
       <svg width="48" height="48" fill="none" xmlns="http://www.w3.org/2000/svg" className="block size-full" preserveAspectRatio="none" viewBox="0 0 64 64">
         <g id="rediconblur" filter="url(#a)">
           <path d="M50.25 23.558l-4.736 1.652" stroke="url(#b)" strokeWidth="2"/>
@@ -72,7 +72,7 @@ function BombBlurredLayer() {
 
 function BombMainLayer() {
   return (
-    <div className="[grid-area:1_/_1] h-[48px] ml-0 mt-0 relative w-[48px]">
+    <div className="[grid-area:1_/_1] h-full ml-0 mt-0 relative w-full">
       <svg width="48" height="48" fill="none" xmlns="http://www.w3.org/2000/svg" className="block size-full" preserveAspectRatio="none" viewBox="0 0 64 64">
         <g id="redicondefault">
           <path d="M50.25 23.558l-4.736 1.652" stroke="url(#i)" strokeWidth="2"/>

@@ -258,6 +258,40 @@
   }
 }
 
+/* Cell shake animation for last 6 seconds - Gentle subtle shake */
+@keyframes cellShake {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  10% {
+    transform: translate(-0.5px, -0.3px) rotate(-0.2deg);
+  }
+  20% {
+    transform: translate(0.5px, 0.3px) rotate(0.2deg);
+  }
+  30% {
+    transform: translate(-0.3px, 0.5px) rotate(-0.15deg);
+  }
+  40% {
+    transform: translate(0.3px, -0.5px) rotate(0.15deg);
+  }
+  50% {
+    transform: translate(-0.5px, 0.3px) rotate(-0.2deg);
+  }
+  60% {
+    transform: translate(0.5px, -0.3px) rotate(0.2deg);
+  }
+  70% {
+    transform: translate(-0.3px, -0.5px) rotate(-0.15deg);
+  }
+  80% {
+    transform: translate(0.3px, 0.5px) rotate(0.15deg);
+  }
+  90% {
+    transform: translate(-0.5px, 0px) rotate(-0.2deg);
+  }
+}
+
 /* Dot Inner Container */
 .history-dot-inner {
   display: flex;

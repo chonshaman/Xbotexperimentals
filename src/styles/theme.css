@@ -208,4 +208,111 @@
       transform: scale(1);
     }
   }
+
+  /* Live Chart Responsive Heights - Keep buttons and history visible on all devices */
+  /* All gaps are now 8px instead of 14px for tighter spacing */
+  
+  /* Idle State: Fixed 256px height */
+  .live-chart-idle {
+    height: 256px;
+    flex: 0 0 auto;
+  }
+
+  /* Expanded State (Live/Opened): Responsive heights */
+  .live-chart-expanded {
+    /* Default: Large screens (> 850px height) */
+    /* Fixed height to match trading panel collapse: 256px + 108px = 364px */
+    height: 364px;
+    flex: 0 0 auto;
+  }
+
+  /* Medium-Large screens: iPhone 13/14/15 Pro Max (926px), iPhone 13/14/15 (844-852px) */
+  @media (max-height: 850px) {
+    .live-chart-expanded {
+      /* Start flexible height - ensure buttons + history remain visible */
+      /* Header: ~100px, Buttons: ~56px, History: ~135px, Gaps: 4×8px = 32px */
+      /* Total reserved: ~323px, chart gets the rest */
+      height: auto;
+      flex: 1 1 auto;
+      max-height: calc(100vh - 323px);
+      min-height: 280px;
+    }
+  }
+
+  /* Smaller screens: iPhone 12/13 mini (812px), iPhone X/XS/11 Pro (812px) */
+  @media (max-height: 812px) {
+    .live-chart-expanded {
+      max-height: calc(100vh - 316px);
+      min-height: 260px;
+    }
+  }
+
+  /* Small screens: iPhone SE 3rd gen (667px), iPhone 8/7/6s (667px) */
+  @media (max-height: 740px) {
+    .live-chart-expanded {
+      max-height: calc(100vh - 296px);
+      min-height: 240px;
+    }
+  }
+
+  /* Very small screens: iPhone SE 1st/2nd gen (568px) */
+  @media (max-height: 670px) {
+    .live-chart-expanded {
+      max-height: calc(100vh - 236px); /* Increased by 40px (276px - 40px = 236px) */
+      min-height: 260px; /* Increased by 40px to prevent overlap */
+    }
+  }
+
+  /* Extra small screens */
+  @media (max-height: 600px) {
+    .live-chart-expanded {
+      max-height: calc(100vh - 216px); /* Increased by 40px (256px - 40px = 216px) */
+      min-height: 240px; /* Increased by 40px to prevent overlap */
+    }
+  }
+
+  /* Button wrapper default height */
+  .button-wrapper {
+    height: 108px;
+    max-height: 108px;
+  }
+
+  /* Button height optimization for small screens (iPhone SE and below) */
+  /* Reduce button height to 88px to give more space to chart */
+  @media (max-height: 670px) {
+    .button-wrapper {
+      height: 88px;
+      max-height: 88px;
+    }
+
+    /* Adjust chart calculations with reduced button height */
+    .live-chart-expanded {
+      /* Buttons reduced from 108px to 88px = 20px saved per button, 40px total */
+      /* New calculation: Header(~100px) + Buttons(176px) + History(~135px) + Gaps(4×8px=32px) */
+      /* Total reserved: ~443px */
+      max-height: calc(100vh - 380px);
+    }
+  }
+
+  @media (max-height: 600px) {
+    .live-chart-expanded {
+      max-height: calc(100vh - 360px);
+    }
+  }
+
+  /* Hide scrollbar on small screens (iPhone SE and below) */
+  @media (max-height: 670px) {
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    body::-webkit-scrollbar,
+    html::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Hide scrollbar for IE, Edge and Firefox */
+    body,
+    html {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+    }
+  }
 }

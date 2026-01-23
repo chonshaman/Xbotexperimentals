@@ -308,7 +308,16 @@ function HistoryDot({ type, isNew, isFlashing, countdown }: { type: 'WIN' | 'LOS
   // Empty cell - match Figma design exactly
   if (!type) {
     return (
-      <div className={`history-dot-empty ${isFlashing ? 'flashing' : ''}`}>
+      <div 
+        className={`history-dot-empty ${isFlashing ? 'flashing' : ''}`}
+        style={{
+          animation: isFlashing && countdown !== undefined && countdown <= 6 
+            ? 'emptyFlashing 0.8s ease-in-out infinite, cellShake 0.6s ease-in-out infinite' 
+            : isFlashing 
+            ? 'emptyFlashing 0.8s ease-in-out infinite'
+            : 'none'
+        }}
+      >
         <div className="history-dot-empty-inner">
           <div className="history-dot-empty-bg" />
           {/* Show countdown when flashing - always show, but flash animation only for last 6s */}

@@ -161,7 +161,7 @@ function MarginSlider({ value, onChange, balance = 10000 }: MarginSliderProps) {
       {/* Slider Container */}
       <div className="relative w-full">
         {/* Number Labels Container - Now at the top for positioning reference */}
-        <div className="absolute bottom-[-24px] left-0 right-0 w-full max-[340px]:bottom-[-22px]">
+        <div className="absolute bottom-[-24px] left-0 right-0 w-full max-[670px]:bottom-[-18px] max-[340px]:bottom-[-16px]">
           <div className="flex items-start justify-between w-full">
             {marginOptions.map((option, index) => {
               // Show "Max" for the last option (balance)
@@ -178,7 +178,7 @@ function MarginSlider({ value, onChange, balance = 10000 }: MarginSliderProps) {
                   style={{ flex: '0 0 auto' }}
                 >
                   <p 
-                    className="relative shrink-0 text-[16px] leading-normal text-black max-[375px]:text-[14px] max-[340px]:text-[13px] max-[320px]:text-[12px]"
+                    className="relative shrink-0 text-[16px] leading-normal text-black max-[670px]:text-[14px] max-[375px]:text-[13px] max-[340px]:text-[12px] max-[320px]:text-[11px]"
                     style={{ 
                       paddingLeft: shouldAddPadding ? '8px' : '0',
                       fontFamily: "'IBM Plex Sans Condensed', sans-serif",
