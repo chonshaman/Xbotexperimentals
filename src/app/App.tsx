@@ -19,6 +19,9 @@ export default function App() {
   const [finalPnL, setFinalPnL] = useState<number>(0);
   const [activeButton, setActiveButton] = useState<'up' | 'down' | null>(null);
   const [timeMode, setTimeMode] = useState<'30s' | '60s' | 'price'>('30s');
+  const [chartMaxHeight, setChartMaxHeight] = useState<number | undefined>(undefined);
+  
+  const chartContainerRef = useRef<HTMLDivElement>(null);
   const [countdown, setCountdown] = useState<number | undefined>(undefined);
   const [entryPrice, setEntryPrice] = useState<number | undefined>(undefined);
   const [currentPrice, setCurrentPrice] = useState<number>(96500);
@@ -35,6 +38,28 @@ export default function App() {
   useEffect(() => {
     currentPriceRef.current = currentPrice;
   }, [currentPrice]);
+
+  // ✅ Calculate 1:1 aspect ratio for chart when in live state
+  useEffect(() => {
+    if (chartState !== 'live') {
+      setChartMaxHeight(undefined);
+      return;
+    }
+
+    const updateMaxHeight = () => {
+      if (chartContainerRef.current) {
+        const width = chartContainerRef.current.offsetWidth;
+        setChartMaxHeight(width);
+      }
+    };
+
+    // Update on mount and when state changes to live
+    updateMaxHeight();
+
+    // Update on window resize
+    window.addEventListener('resize', updateMaxHeight);
+    return () => window.removeEventListener('resize', updateMaxHeight);
+  }, [chartState]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -269,10 +294,12 @@ export default function App() {
           
           {/* Live Chart - Min height 256px, expands when live */}
           <div 
+            ref={chartContainerRef}
             className="w-full transition-all duration-300 ease-in-out relative"
             style={{
               minHeight: '256px',
-              flex: chartState === 'live' ? '1 1 auto' : '0 0 256px'
+              flex: chartState === 'live' ? '1 1 auto' : '0 0 256px',
+              maxHeight: chartState === 'live' && chartMaxHeight ? `${chartMaxHeight}px` : undefined
             }}
           >
             <LiveChartWithStates 
